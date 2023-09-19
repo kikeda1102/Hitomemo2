@@ -3,6 +3,7 @@ import 'package:isar/isar.dart';
 import 'package:hito_memo_2/models/profile.dart';
 import 'package:hito_memo_2/models/general_tag.dart';
 
+// 
 class IsarService {
   late Future<Isar> _isar;
 
