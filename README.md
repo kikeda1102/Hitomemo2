@@ -4,7 +4,7 @@
 ## 構成
 - models
 - pages
-  - home_page.dart: 最初の画面
+  - home_page.dart: 開始時画面
 
 - services
   - isar_service.dart: IsarDBへのCRUD操作を行う関数を定義

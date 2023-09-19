@@ -1,9 +1,9 @@
-import 'package:flutter/material.dart';
 import 'package:isar/isar.dart';
+import 'package:path_provider/path_provider.dart';
 import 'package:hito_memo_2/models/profile.dart';
 import 'package:hito_memo_2/models/general_tag.dart';
 
-// 
+// DBを操作するためのserviceクラス
 class IsarService {
   late Future<Isar> _isar;
 
