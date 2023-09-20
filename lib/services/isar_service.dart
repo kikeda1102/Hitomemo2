@@ -29,6 +29,7 @@ class IsarService {
   }
 
   // CRUD操作
+  // プロパティの一部を更新する操作はcopyWithとしてprofile.dartで定義されている(copyWithはDB操作ではない)
 // put (更新)
   Future<void> putProfile(Profile newProfile) async {
     final isar = await _isar;
@@ -48,7 +49,7 @@ class IsarService {
   Stream<Profile?> listenToProfile(int id) async* {
     final isar = await _isar;
     yield* isar.profiles.watchObject(
-        id); // https://pub.dev/documentation/isar/latest/isar/IsarCollection/watchObject.html
+        id); // watchObjectのAPI仕様: https://pub.dev/documentation/isar/latest/isar/IsarCollection/watchObject.html
   }
 
   // Delete

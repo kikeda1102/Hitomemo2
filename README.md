@@ -4,10 +4,10 @@
 
 ## 構成
 
-- models
 - pages
   - home_page.dart: 開始時画面
-
+- models
+  - profile.dart: Profileクラスを定義
 - services
   - isar_service.dart: IsarDBへのCRUD操作を行う関数を定義
 - components

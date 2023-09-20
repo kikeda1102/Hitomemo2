@@ -76,7 +76,7 @@ class HomePage extends StatelessWidget {
                       if (snapshot.hasError) {
                         return const Text('Something went wrong');
                       } else if (data == null || data.isEmpty) {
-                        return const Text('No data');
+                        return const Center(child: Text('No data'));
                       } else {
                         // TODO: dataをソートする
                         return ReorderableListView.builder(
