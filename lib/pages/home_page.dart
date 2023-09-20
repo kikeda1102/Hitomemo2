@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:url_launcher/link.dart'; // プライバシーポリシーのページに飛ぶ用
-import 'package:hito_memo_2/pages/add_profile_page.dart'; // プロフィール追加画面
-import 'package:hito_memo_2/pages/profile_detail_page.dart'; // プロフィール詳細画面
+// import 'package:hito_memo_2/pages/add_profile_page.dart'; // TODO: プロフィール追加画面
+// import 'package:hito_memo_2/pages/profile_detail_page.dart'; // TODO: プロフィール詳細画面
+import 'package:hito_memo_2/models/profile.dart';
+import 'package:hito_memo_2/services/isar_service.dart';
 
 // ホーム画面
 class HomePage extends StatelessWidget {
@@ -49,13 +51,13 @@ class HomePage extends StatelessWidget {
           // title: const Text('People List'),
           actions: [
             IconButton(
-              icon: const Icon(Icons.add),
+              icon: const Icon(Icons.search),
               onPressed: () {
-                // 検索機能
-                showSearch(
-                  context: context,
-                  delegate: ProfileSearchDelegate(service: service),
-                );
+                // TODO: 検索機能
+                // showSearch(
+                //   context: context,
+                //   delegate: ProfileSearchDelegate(service: service),
+                // );
               },
             ),
           ],
@@ -67,25 +69,75 @@ class HomePage extends StatelessWidget {
                 padding: const EdgeInsets.all(8.0),
                 // profileの一覧をStreamとして表示
                 child: StreamBuilder<List<Profile>>(
-                  stream: service.listenToProfiles(),
-                  builder: (BuildContext context, AsyncSnapshot<List<Profile> snapshot) {
-                    if (snapshot.hasError) {
-                      return const Text('Something went wrong');
-                    } else if (snapshot.data == null || snapshot.data.isEmpty ) {
-                      return const Text('No data');
-                    } else {
-                      // TODO: snapshot.dataをソートする
-                      rerturn ReorderableListView.builder(
-                        onReorder: (int oldIndex, int newIndex) {
-                          if (oldIndex < newIndex) {
-                            newIndex -= 1;
-                          }
-                          final Profile item = snapshot.data.removeAt(oldIndex); // oldIndex番目の要素を削除し、その要素をitemに格納
-                        }
-                      )
-                    }
-                  } // profileの一覧をlisten
-                )),
+                    stream: service.listenToAllProfiles(),
+                    builder: (BuildContext context,
+                        AsyncSnapshot<List<Profile>> snapshot) {
+                      final data = snapshot.data; // 静的解析が効くように変数に格納
+                      if (snapshot.hasError) {
+                        return const Text('Something went wrong');
+                      } else if (data == null || data.isEmpty) {
+                        return const Text('No data');
+                      } else {
+                        // TODO: dataをソートする
+                        return ReorderableListView.builder(
+                          onReorder: (int oldIndex, int newIndex) {
+                            if (oldIndex < newIndex) {
+                              newIndex -= 1;
+                            }
+                            final Profile item = data.removeAt(
+                                oldIndex); // oldIndex番目の要素を削除し、その要素をitemに格納
+                            data.insert(newIndex, item); // newIndex番目にitemを挿入
+                            // orderを更新
+                            for (int i = 0; i < data.length; i++) {
+                              data[i] = data[i].copyWith(
+                                order: i,
+                              );
+                              // 更新したデータを保存
+                              service.putProfile(data[i]);
+                            }
+                          },
+                          itemCount: data.length,
+                          // ListViewの各要素を表示
+                          itemBuilder: (BuildContext context, int index) {
+                            final profile = data[index];
+
+                            return ListTile(
+                              key: ValueKey(profile.id),
+                              title: Text(profile.name),
+                              trailing: Text(profile.memo), // TODO: UIの改善
+                              // Chipを表示
+                              subtitle: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Text(profile.order.toString()), // debug用
+                                  if (profile.personalTags.isNotEmpty)
+                                    Wrap(
+                                      spacing: 4,
+                                      runSpacing: -12,
+                                      children: profile.personalTags
+                                          .map((tag) => Chip(
+                                                label: Text(
+                                                  tag,
+                                                  style: const TextStyle(
+                                                      fontSize: 12),
+                                                ),
+                                              ))
+                                          .toList(),
+                                    ),
+                                ],
+                              ),
+                              // TODO: ProfileDetailPageを作る
+                              // onTap: () => Navigator.of(context).push(
+                              //   MaterialPageRoute(
+                              //       builder: (context) => ProfileDetailPage(
+                              //           id: profile.id, service: service)),
+                              // ),
+                            );
+                          },
+                        );
+                      }
+                    } // profileの一覧をlisten
+                    )),
           )
         ]));
   }

@@ -1,23 +1,59 @@
 import 'package:isar/isar.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:hito_memo_2/models/profile.dart';
-import 'package:hito_memo_2/models/general_tag.dart';
+// import 'package:hito_memo_2/models/general_tag.dart';
 
-// DBを操作するためのserviceクラス
+// IsarServcie: DBを操作するためのメソッドを持つserviceクラス
 class IsarService {
-  late Future<Isar> _isar;
+  late Future<Isar> _isar; // Isarのインスタンスを格納するメンバ変数
 
   IsarService() {
     _isar = openIsar();
   }
 
+  // クラスメソッド
+  // Isarのインスタンスを作成
   Future<Isar> openIsar() async {
-    final dir = await getApplicationDocumentsDirectory();
-    return await Isar.open(
-      [ProfileSchema, GeneralTagSchema],
-      inspector: true,
-      directory: dir.path,
-    );
+    // Isarのインスタンスがなければ作成
+    if (Isar.instanceNames.isEmpty) {
+      final dir = await getApplicationDocumentsDirectory();
+      return await Isar.open(
+        // [ProfileSchema, GeneralTagSchema], // TODO: GeneralTagの実装
+        [ProfileSchema],
+        inspector: true,
+        directory: dir.path,
+      );
+    }
+    // すでにIsarのインスタンスがあればそれを返す
+    return Future.value(Isar.getInstance());
   }
-  return Future.value(Isar.getInstance());
+
+  // CRUD操作
+// put (更新)
+  Future<void> putProfile(Profile newProfile) async {
+    final isar = await _isar;
+    isar.writeTxn(() async {
+      isar.profiles.put(newProfile);
+    });
+  }
+
+  // Read
+  // 全件取得
+  Stream<List<Profile>> listenToAllProfiles() async* {
+    final isar = await _isar;
+    yield* isar.profiles.where().watch(fireImmediately: true); // 初回の要素リストを最初に返す
+  }
+
+  // idで取得
+  Stream<Profile?> listenToProfile(int id) async* {
+    final isar = await _isar;
+    yield* isar.profiles.watchObject(
+        id); // https://pub.dev/documentation/isar/latest/isar/IsarCollection/watchObject.html
+  }
+
+  // Delete
+  Future<void> deleteProfile(int id) async {
+    final isar = await _isar;
+    await isar.writeTxn(() => isar.profiles.delete(id));
+  }
 }
