@@ -12,3 +12,7 @@
  - add_tag_widget.dart: personalTag追加機能を切り出したもの
 
 
+### 進捗記録
+- 2023/9/20: HitoMemoからリファクタ開始
+  - 動かせて、listenで更新できるとこまで行きたい
+  - snippetの設定について
