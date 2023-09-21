@@ -56,7 +56,7 @@ class _RegisterProfilePageState extends State<RegisterProfilePage> {
                     ),
                     onChanged: (text) {
                       // 名前が入力されるとnewProfileに反映
-                      newProfile = newProfile.copyWith(name: text);
+                      newProfile.name = text;
                     },
                     validator: (text) {
                       // 名前が入力されていない場合はエラーを返す
@@ -82,9 +82,9 @@ class _RegisterProfilePageState extends State<RegisterProfilePage> {
                 Container(
                   padding: const EdgeInsets.only(left: 30, right: 30),
                   child: TextField(
-                    onChanged: (value) {
+                    onChanged: (text) {
                       // メモが入力されるとnewProfileに反映
-                      newProfile = newProfile.copyWith(memo: value);
+                      newProfile.memo = text;
                     },
                     controller: _memoTextController,
                     maxLines: 10,
@@ -102,12 +102,16 @@ class _RegisterProfilePageState extends State<RegisterProfilePage> {
                   child: const Text('Register'),
                   onPressed: () {
                     // validation
-                    FormState? formState = _formKey.currentState;
-                    if (formState != null && formState.validate()) {
+                    FormState? formKeyState = _formKey.currentState;
+                    if (formKeyState != null && formKeyState.validate()) {
                       // DBへの登録
                       widget.service.putProfile(newProfile);
                       // TODO: orderの適切な更新
                       Navigator.pop(context);
+                    }
+                    // for debug
+                    if (formKeyState == null) {
+                      print('formKey.currentState is null');
                     }
                   },
                 ),
