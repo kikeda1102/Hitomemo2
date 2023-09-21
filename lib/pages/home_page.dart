@@ -77,7 +77,7 @@ class HomePage extends StatelessWidget {
                   if (snapshot.hasError) {
                     return const Text('Something went wrong');
                   } else if (data == null || data.isEmpty) {
-                    return const Center(child: Text('No data'));
+                    return const Center();
                   } else {
                     // TODO: dataをソートする
                     return ReorderableListView.builder(
@@ -149,8 +149,33 @@ class HomePage extends StatelessWidget {
           child: SizedBox(
             height: 60,
             child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceAround,
+              crossAxisAlignment: CrossAxisAlignment.center,
               children: [
-                // TODO: personalTag omponent
+                // TODO: TagManagementPageの作成
+                TextButton(
+                  onPressed: () {
+                    // タグ管理画面へ遷移
+                    // Navigator.push(
+                    //     context,
+                    //     MaterialPageRoute(
+                    //       builder: (context) =>
+                    //           TagManagementPage(service: service),
+                    //     ));
+                  },
+                  child: const Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      SizedBox(height: 4),
+                      Icon(
+                        Icons.tag,
+                        // color: Colors.white,
+                        // size: 30,
+                      ),
+                      Text('Tags', style: TextStyle(fontSize: 10)),
+                    ],
+                  ),
+                ),
 
                 // 新規perofile追加
                 TextButton(
@@ -166,6 +191,7 @@ class HomePage extends StatelessWidget {
                     );
                   },
                   child: const Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
                     children: [
                       SizedBox(height: 4),
                       Icon(

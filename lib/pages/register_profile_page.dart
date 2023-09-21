@@ -21,7 +21,7 @@ class _RegisterProfilePageState extends State<RegisterProfilePage> {
     personalTags: List<String>.empty(growable: true),
     memo: '',
   );
-
+  final _formKey = GlobalKey<FormState>(); // Validation用
   // 名前を入力するTextField
   final _nameTextController = TextEditingController();
   // メモを入力するTextField
@@ -55,9 +55,11 @@ class _RegisterProfilePageState extends State<RegisterProfilePage> {
                       hintText: 'Enter the name',
                     ),
                     onChanged: (text) {
+                      // 名前が入力されるとnewProfileに反映
                       newProfile = newProfile.copyWith(name: text);
                     },
                     validator: (text) {
+                      // 名前が入力されていない場合はエラーを返す
                       if (text == null || text.isEmpty) {
                         return 'Please enter the name';
                       }
@@ -65,6 +67,52 @@ class _RegisterProfilePageState extends State<RegisterProfilePage> {
                     },
                   ),
                 ),
+
+                const SizedBox(height: 20),
+
+                // TODO: 登録されたpersonal tagsを表示
+
+                const SizedBox(height: 20),
+
+                // TODO: add tag component 仕様検討も
+
+                const SizedBox(height: 20),
+
+                // メモを入力するTextField
+                Container(
+                  padding: const EdgeInsets.only(left: 30, right: 30),
+                  child: TextField(
+                    onChanged: (value) {
+                      // メモが入力されるとnewProfileに反映
+                      newProfile = newProfile.copyWith(memo: value);
+                    },
+                    controller: _memoTextController,
+                    maxLines: 10,
+                    decoration: const InputDecoration(
+                      labelText: 'Memo',
+                      border: InputBorder.none,
+                    ),
+                  ),
+                ),
+
+                const SizedBox(height: 20),
+
+                // 登録ボタン
+                ElevatedButton(
+                  child: const Text('Register'),
+                  onPressed: () {
+                    // validation
+                    FormState? formState = _formKey.currentState;
+                    if (formState != null && formState.validate()) {
+                      // DBへの登録
+                      widget.service.putProfile(newProfile);
+                      // TODO: orderの適切な更新
+                      Navigator.pop(context);
+                    }
+                  },
+                ),
+
+                const SizedBox(height: 20),
               ],
             ),
           ),
