@@ -7,9 +7,9 @@ void main() async {
   // IsarDBの初期化
   WidgetsFlutterBinding.ensureInitialized();
   // isar_service.dartで定義した、IsarServiceクラスのインスタンス化
-  final service = IsarService();
+  final isarService = IsarService();
   // アプリの起動
-  runApp(MyApp(service: service));
+  runApp(MyApp(service: isarService));
 }
 
 class MyApp extends StatelessWidget {

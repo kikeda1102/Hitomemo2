@@ -40,6 +40,7 @@ class _RegisterProfilePageState extends State<RegisterProfilePage> {
       body: SingleChildScrollView(
         child: Center(
           child: Form(
+            key: _formKey,
             child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
               mainAxisSize: MainAxisSize.min,

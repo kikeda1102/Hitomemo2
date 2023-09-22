@@ -42,14 +42,18 @@ class IsarService {
   // 全件取得
   Stream<List<Profile>> listenToAllProfiles() async* {
     final isar = await _isar;
-    yield* isar.profiles.where().watch(fireImmediately: true); // 初回の要素リストを最初に返す
+    yield* isar.profiles.where().watch(
+          fireImmediately: true,
+        ); // 初回の要素リストを最初に返す
   }
 
   // idで取得
   Stream<Profile?> listenToProfile(int id) async* {
     final isar = await _isar;
     yield* isar.profiles.watchObject(
-        id); // watchObjectのAPI仕様: https://pub.dev/documentation/isar/latest/isar/IsarCollection/watchObject.html
+      id,
+      fireImmediately: true, // 初回の要素を最初に返す
+    ); // watchObjectのAPI仕様: https://pub.dev/documentation/isar/latest/isar/IsarCollection/watchObject.html
   }
 
   // Delete

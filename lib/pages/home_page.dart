@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:url_launcher/link.dart'; // プライバシーポリシーのページに飛ぶ用
 import 'package:hito_memo_2/pages/register_profile_page.dart'; // TODO: プロフィール追加画面
-// import 'package:hito_memo_2/pages/profile_detail_page.dart'; // TODO: プロフィール詳細画面
+import 'package:hito_memo_2/pages/profile_detail_page.dart'; // TODO: プロフィール詳細画面
 import 'package:hito_memo_2/models/profile.dart';
 import 'package:hito_memo_2/services/isar_service.dart';
 
@@ -56,7 +56,7 @@ class HomePage extends StatelessWidget {
               // TODO: 検索機能
               // showSearch(
               //   context: context,
-              //   delegate: ProfileSearchDelegate(service: service),
+              //   delegate: ProfileSearchDelegate(service: isarService),
               // );
             },
           ),
@@ -98,6 +98,7 @@ class HomePage extends StatelessWidget {
                         }
                       },
                       itemCount: data.length,
+
                       // ListViewの各要素を表示
                       itemBuilder: (BuildContext context, int index) {
                         final profile = data[index];
@@ -128,11 +129,11 @@ class HomePage extends StatelessWidget {
                             ],
                           ),
                           // TODO: ProfileDetailPageを作る
-                          // onTap: () => Navigator.of(context).push(
-                          //   MaterialPageRoute(
-                          //       builder: (context) => ProfileDetailPage(
-                          //           id: profile.id, service: service)),
-                          // ),
+                          onTap: () => Navigator.of(context).push(
+                            MaterialPageRoute(
+                                builder: (context) => ProfileDetailPage(
+                                    id: profile.id, service: service)),
+                          ),
                         );
                       },
                     );
@@ -160,7 +161,7 @@ class HomePage extends StatelessWidget {
                     //     context,
                     //     MaterialPageRoute(
                     //       builder: (context) =>
-                    //           TagManagementPage(service: service),
+                    //           TagManagementPage(service: isarService),
                     //     ));
                   },
                   child: const Column(
