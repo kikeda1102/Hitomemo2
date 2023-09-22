@@ -29,8 +29,9 @@ class IsarService {
   }
 
   // CRUD操作
-  // プロパティの一部を更新する操作はcopyWithとしてprofile.dartで定義されている(copyWithはDB操作ではない)
-// put (更新)
+  // profileのメンバ変数を変更する操作は、profile.dartでcopyWith()として定義されている(DB操作ではない)
+
+  // put (更新)
   Future<void> putProfile(Profile newProfile) async {
     final isar = await _isar;
     isar.writeTxn(() async {
@@ -39,7 +40,7 @@ class IsarService {
   }
 
   // Read
-  // 全件取得
+  // 全件をStreamとして取得
   Stream<List<Profile>> listenToAllProfiles() async* {
     final isar = await _isar;
     yield* isar.profiles.where().watch(
@@ -47,13 +48,20 @@ class IsarService {
         ); // 初回の要素リストを最初に返す
   }
 
-  // idで取得
+  // idで1件をStreamとして取得
   Stream<Profile?> listenToProfile(int id) async* {
     final isar = await _isar;
     yield* isar.profiles.watchObject(
       id,
       fireImmediately: true, // 初回の要素を最初に返す
     ); // watchObjectのAPI仕様: https://pub.dev/documentation/isar/latest/isar/IsarCollection/watchObject.html
+  }
+
+  // 全件をListとして取得
+  // addボタンが押された時のorderRefresh()で使用
+  Future<List<Profile>> getAllProfiles() async {
+    final isar = await _isar;
+    return isar.profiles.where().findAll();
   }
 
   // Delete

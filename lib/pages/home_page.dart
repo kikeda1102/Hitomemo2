@@ -8,6 +8,26 @@ import 'package:hito_memo_2/services/isar_service.dart';
 // ホーム画面
 class HomePage extends StatelessWidget {
   final IsarService service;
+
+  // profilesのorderを現状順に更新する関数
+  void refreshOrder(List<Profile> profiles, IsarService service) {
+    for (int i = 0; i < profiles.length; i++) {
+      profiles[i] = profiles[i].copyWith(order: i);
+      // 更新をDBに保存
+      service.putProfile(profiles[i]);
+    }
+  }
+
+  // Futureバージョン (addボタン用)
+  void refreshOrderFuture(Future<List<Profile>> profiles, IsarService service) {
+    // sort
+    profiles.then((value) {
+      value.sort((a, b) => a.order.compareTo(b.order));
+    });
+    // 更新
+    profiles.then((value) => refreshOrder(value, service));
+  }
+
   const HomePage({Key? key, required this.service}) : super(key: key);
 
   @override
@@ -79,35 +99,32 @@ class HomePage extends StatelessWidget {
                   } else if (data == null || data.isEmpty) {
                     return const Center();
                   } else {
-                    // TODO: dataをソートする
+                    // dataをorder順にソートする
+                    data.sort((a, b) => a.order.compareTo(b.order));
+                    // ReorderableListViewで表示
                     return ReorderableListView.builder(
                       onReorder: (int oldIndex, int newIndex) {
+                        // 下に移動した場合は、自分が消える分、newIndexを1減らす
                         if (oldIndex < newIndex) {
                           newIndex -= 1;
                         }
-                        final Profile item = data.removeAt(
-                            oldIndex); // oldIndex番目の要素を削除し、その要素をitemに格納
-                        data.insert(newIndex, item); // newIndex番目にitemを挿入
+                        // oldIndex番目の要素を削除し、その要素をitemに格納
+                        final Profile item = data.removeAt(oldIndex);
+                        // newIndex番目にitemを挿入
+                        data.insert(newIndex, item);
                         // orderを更新
-                        for (int i = 0; i < data.length; i++) {
-                          data[i] = data[i].copyWith(
-                            order: i,
-                          );
-                          // 更新したデータを保存
-                          service.putProfile(data[i]);
-                        }
+                        refreshOrder(data, service);
                       },
                       itemCount: data.length,
-
                       // ListViewの各要素を表示
                       itemBuilder: (BuildContext context, int index) {
+                        // profileを取得
                         final profile = data[index];
-
                         return ListTile(
                           key: ValueKey(profile.id),
                           title: Text(profile.name),
                           trailing: Text(profile.memo), // TODO: UIの改善
-                          // Chipを表示
+                          // タグをChipで表示
                           subtitle: Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
@@ -181,6 +198,10 @@ class HomePage extends StatelessWidget {
                 // 新規perofile追加
                 TextButton(
                   onPressed: () {
+                    // 現在のprofilesを取得
+                    Future<List<Profile>> profiles = service.getAllProfiles();
+                    // orderの更新
+                    refreshOrderFuture(profiles, service);
                     // RegisterProfilePageへ遷移
                     Navigator.push(
                       context,
