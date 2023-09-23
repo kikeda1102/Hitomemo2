@@ -123,12 +123,14 @@ class HomePage extends StatelessWidget {
                         return ListTile(
                           key: ValueKey(profile.id),
                           title: Text(profile.name),
-                          trailing: Text(profile.memo), // TODO: UIの改善
                           // タグをChipで表示
                           subtitle: Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
-                              Text(profile.order.toString()), // debug用
+                              Text(
+                                // profile.order.toString(), // for debug
+                                profile.memo,
+                              ),
                               if (profile.personalTags.isNotEmpty)
                                 Wrap(
                                   spacing: 4,

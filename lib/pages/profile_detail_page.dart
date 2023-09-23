@@ -42,13 +42,15 @@ class _ProfileDetailPageState extends State<ProfileDetailPage> {
                     crossAxisAlignment: CrossAxisAlignment.center,
                     children: [
                       const SizedBox(height: 20),
+
                       // 名前を表示
                       // TODO: Formによるvalidationを実装
                       TextFormField(
                         onChanged: (text) {
-                          profile.name = text;
+                          // profile.name = text;
+                          profile = profile!.copyWith(name: text);
                           // DB保存
-                          widget.service.putProfile(profile);
+                          widget.service.putProfile(profile!);
                         },
                         controller: TextEditingController(text: profile.name),
                         decoration: const InputDecoration(
@@ -69,11 +71,11 @@ class _ProfileDetailPageState extends State<ProfileDetailPage> {
                       // メモを表示
                       TextFormField(
                         onChanged: (text) {
-                          profile.memo = text;
+                          profile!.memo = text;
                           // DB保存
-                          widget.service.putProfile(profile);
+                          widget.service.putProfile(profile!);
                         },
-                        controller: TextEditingController(text: profile.memo),
+                        controller: TextEditingController(text: profile!.memo),
                         decoration: const InputDecoration(
                           labelText: 'Memo',
                           hintText: 'Enter the memo',
@@ -100,7 +102,7 @@ class _ProfileDetailPageState extends State<ProfileDetailPage> {
                             context: context,
                             builder: (context) {
                               return _deleteDialog(context,
-                                  profile: profile, service: widget.service);
+                                  profile: profile!, service: widget.service);
                             },
                           );
                         },
