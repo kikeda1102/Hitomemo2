@@ -14,6 +14,13 @@ class ProfileDetailPage extends StatefulWidget {
 }
 
 class _ProfileDetailPageState extends State<ProfileDetailPage> {
+  // profileの読み込み
+  // @override
+  // void initState() {
+  //   super.initState();
+  //   // widget.service.listenToProfile(widget.id);
+  // }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
