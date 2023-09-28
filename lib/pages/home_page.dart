@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:url_launcher/link.dart'; // プライバシーポリシーのページに飛ぶ用
-import 'package:hito_memo_2/pages/register_profile_page.dart'; // TODO: プロフィール追加画面
-import 'package:hito_memo_2/pages/profile_detail_page.dart'; // TODO: プロフィール詳細画面
+import 'package:hito_memo_2/pages/register_profile_page.dart';
+import 'package:hito_memo_2/pages/profile_detail_page.dart';
 import 'package:hito_memo_2/models/profile.dart';
 import 'package:hito_memo_2/services/isar_service.dart';
 
@@ -147,7 +147,7 @@ class HomePage extends StatelessWidget {
                                 ),
                             ],
                           ),
-                          // TODO: ProfileDetailPageを作る
+
                           onTap: () => Navigator.of(context).push(
                             MaterialPageRoute(
                                 builder: (context) => ProfileDetailPage(

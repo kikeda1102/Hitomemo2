@@ -20,6 +20,7 @@ class _ProfileDetailPageState extends State<ProfileDetailPage> {
   //   super.initState();
   //   // widget.service.listenToProfile(widget.id);
   // }
+  final _formKey = GlobalKey<FormState>(); // Validation用
 
   @override
   Widget build(BuildContext context) {
@@ -45,76 +46,90 @@ class _ProfileDetailPageState extends State<ProfileDetailPage> {
                   return const Center(child: Text('No data'));
                 } else {
                   // 問題なくデータがある場合
-                  return Column(
-                    crossAxisAlignment: CrossAxisAlignment.center,
-                    children: [
-                      const SizedBox(height: 20),
+                  return Form(
+                    key: _formKey,
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.center,
+                      children: [
+                        const SizedBox(height: 20),
 
-                      // 名前を表示
-                      // TODO: Formによるvalidationを実装
-                      TextFormField(
-                        onChanged: (text) {
-                          // profile.name = text;
-                          profile = profile!.copyWith(name: text);
-                          // DB保存
-                          widget.service.putProfile(profile!);
-                        },
-                        controller: TextEditingController(text: profile.name),
-                        decoration: const InputDecoration(
-                          labelText: 'Name',
-                          hintText: 'Enter the name',
-                          border: UnderlineInputBorder(),
+                        // 名前を表示
+                        TextFormField(
+                          onChanged: (text) {
+                            // validation
+                            FormState? formKeyState = _formKey.currentState;
+                            if (formKeyState != null &&
+                                formKeyState.validate()) {
+                              // profile.name = text;
+                              profile = profile!.copyWith(name: text);
+                              // DB保存
+                              widget.service.putProfile(profile!);
+                            }
+                            // for debug
+                            if (formKeyState == null) {
+                              // print('formKey.currentState is null');
+                            }
+                          },
+                          initialValue: profile.name,
+                          // controller: TextEditingController(text: profile.name),
+                          decoration: const InputDecoration(
+                            labelText: 'Name',
+                            hintText: 'Enter the name',
+                            border: UnderlineInputBorder(),
+                          ),
+                          validator: (text) {
+                            if (text == null || text.isEmpty) {
+                              return "Please enter the name.";
+                            }
+                            return null;
+                          },
                         ),
-                        validator: (text) {
-                          if (text == null || text.isEmpty) {
-                            return "Please enter the name.";
-                          }
-                          return null;
-                        },
-                      ),
 
-                      const SizedBox(height: 20),
+                        const SizedBox(height: 20),
 
-                      // メモを表示
-                      TextFormField(
-                        onChanged: (text) {
-                          profile!.memo = text;
-                          // DB保存
-                          widget.service.putProfile(profile!);
-                        },
-                        controller: TextEditingController(text: profile!.memo),
-                        decoration: const InputDecoration(
-                          labelText: 'Memo',
-                          hintText: 'Enter the memo',
-                          border: InputBorder.none,
+                        // メモを表示
+                        TextFormField(
+                          initialValue: profile!.memo,
+                          onChanged: (text) {
+                            profile!.memo = text;
+                            // DB保存
+                            widget.service.putSyncProfile(profile!);
+                          },
+                          // controller:
+                          //     TextEditingController(text: profile!.memo),
+                          decoration: const InputDecoration(
+                            labelText: 'Memo',
+                            hintText: 'Enter the memo',
+                            border: InputBorder.none,
+                          ),
+                          validator: (text) {
+                            // TODO: validation
+                            return null;
+                          },
                         ),
-                        validator: (text) {
-                          // TODO: validation
-                          return null;
-                        },
-                      ),
 
-                      const SizedBox(height: 20),
+                        const SizedBox(height: 20),
 
-                      // TODO: タグ
+                        // TODO: タグ
 
-                      const SizedBox(height: 20),
+                        const SizedBox(height: 20),
 
-                      // 削除ボタン
-                      ElevatedButton(
-                        child: const Text('Delete'),
-                        onPressed: () {
-                          // 確認ダイアログを表示
-                          showDialog(
-                            context: context,
-                            builder: (context) {
-                              return _deleteDialog(context,
-                                  profile: profile!, service: widget.service);
-                            },
-                          );
-                        },
-                      )
-                    ],
+                        // 削除ボタン
+                        ElevatedButton(
+                          child: const Text('Delete'),
+                          onPressed: () {
+                            // 確認ダイアログを表示
+                            showDialog(
+                              context: context,
+                              builder: (context) {
+                                return _deleteDialog(context,
+                                    profile: profile!, service: widget.service);
+                              },
+                            );
+                          },
+                        )
+                      ],
+                    ),
                   );
                 }
               },

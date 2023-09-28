@@ -39,6 +39,12 @@ class IsarService {
     });
   }
 
+  // putSync
+  Future<void> putSyncProfile(Profile newProfile) async {
+    final isar = await _isar;
+    isar.writeTxnSync<int>(() => isar.profiles.putSync(newProfile));
+  }
+
   // Read
   // 全件をStreamとして取得
   Stream<List<Profile>> listenToAllProfiles() async* {

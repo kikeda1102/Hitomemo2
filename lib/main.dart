@@ -22,6 +22,7 @@ class MyApp extends StatelessWidget {
       debugShowCheckedModeBanner: false, // デバッグバナーを非表示
       title: 'hitomemo',
       theme: ThemeData(
+        useMaterial3: true,
         primarySwatch: Colors.blueGrey,
       ),
       home: HomePage(service: service),

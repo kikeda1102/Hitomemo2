@@ -14,7 +14,7 @@ class RegisterProfilePage extends StatefulWidget {
 }
 
 class _RegisterProfilePageState extends State<RegisterProfilePage> {
-  // 新規Profile
+  // 空の新規Profileを作成
   Profile newProfile = Profile(
     name: '',
     imageBytes: null,
@@ -107,12 +107,11 @@ class _RegisterProfilePageState extends State<RegisterProfilePage> {
                     if (formKeyState != null && formKeyState.validate()) {
                       // DBへの登録
                       widget.service.putProfile(newProfile);
-                      // TODO: orderの適切な更新
                       Navigator.pop(context);
                     }
                     // for debug
                     if (formKeyState == null) {
-                      print('formKey.currentState is null');
+                      // print('formKey.currentState is null');
                     }
                   },
                 ),
