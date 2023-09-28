@@ -74,7 +74,6 @@ class HomePage extends StatelessWidget {
           IconButton(
             icon: const Icon(Icons.search),
             onPressed: () {
-              // TODO: 検索機能
               showSearch(
                 context: context,
                 delegate: ProfileSearchDelegate(service: service),
@@ -162,6 +161,7 @@ class HomePage extends StatelessWidget {
               ),
             ),
           ),
+          // TODO: クイズ機能
         ],
       ),
       floatingActionButton: FloatingActionButton(

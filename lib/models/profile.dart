@@ -17,7 +17,7 @@ class Profile {
   // コンストラクタ
   Profile({
     this.id = Isar.autoIncrement,
-    this.order = -1, // TODO: 仕様の再検討
+    this.order = -1, // 一番上に表示するため、初期値は-1
     this.updated,
     required this.name,
     this.imageBytes,
