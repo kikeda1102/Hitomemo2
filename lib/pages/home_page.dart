@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:url_launcher/link.dart'; // プライバシーポリシーのページに飛ぶ用
+import 'package:hito_memo_2/components/profile_search_delegate.dart';
 import 'package:hito_memo_2/pages/register_profile_page.dart';
 import 'package:hito_memo_2/pages/profile_detail_page.dart';
 import 'package:hito_memo_2/models/profile.dart';
@@ -74,10 +75,10 @@ class HomePage extends StatelessWidget {
             icon: const Icon(Icons.search),
             onPressed: () {
               // TODO: 検索機能
-              // showSearch(
-              //   context: context,
-              //   delegate: ProfileSearchDelegate(service: isarService),
-              // );
+              showSearch(
+                context: context,
+                delegate: ProfileSearchDelegate(service: service),
+              );
             },
           ),
         ],
@@ -163,74 +164,23 @@ class HomePage extends StatelessWidget {
           ),
         ],
       ),
-      bottomNavigationBar: PreferredSize(
-        preferredSize: const Size.fromHeight(20),
-        child: BottomAppBar(
-          child: SizedBox(
-            height: 60,
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceAround,
-              crossAxisAlignment: CrossAxisAlignment.center,
-              children: [
-                // TODO: TagManagementPageの作成
-                TextButton(
-                  onPressed: () {
-                    // タグ管理画面へ遷移
-                    // Navigator.push(
-                    //     context,
-                    //     MaterialPageRoute(
-                    //       builder: (context) =>
-                    //           TagManagementPage(service: isarService),
-                    //     ));
-                  },
-                  child: const Column(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      SizedBox(height: 4),
-                      Icon(
-                        Icons.tag,
-                        // color: Colors.white,
-                        // size: 30,
-                      ),
-                      Text('Tags', style: TextStyle(fontSize: 10)),
-                    ],
-                  ),
-                ),
-
-                // 新規perofile追加
-                TextButton(
-                  onPressed: () {
-                    // 現在のprofilesを取得
-                    Future<List<Profile>> profiles = service.getAllProfiles();
-                    // orderの更新
-                    refreshOrderFuture(profiles, service);
-                    // RegisterProfilePageへ遷移
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                        builder: (context) => RegisterProfilePage(
-                          service: service,
-                        ),
-                      ),
-                    );
-                  },
-                  child: const Column(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      SizedBox(height: 4),
-                      Icon(
-                        Icons.add_circle,
-                        // color: Colors.white,
-                        // size: 30,
-                      ),
-                      Text('New', style: TextStyle(fontSize: 10)),
-                    ],
-                  ),
-                ),
-              ],
+      floatingActionButton: FloatingActionButton(
+        onPressed: () {
+          // 現在のprofilesを取得
+          Future<List<Profile>> profiles = service.getAllProfiles();
+          // orderの更新
+          refreshOrderFuture(profiles, service);
+          // RegisterProfilePageへ遷移
+          Navigator.push(
+            context,
+            MaterialPageRoute(
+              builder: (context) => RegisterProfilePage(
+                service: service,
+              ),
             ),
-          ),
-        ),
+          );
+        },
+        child: const Icon(Icons.add),
       ),
     );
   }
