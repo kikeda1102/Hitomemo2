@@ -12,7 +12,7 @@ class Profile {
   String name;
   List<byte>? imageBytes;
   List<String> personalTags;
-  String memo;
+  String memo; // TODO: 長文メモではなく、箇条書き風に再設計
 
   // コンストラクタ
   Profile({
