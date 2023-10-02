@@ -54,8 +54,7 @@ class HomePage extends StatelessWidget {
             ),
             Link(
               // 開きたいURL
-              uri: Uri.parse(
-                  'https://kikeda1102.github.io/tt_scoreboard_LP/'), // TODO: プライバシーポリシーのページを作る
+              uri: Uri.parse('https://kikeda1102.github.io/Hitomemo2/'),
               target: LinkTarget.self, // 独立したブラウゼで開く
               builder: (BuildContext context, FollowLink? followLink) {
                 return TextButton.icon(
