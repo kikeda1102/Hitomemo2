@@ -15,11 +15,16 @@
 
 ### 進捗記録
 
-- 以前の問題:
-  - add_tag_widgetにおけるonPressedの関数を切り出す再設計: done
-  - profile_detail_pageのlistenによる更新: まだ
+- 2023/10/4: 
+  - memoを長文ではなく、箇条書き風に再設計したい
+  - クイズ機能をつけたい
+  - デザイン: material3を採用
+
 - 2023/9/20: HitoMemoではcopilotに頼りすぎ、自力で書き直したくなったので、hito_memo_2リポジトリを作ってリファクタ開始
   - buildできて、listenで更新できるとこまで行きたかった: まだ
   - isar_service.dartの設計についてちゃんと考え直したい
-  - vscodeのsnippetの設定について
   - 次回: 画面とlistenまで実装
+
+- 以前の問題:
+  - add_tag_widgetにおけるonPressedの関数を切り出す再設計: done
+  - profile_detail_pageのlistenによる更新: まだ
