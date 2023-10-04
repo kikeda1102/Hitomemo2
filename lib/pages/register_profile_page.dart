@@ -57,6 +57,11 @@ class _RegisterProfilePageState extends State<RegisterProfilePage> {
                     onChanged: (text) {
                       // 名前が入力されるとnewProfileに反映
                       newProfile.name = text;
+                      // validation
+                      FormState? formKeyState = _formKey.currentState;
+                      if (formKeyState != null) {
+                        formKeyState.validate();
+                      }
                     },
                     validator: (text) {
                       // 名前が入力されていない場合はエラーを返す

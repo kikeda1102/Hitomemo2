@@ -92,13 +92,12 @@ class _ProfileDetailPageState extends State<ProfileDetailPage> {
                         const SizedBox(height: 20),
 
                         // memosを表示
-                        ...profile.memos
+                        ...profile.memos.indexed
                             .map((memo) => TextFormField(
-                                  initialValue: memo,
+                                  initialValue: memo.$2,
                                   // 更新
                                   onChanged: (newMemo) {
-                                    int index = profile.memos.indexOf(memo);
-                                    profile.memos[index] = newMemo;
+                                    profile.memos[memo.$1] = newMemo;
                                     // DB保存
                                     widget.service.putProfile(profile);
                                   },
@@ -109,6 +108,20 @@ class _ProfileDetailPageState extends State<ProfileDetailPage> {
                                   ),
                                 ))
                             .toList(),
+
+                        TextFormField(
+                          // 更新
+                          onFieldSubmitted: (newMemo) {
+                            profile.memos = [...profile.memos, newMemo];
+                            // DB保存
+                            widget.service.putProfile(profile);
+                          },
+                          decoration: const InputDecoration(
+                            // labelText: 'Memo',
+                            hintText: 'Enter the Memo',
+                            border: InputBorder.none,
+                          ),
+                        ),
 
                         const SizedBox(height: 20),
 

@@ -16,9 +16,15 @@
 ### 進捗記録
 
 - 2023/10/4: 
-  - memoを長文ではなく、箇条書き風に再設計したい
-  - クイズ機能をつけたい
-  - Navigator.popでvalidationできる？
+  - memoを長文ではなく、箇条書き風に再設計したい: 細かい点を除けばdone
+  - クイズ機能をつけたい: todo
+  - Navigator.popでvalidationできる？: WillPopScopeがあるが、今回の場合はTextFormFieldのonChangedでvalidateすればよい
+
+  - TODO:
+    - 文字数制限など細かい点を詰める
+    - UI詰める 実機テスト
+    - クイズ機能 できるとこまで
+
 
 - 2023/9/20: HitoMemoではcopilotに頼りすぎ、自力で書き直したくなったので、hito_memo_2リポジトリを作ってリファクタ開始
   - buildできて、listenで更新できるとこまで行きたかった: まだ
