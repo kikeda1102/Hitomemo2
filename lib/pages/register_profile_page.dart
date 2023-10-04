@@ -18,14 +18,13 @@ class _RegisterProfilePageState extends State<RegisterProfilePage> {
   Profile newProfile = Profile(
     name: '',
     imageBytes: null,
-    personalTags: List<String>.empty(growable: true),
-    memo: '',
+    memos: List<String>.empty(),
   );
   final _formKey = GlobalKey<FormState>(); // Validation用
   // 名前を入力するTextField
-  final _nameTextController = TextEditingController();
+  // final _nameTextController = TextEditingController();
   // メモを入力するTextField
-  final _memoTextController = TextEditingController();
+  // final _memoTextController = TextEditingController();
   // Stateの更新
   void updateProfile() {
     setState(() {});
@@ -50,7 +49,7 @@ class _RegisterProfilePageState extends State<RegisterProfilePage> {
                 Container(
                   padding: const EdgeInsets.only(left: 30.0, right: 30.0),
                   child: TextFormField(
-                    controller: _nameTextController,
+                    // controller: _nameTextController,
                     decoration: const InputDecoration(
                       // labelText: 'Name',
                       hintText: 'Enter the name',
@@ -71,26 +70,46 @@ class _RegisterProfilePageState extends State<RegisterProfilePage> {
 
                 const SizedBox(height: 20),
 
-                // TODO: 登録されたpersonal tagsを表示
-
-                const SizedBox(height: 20),
-
-                // TODO: add tag component 仕様検討も
-
-                const SizedBox(height: 20),
-
-                // メモを入力するTextField
+                // memosを表示
                 Container(
                   padding: const EdgeInsets.only(left: 30, right: 30),
-                  child: TextField(
-                    onChanged: (text) {
-                      // メモが入力されるとnewProfileに反映
-                      newProfile.memo = text;
+                  child: Column(
+                    children: [
+                      const Text('Memos'),
+                      const SizedBox(height: 10),
+                      // memosを表示
+                      if (newProfile.memos.isNotEmpty)
+                        Wrap(
+                          spacing: 4,
+                          runSpacing: -12,
+                          children: newProfile.memos
+                              .map((memo) => Chip(
+                                    label: Text(
+                                      memo,
+                                      style: const TextStyle(fontSize: 12),
+                                    ),
+                                  ))
+                              .toList(),
+                        ),
+                    ],
+                  ),
+                ),
+
+                const SizedBox(height: 20),
+
+                // memosを作成
+                Container(
+                  padding: const EdgeInsets.only(left: 30, right: 30),
+                  child: TextFormField(
+                    onFieldSubmitted: (text) {
+                      // メモが入力されたとき、newProfileに反映
+                      newProfile.memos = [...newProfile.memos, text];
+                      setState(() {});
                     },
-                    controller: _memoTextController,
-                    maxLines: 10,
+                    // controller: _memoTextController,
+                    // maxLines: 10,
                     decoration: const InputDecoration(
-                      labelText: 'Memo',
+                      labelText: 'Memos',
                       border: InputBorder.none,
                     ),
                   ),

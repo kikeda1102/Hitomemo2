@@ -18,7 +18,6 @@ class IsarService {
     if (Isar.instanceNames.isEmpty) {
       final dir = await getApplicationDocumentsDirectory();
       return await Isar.open(
-        // [ProfileSchema, GeneralTagSchema], // TODO: GeneralTagの実装
         [ProfileSchema],
         inspector: true,
         directory: dir.path,
@@ -55,12 +54,22 @@ class IsarService {
   }
 
   // idで1件をStreamとして取得
-  Stream<Profile?> listenToProfile(int id) async* {
+  Stream<Profile> listenToProfile(int id) async* {
     final isar = await _isar;
-    yield* isar.profiles.watchObject(
+    Stream<Profile?> stream = isar.profiles.watchObject(
       id,
-      fireImmediately: true, // 初回の要素を最初に返す
-    ); // watchObjectのAPI仕様: https://pub.dev/documentation/isar/latest/isar/IsarCollection/watchObject.html
+      fireImmediately: true,
+    );
+    // nullの場合に対応
+    Stream<Profile> nonNullableStream = stream
+        .where((profile) => profile != null) // nullでない要素だけをフィルタリング
+        .map((profile) {
+      if (profile == null) {
+        throw Exception("Null profile encountered."); // エラーをスロー
+      }
+      return profile; // nullでない場合、profileを返す
+    });
+    yield* nonNullableStream;
   }
 
   // 全件をListとして取得

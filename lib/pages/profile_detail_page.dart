@@ -33,16 +33,20 @@ class _ProfileDetailPageState extends State<ProfileDetailPage> {
           padding: const EdgeInsets.all(30),
           // スクロール可能な画面
           child: SingleChildScrollView(
-            child: StreamBuilder<Profile?>(
+            child: StreamBuilder<Profile>(
               stream: widget.service.listenToProfile(widget.id),
-              builder:
-                  (BuildContext context, AsyncSnapshot<Profile?> snapshot) {
-                Profile? profile = snapshot.data;
+              builder: (BuildContext context, AsyncSnapshot<Profile> snapshot) {
+                Profile profile = snapshot.data ??
+                    Profile(
+                      name: '',
+                      imageBytes: null,
+                      memos: List<String>.empty(),
+                    );
                 if (snapshot.connectionState == ConnectionState.waiting) {
                   return const Center(child: CircularProgressIndicator());
                 } else if (snapshot.hasError) {
                   return Text('Error: ${snapshot.error}');
-                } else if (!snapshot.hasData || profile == null) {
+                } else if (!snapshot.hasData) {
                   return const Center(child: Text('No data'));
                 } else {
                   // 問題なくデータがある場合
@@ -61,9 +65,9 @@ class _ProfileDetailPageState extends State<ProfileDetailPage> {
                             if (formKeyState != null &&
                                 formKeyState.validate()) {
                               // profile.name = text;
-                              profile = profile!.copyWith(name: text);
+                              profile = profile.copyWith(newName: text);
                               // DB保存
-                              widget.service.putProfile(profile!);
+                              widget.service.putProfile(profile);
                             }
                             // for debug
                             if (formKeyState == null) {
@@ -87,30 +91,24 @@ class _ProfileDetailPageState extends State<ProfileDetailPage> {
 
                         const SizedBox(height: 20),
 
-                        // メモを表示
-                        TextFormField(
-                          initialValue: profile!.memo,
-                          onChanged: (text) {
-                            profile!.memo = text;
-                            // DB保存
-                            widget.service.putSyncProfile(profile!);
-                          },
-                          // controller:
-                          //     TextEditingController(text: profile!.memo),
-                          decoration: const InputDecoration(
-                            labelText: 'Memo',
-                            hintText: 'Enter the memo',
-                            border: InputBorder.none,
-                          ),
-                          validator: (text) {
-                            // TODO: validation
-                            return null;
-                          },
-                        ),
-
-                        const SizedBox(height: 20),
-
-                        // TODO: タグ
+                        // memosを表示
+                        ...profile.memos
+                            .map((memo) => TextFormField(
+                                  initialValue: memo,
+                                  // 更新
+                                  onChanged: (newMemo) {
+                                    int index = profile.memos.indexOf(memo);
+                                    profile.memos[index] = newMemo;
+                                    // DB保存
+                                    widget.service.putProfile(profile);
+                                  },
+                                  decoration: const InputDecoration(
+                                    // labelText: 'Memo',
+                                    hintText: 'Enter the memo',
+                                    border: InputBorder.none,
+                                  ),
+                                ))
+                            .toList(),
 
                         const SizedBox(height: 20),
 
@@ -123,7 +121,7 @@ class _ProfileDetailPageState extends State<ProfileDetailPage> {
                               context: context,
                               builder: (context) {
                                 return _deleteDialog(context,
-                                    profile: profile!, service: widget.service);
+                                    profile: profile, service: widget.service);
                               },
                             );
                           },

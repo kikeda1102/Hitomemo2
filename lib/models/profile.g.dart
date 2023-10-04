@@ -27,10 +27,10 @@ const ProfileSchema = CollectionSchema(
       name: r'imageBytes',
       type: IsarType.byteList,
     ),
-    r'memo': PropertySchema(
+    r'memos': PropertySchema(
       id: 2,
-      name: r'memo',
-      type: IsarType.string,
+      name: r'memos',
+      type: IsarType.stringList,
     ),
     r'name': PropertySchema(
       id: 3,
@@ -42,13 +42,8 @@ const ProfileSchema = CollectionSchema(
       name: r'order',
       type: IsarType.long,
     ),
-    r'personalTags': PropertySchema(
-      id: 5,
-      name: r'personalTags',
-      type: IsarType.stringList,
-    ),
     r'updated': PropertySchema(
-      id: 6,
+      id: 5,
       name: r'updated',
       type: IsarType.dateTime,
     )
@@ -79,15 +74,14 @@ int _profileEstimateSize(
       bytesCount += 3 + value.length;
     }
   }
-  bytesCount += 3 + object.memo.length * 3;
-  bytesCount += 3 + object.name.length * 3;
-  bytesCount += 3 + object.personalTags.length * 3;
+  bytesCount += 3 + object.memos.length * 3;
   {
-    for (var i = 0; i < object.personalTags.length; i++) {
-      final value = object.personalTags[i];
+    for (var i = 0; i < object.memos.length; i++) {
+      final value = object.memos[i];
       bytesCount += value.length * 3;
     }
   }
+  bytesCount += 3 + object.name.length * 3;
   return bytesCount;
 }
 
@@ -99,11 +93,10 @@ void _profileSerialize(
 ) {
   writer.writeDateTime(offsets[0], object.created);
   writer.writeByteList(offsets[1], object.imageBytes);
-  writer.writeString(offsets[2], object.memo);
+  writer.writeStringList(offsets[2], object.memos);
   writer.writeString(offsets[3], object.name);
   writer.writeLong(offsets[4], object.order);
-  writer.writeStringList(offsets[5], object.personalTags);
-  writer.writeDateTime(offsets[6], object.updated);
+  writer.writeDateTime(offsets[5], object.updated);
 }
 
 Profile _profileDeserialize(
@@ -115,11 +108,10 @@ Profile _profileDeserialize(
   final object = Profile(
     id: id,
     imageBytes: reader.readByteList(offsets[1]),
-    memo: reader.readString(offsets[2]),
+    memos: reader.readStringList(offsets[2]) ?? [],
     name: reader.readString(offsets[3]),
     order: reader.readLongOrNull(offsets[4]) ?? -1,
-    personalTags: reader.readStringList(offsets[5]) ?? [],
-    updated: reader.readDateTimeOrNull(offsets[6]),
+    updated: reader.readDateTimeOrNull(offsets[5]),
   );
   object.created = reader.readDateTime(offsets[0]);
   return object;
@@ -137,14 +129,12 @@ P _profileDeserializeProp<P>(
     case 1:
       return (reader.readByteList(offset)) as P;
     case 2:
-      return (reader.readString(offset)) as P;
+      return (reader.readStringList(offset) ?? []) as P;
     case 3:
       return (reader.readString(offset)) as P;
     case 4:
       return (reader.readLongOrNull(offset) ?? -1) as P;
     case 5:
-      return (reader.readStringList(offset) ?? []) as P;
-    case 6:
       return (reader.readDateTimeOrNull(offset)) as P;
     default:
       throw IsarError('Unknown property with id $propertyId');
@@ -503,20 +493,20 @@ extension ProfileQueryFilter
     });
   }
 
-  QueryBuilder<Profile, Profile, QAfterFilterCondition> memoEqualTo(
+  QueryBuilder<Profile, Profile, QAfterFilterCondition> memosElementEqualTo(
     String value, {
     bool caseSensitive = true,
   }) {
     return QueryBuilder.apply(this, (query) {
       return query.addFilterCondition(FilterCondition.equalTo(
-        property: r'memo',
+        property: r'memos',
         value: value,
         caseSensitive: caseSensitive,
       ));
     });
   }
 
-  QueryBuilder<Profile, Profile, QAfterFilterCondition> memoGreaterThan(
+  QueryBuilder<Profile, Profile, QAfterFilterCondition> memosElementGreaterThan(
     String value, {
     bool include = false,
     bool caseSensitive = true,
@@ -524,14 +514,14 @@ extension ProfileQueryFilter
     return QueryBuilder.apply(this, (query) {
       return query.addFilterCondition(FilterCondition.greaterThan(
         include: include,
-        property: r'memo',
+        property: r'memos',
         value: value,
         caseSensitive: caseSensitive,
       ));
     });
   }
 
-  QueryBuilder<Profile, Profile, QAfterFilterCondition> memoLessThan(
+  QueryBuilder<Profile, Profile, QAfterFilterCondition> memosElementLessThan(
     String value, {
     bool include = false,
     bool caseSensitive = true,
@@ -539,14 +529,14 @@ extension ProfileQueryFilter
     return QueryBuilder.apply(this, (query) {
       return query.addFilterCondition(FilterCondition.lessThan(
         include: include,
-        property: r'memo',
+        property: r'memos',
         value: value,
         caseSensitive: caseSensitive,
       ));
     });
   }
 
-  QueryBuilder<Profile, Profile, QAfterFilterCondition> memoBetween(
+  QueryBuilder<Profile, Profile, QAfterFilterCondition> memosElementBetween(
     String lower,
     String upper, {
     bool includeLower = true,
@@ -555,7 +545,7 @@ extension ProfileQueryFilter
   }) {
     return QueryBuilder.apply(this, (query) {
       return query.addFilterCondition(FilterCondition.between(
-        property: r'memo',
+        property: r'memos',
         lower: lower,
         includeLower: includeLower,
         upper: upper,
@@ -565,71 +555,156 @@ extension ProfileQueryFilter
     });
   }
 
-  QueryBuilder<Profile, Profile, QAfterFilterCondition> memoStartsWith(
+  QueryBuilder<Profile, Profile, QAfterFilterCondition> memosElementStartsWith(
     String value, {
     bool caseSensitive = true,
   }) {
     return QueryBuilder.apply(this, (query) {
       return query.addFilterCondition(FilterCondition.startsWith(
-        property: r'memo',
+        property: r'memos',
         value: value,
         caseSensitive: caseSensitive,
       ));
     });
   }
 
-  QueryBuilder<Profile, Profile, QAfterFilterCondition> memoEndsWith(
+  QueryBuilder<Profile, Profile, QAfterFilterCondition> memosElementEndsWith(
     String value, {
     bool caseSensitive = true,
   }) {
     return QueryBuilder.apply(this, (query) {
       return query.addFilterCondition(FilterCondition.endsWith(
-        property: r'memo',
+        property: r'memos',
         value: value,
         caseSensitive: caseSensitive,
       ));
     });
   }
 
-  QueryBuilder<Profile, Profile, QAfterFilterCondition> memoContains(
+  QueryBuilder<Profile, Profile, QAfterFilterCondition> memosElementContains(
       String value,
       {bool caseSensitive = true}) {
     return QueryBuilder.apply(this, (query) {
       return query.addFilterCondition(FilterCondition.contains(
-        property: r'memo',
+        property: r'memos',
         value: value,
         caseSensitive: caseSensitive,
       ));
     });
   }
 
-  QueryBuilder<Profile, Profile, QAfterFilterCondition> memoMatches(
+  QueryBuilder<Profile, Profile, QAfterFilterCondition> memosElementMatches(
       String pattern,
       {bool caseSensitive = true}) {
     return QueryBuilder.apply(this, (query) {
       return query.addFilterCondition(FilterCondition.matches(
-        property: r'memo',
+        property: r'memos',
         wildcard: pattern,
         caseSensitive: caseSensitive,
       ));
     });
   }
 
-  QueryBuilder<Profile, Profile, QAfterFilterCondition> memoIsEmpty() {
+  QueryBuilder<Profile, Profile, QAfterFilterCondition> memosElementIsEmpty() {
     return QueryBuilder.apply(this, (query) {
       return query.addFilterCondition(FilterCondition.equalTo(
-        property: r'memo',
+        property: r'memos',
         value: '',
       ));
     });
   }
 
-  QueryBuilder<Profile, Profile, QAfterFilterCondition> memoIsNotEmpty() {
+  QueryBuilder<Profile, Profile, QAfterFilterCondition>
+      memosElementIsNotEmpty() {
     return QueryBuilder.apply(this, (query) {
       return query.addFilterCondition(FilterCondition.greaterThan(
-        property: r'memo',
+        property: r'memos',
         value: '',
       ));
+    });
+  }
+
+  QueryBuilder<Profile, Profile, QAfterFilterCondition> memosLengthEqualTo(
+      int length) {
+    return QueryBuilder.apply(this, (query) {
+      return query.listLength(
+        r'memos',
+        length,
+        true,
+        length,
+        true,
+      );
+    });
+  }
+
+  QueryBuilder<Profile, Profile, QAfterFilterCondition> memosIsEmpty() {
+    return QueryBuilder.apply(this, (query) {
+      return query.listLength(
+        r'memos',
+        0,
+        true,
+        0,
+        true,
+      );
+    });
+  }
+
+  QueryBuilder<Profile, Profile, QAfterFilterCondition> memosIsNotEmpty() {
+    return QueryBuilder.apply(this, (query) {
+      return query.listLength(
+        r'memos',
+        0,
+        false,
+        999999,
+        true,
+      );
+    });
+  }
+
+  QueryBuilder<Profile, Profile, QAfterFilterCondition> memosLengthLessThan(
+    int length, {
+    bool include = false,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.listLength(
+        r'memos',
+        0,
+        true,
+        length,
+        include,
+      );
+    });
+  }
+
+  QueryBuilder<Profile, Profile, QAfterFilterCondition> memosLengthGreaterThan(
+    int length, {
+    bool include = false,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.listLength(
+        r'memos',
+        length,
+        include,
+        999999,
+        true,
+      );
+    });
+  }
+
+  QueryBuilder<Profile, Profile, QAfterFilterCondition> memosLengthBetween(
+    int lower,
+    int upper, {
+    bool includeLower = true,
+    bool includeUpper = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.listLength(
+        r'memos',
+        lower,
+        includeLower,
+        upper,
+        includeUpper,
+      );
     });
   }
 
@@ -816,230 +891,6 @@ extension ProfileQueryFilter
     });
   }
 
-  QueryBuilder<Profile, Profile, QAfterFilterCondition>
-      personalTagsElementEqualTo(
-    String value, {
-    bool caseSensitive = true,
-  }) {
-    return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.equalTo(
-        property: r'personalTags',
-        value: value,
-        caseSensitive: caseSensitive,
-      ));
-    });
-  }
-
-  QueryBuilder<Profile, Profile, QAfterFilterCondition>
-      personalTagsElementGreaterThan(
-    String value, {
-    bool include = false,
-    bool caseSensitive = true,
-  }) {
-    return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.greaterThan(
-        include: include,
-        property: r'personalTags',
-        value: value,
-        caseSensitive: caseSensitive,
-      ));
-    });
-  }
-
-  QueryBuilder<Profile, Profile, QAfterFilterCondition>
-      personalTagsElementLessThan(
-    String value, {
-    bool include = false,
-    bool caseSensitive = true,
-  }) {
-    return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.lessThan(
-        include: include,
-        property: r'personalTags',
-        value: value,
-        caseSensitive: caseSensitive,
-      ));
-    });
-  }
-
-  QueryBuilder<Profile, Profile, QAfterFilterCondition>
-      personalTagsElementBetween(
-    String lower,
-    String upper, {
-    bool includeLower = true,
-    bool includeUpper = true,
-    bool caseSensitive = true,
-  }) {
-    return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.between(
-        property: r'personalTags',
-        lower: lower,
-        includeLower: includeLower,
-        upper: upper,
-        includeUpper: includeUpper,
-        caseSensitive: caseSensitive,
-      ));
-    });
-  }
-
-  QueryBuilder<Profile, Profile, QAfterFilterCondition>
-      personalTagsElementStartsWith(
-    String value, {
-    bool caseSensitive = true,
-  }) {
-    return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.startsWith(
-        property: r'personalTags',
-        value: value,
-        caseSensitive: caseSensitive,
-      ));
-    });
-  }
-
-  QueryBuilder<Profile, Profile, QAfterFilterCondition>
-      personalTagsElementEndsWith(
-    String value, {
-    bool caseSensitive = true,
-  }) {
-    return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.endsWith(
-        property: r'personalTags',
-        value: value,
-        caseSensitive: caseSensitive,
-      ));
-    });
-  }
-
-  QueryBuilder<Profile, Profile, QAfterFilterCondition>
-      personalTagsElementContains(String value, {bool caseSensitive = true}) {
-    return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.contains(
-        property: r'personalTags',
-        value: value,
-        caseSensitive: caseSensitive,
-      ));
-    });
-  }
-
-  QueryBuilder<Profile, Profile, QAfterFilterCondition>
-      personalTagsElementMatches(String pattern, {bool caseSensitive = true}) {
-    return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.matches(
-        property: r'personalTags',
-        wildcard: pattern,
-        caseSensitive: caseSensitive,
-      ));
-    });
-  }
-
-  QueryBuilder<Profile, Profile, QAfterFilterCondition>
-      personalTagsElementIsEmpty() {
-    return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.equalTo(
-        property: r'personalTags',
-        value: '',
-      ));
-    });
-  }
-
-  QueryBuilder<Profile, Profile, QAfterFilterCondition>
-      personalTagsElementIsNotEmpty() {
-    return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.greaterThan(
-        property: r'personalTags',
-        value: '',
-      ));
-    });
-  }
-
-  QueryBuilder<Profile, Profile, QAfterFilterCondition>
-      personalTagsLengthEqualTo(int length) {
-    return QueryBuilder.apply(this, (query) {
-      return query.listLength(
-        r'personalTags',
-        length,
-        true,
-        length,
-        true,
-      );
-    });
-  }
-
-  QueryBuilder<Profile, Profile, QAfterFilterCondition> personalTagsIsEmpty() {
-    return QueryBuilder.apply(this, (query) {
-      return query.listLength(
-        r'personalTags',
-        0,
-        true,
-        0,
-        true,
-      );
-    });
-  }
-
-  QueryBuilder<Profile, Profile, QAfterFilterCondition>
-      personalTagsIsNotEmpty() {
-    return QueryBuilder.apply(this, (query) {
-      return query.listLength(
-        r'personalTags',
-        0,
-        false,
-        999999,
-        true,
-      );
-    });
-  }
-
-  QueryBuilder<Profile, Profile, QAfterFilterCondition>
-      personalTagsLengthLessThan(
-    int length, {
-    bool include = false,
-  }) {
-    return QueryBuilder.apply(this, (query) {
-      return query.listLength(
-        r'personalTags',
-        0,
-        true,
-        length,
-        include,
-      );
-    });
-  }
-
-  QueryBuilder<Profile, Profile, QAfterFilterCondition>
-      personalTagsLengthGreaterThan(
-    int length, {
-    bool include = false,
-  }) {
-    return QueryBuilder.apply(this, (query) {
-      return query.listLength(
-        r'personalTags',
-        length,
-        include,
-        999999,
-        true,
-      );
-    });
-  }
-
-  QueryBuilder<Profile, Profile, QAfterFilterCondition>
-      personalTagsLengthBetween(
-    int lower,
-    int upper, {
-    bool includeLower = true,
-    bool includeUpper = true,
-  }) {
-    return QueryBuilder.apply(this, (query) {
-      return query.listLength(
-        r'personalTags',
-        lower,
-        includeLower,
-        upper,
-        includeUpper,
-      );
-    });
-  }
-
   QueryBuilder<Profile, Profile, QAfterFilterCondition> updatedIsNull() {
     return QueryBuilder.apply(this, (query) {
       return query.addFilterCondition(const FilterCondition.isNull(
@@ -1129,18 +980,6 @@ extension ProfileQuerySortBy on QueryBuilder<Profile, Profile, QSortBy> {
     });
   }
 
-  QueryBuilder<Profile, Profile, QAfterSortBy> sortByMemo() {
-    return QueryBuilder.apply(this, (query) {
-      return query.addSortBy(r'memo', Sort.asc);
-    });
-  }
-
-  QueryBuilder<Profile, Profile, QAfterSortBy> sortByMemoDesc() {
-    return QueryBuilder.apply(this, (query) {
-      return query.addSortBy(r'memo', Sort.desc);
-    });
-  }
-
   QueryBuilder<Profile, Profile, QAfterSortBy> sortByName() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'name', Sort.asc);
@@ -1204,18 +1043,6 @@ extension ProfileQuerySortThenBy
     });
   }
 
-  QueryBuilder<Profile, Profile, QAfterSortBy> thenByMemo() {
-    return QueryBuilder.apply(this, (query) {
-      return query.addSortBy(r'memo', Sort.asc);
-    });
-  }
-
-  QueryBuilder<Profile, Profile, QAfterSortBy> thenByMemoDesc() {
-    return QueryBuilder.apply(this, (query) {
-      return query.addSortBy(r'memo', Sort.desc);
-    });
-  }
-
   QueryBuilder<Profile, Profile, QAfterSortBy> thenByName() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'name', Sort.asc);
@@ -1267,10 +1094,9 @@ extension ProfileQueryWhereDistinct
     });
   }
 
-  QueryBuilder<Profile, Profile, QDistinct> distinctByMemo(
-      {bool caseSensitive = true}) {
+  QueryBuilder<Profile, Profile, QDistinct> distinctByMemos() {
     return QueryBuilder.apply(this, (query) {
-      return query.addDistinctBy(r'memo', caseSensitive: caseSensitive);
+      return query.addDistinctBy(r'memos');
     });
   }
 
@@ -1284,12 +1110,6 @@ extension ProfileQueryWhereDistinct
   QueryBuilder<Profile, Profile, QDistinct> distinctByOrder() {
     return QueryBuilder.apply(this, (query) {
       return query.addDistinctBy(r'order');
-    });
-  }
-
-  QueryBuilder<Profile, Profile, QDistinct> distinctByPersonalTags() {
-    return QueryBuilder.apply(this, (query) {
-      return query.addDistinctBy(r'personalTags');
     });
   }
 
@@ -1320,9 +1140,9 @@ extension ProfileQueryProperty
     });
   }
 
-  QueryBuilder<Profile, String, QQueryOperations> memoProperty() {
+  QueryBuilder<Profile, List<String>, QQueryOperations> memosProperty() {
     return QueryBuilder.apply(this, (query) {
-      return query.addPropertyName(r'memo');
+      return query.addPropertyName(r'memos');
     });
   }
 
@@ -1335,12 +1155,6 @@ extension ProfileQueryProperty
   QueryBuilder<Profile, int, QQueryOperations> orderProperty() {
     return QueryBuilder.apply(this, (query) {
       return query.addPropertyName(r'order');
-    });
-  }
-
-  QueryBuilder<Profile, List<String>, QQueryOperations> personalTagsProperty() {
-    return QueryBuilder.apply(this, (query) {
-      return query.addPropertyName(r'personalTags');
     });
   }
 

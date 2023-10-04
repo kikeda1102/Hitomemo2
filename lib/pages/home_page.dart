@@ -13,7 +13,7 @@ class HomePage extends StatelessWidget {
   // profilesのorderを現状順に更新する関数
   void refreshOrder(List<Profile> profiles, IsarService service) {
     for (int i = 0; i < profiles.length; i++) {
-      profiles[i] = profiles[i].copyWith(order: i);
+      profiles[i] = profiles[i].copyWith(newOrder: i);
       // 更新をDBに保存
       service.putProfile(profiles[i]);
     }
@@ -126,24 +126,25 @@ class HomePage extends StatelessWidget {
                           subtitle: Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
+                              // memosをTextで表示
                               Text(
                                 // profile.order.toString(), // for debug
-                                profile.memo,
+                                profile.memos
+                                    .join('     '), // memosの要素を改行で結合して表示
                               ),
-                              if (profile.personalTags.isNotEmpty)
-                                Wrap(
-                                  spacing: 4,
-                                  runSpacing: -12,
-                                  children: profile.personalTags
-                                      .map((tag) => Chip(
-                                            label: Text(
-                                              tag,
-                                              style:
-                                                  const TextStyle(fontSize: 12),
-                                            ),
-                                          ))
-                                      .toList(),
-                                ),
+                              // memosをchipで表示
+                              // if (profile.memos.isNotEmpty)
+                              //   Wrap(
+                              //     spacing: 4,
+                              //     runSpacing: -12,
+                              //     children: profile.memos
+                              //         .map((memo) => Chip(
+                              //               label: Text(memo,
+                              //                   style: const TextStyle(
+                              //                       fontSize: 12)),
+                              //             ))
+                              //         .toList(),
+                              //   ),
                             ],
                           ),
 

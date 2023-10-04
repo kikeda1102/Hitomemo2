@@ -10,9 +10,8 @@ class Profile {
   DateTime created;
   DateTime? updated;
   String name;
-  List<byte>? imageBytes;
-  List<String> personalTags;
-  String memo; // TODO: 長文メモではなく、箇条書き風に再設計
+  List<byte>? imageBytes; // 画像
+  List<String> memos; //箇条書きのメモ
 
   // コンストラクタ
   Profile({
@@ -21,30 +20,27 @@ class Profile {
     this.updated,
     required this.name,
     this.imageBytes,
-    required this.personalTags,
-    required this.memo,
+    required this.memos,
   }) : created = DateTime.now();
 
   // copyWithメソッドを定義
   Profile copyWith({
-    int? id,
-    int? order,
+    int? newId,
+    int? newOrder,
     // DateTime? created,
-    DateTime? updated,
-    String? name,
-    List<int>? imageBytes,
-    List<String>? personalTags,
-    String? memo,
+    DateTime? newUpdated,
+    String? newName,
+    List<int>? newImageBytes,
+    List<String>? newMemos,
   }) {
     return Profile(
-      id: id ?? this.id,
-      order: order ?? this.order,
+      id: newId ?? id,
+      order: newOrder ?? order,
       // created: created ?? this.created,
-      updated: updated ?? this.updated,
-      name: name ?? this.name,
-      imageBytes: imageBytes ?? this.imageBytes,
-      personalTags: personalTags ?? this.personalTags,
-      memo: memo ?? this.memo,
+      updated: newUpdated ?? updated,
+      name: newName ?? name,
+      imageBytes: newImageBytes ?? imageBytes,
+      memos: newMemos ?? memos,
     );
   }
 }

@@ -47,8 +47,7 @@ class ProfileSearchDelegate extends SearchDelegate<Profile> {
           context,
           Profile(
             name: '',
-            memo: '',
-            personalTags: [],
+            memos: [],
           )),
     );
   }
@@ -65,9 +64,8 @@ class ProfileSearchDelegate extends SearchDelegate<Profile> {
             final results = snapshot.data!
                 .where((profile) =>
                     profile.name.toLowerCase().contains(query.toLowerCase()) ||
-                    profile.personalTags.any((tag) =>
-                        tag.toLowerCase().contains(query.toLowerCase())) ||
-                    profile.memo.toLowerCase().contains(query.toLowerCase()))
+                    profile.memos.any((memo) =>
+                        memo.toLowerCase().contains(query.toLowerCase())))
                 .toList();
             return ListView.separated(
               separatorBuilder: (BuildContext context, int index) =>
@@ -80,19 +78,19 @@ class ProfileSearchDelegate extends SearchDelegate<Profile> {
                 final profile = results[index];
                 return ListTile(
                   title: Text(profile.name),
-                  trailing: Text(profile.memo),
+                  trailing: Text(profile.memos.join(' ')),
                   // タグ
                   subtitle: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      if (profile.personalTags.isNotEmpty)
+                      if (profile.memos.isNotEmpty)
                         Wrap(
                           spacing: 4,
                           runSpacing: -12,
-                          children: profile.personalTags
-                              .map((tag) => Chip(
+                          children: profile.memos
+                              .map((memo) => Chip(
                                     label: Text(
-                                      tag,
+                                      memo,
                                       style: const TextStyle(fontSize: 12),
                                     ),
                                   ))
@@ -135,9 +133,8 @@ class ProfileSearchDelegate extends SearchDelegate<Profile> {
             final results = snapshot.data!
                 .where((profile) =>
                     profile.name.toLowerCase().contains(query.toLowerCase()) ||
-                    profile.personalTags.any((tag) =>
-                        tag.toLowerCase().contains(query.toLowerCase())) ||
-                    profile.memo.toLowerCase().contains(query.toLowerCase()))
+                    profile.memos.any((memo) =>
+                        memo.toLowerCase().contains(query.toLowerCase())))
                 .toList();
             return ListView.separated(
               separatorBuilder: (BuildContext context, int index) =>
@@ -150,19 +147,19 @@ class ProfileSearchDelegate extends SearchDelegate<Profile> {
                 final profile = results[index];
                 return ListTile(
                   title: Text(profile.name),
-                  trailing: Text(profile.memo),
+                  trailing: Text(profile.memos.join(' ')),
                   // タグ
                   subtitle: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      if (profile.personalTags.isNotEmpty)
+                      if (profile.memos.isNotEmpty)
                         Wrap(
                           spacing: 4,
                           runSpacing: -12,
-                          children: profile.personalTags
-                              .map((tag) => Chip(
+                          children: profile.memos
+                              .map((memo) => Chip(
                                     label: Text(
-                                      tag,
+                                      memo,
                                       style: const TextStyle(fontSize: 12),
                                     ),
                                   ))
