@@ -28,11 +28,12 @@ class _ProfileDetailPageState extends State<ProfileDetailPage> {
       appBar: AppBar(
           // title: const Text('Profile')
           ),
-      body: Center(
-        child: Padding(
-          padding: const EdgeInsets.all(30),
-          // スクロール可能な画面
-          child: SingleChildScrollView(
+      body: Column(
+        children: [
+          Padding(
+            padding: const EdgeInsets.all(30),
+
+            // 名前
             child: StreamBuilder<Profile>(
               stream: widget.service.listenToProfile(widget.id),
               builder: (BuildContext context, AsyncSnapshot<Profile> snapshot) {
@@ -50,103 +51,106 @@ class _ProfileDetailPageState extends State<ProfileDetailPage> {
                   return const Center(child: Text('No data'));
                 } else {
                   // 問題なくデータがある場合
-                  return Form(
-                    key: _formKey,
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.center,
-                      children: [
-                        const SizedBox(height: 20),
-
-                        // 名前を表示
-                        TextFormField(
-                          onChanged: (text) {
-                            // validation
-                            FormState? formKeyState = _formKey.currentState;
-                            if (formKeyState != null &&
-                                formKeyState.validate()) {
-                              // profile.name = text;
-                              profile = profile.copyWith(newName: text);
-                              // DB保存
-                              widget.service.putProfile(profile);
-                            }
-                            // for debug
-                            if (formKeyState == null) {
-                              // print('formKey.currentState is null');
-                            }
-                          },
-                          initialValue: profile.name,
-                          // controller: TextEditingController(text: profile.name),
-                          decoration: const InputDecoration(
-                            labelText: 'Name',
-                            hintText: 'Enter the name',
-                            border: UnderlineInputBorder(),
-                          ),
-                          validator: (text) {
-                            if (text == null || text.isEmpty) {
-                              return "Please enter the name.";
-                            }
-                            return null;
-                          },
-                        ),
-
-                        const SizedBox(height: 20),
-
-                        // memosを表示
-                        ...profile.memos.indexed
-                            .map((memo) => TextFormField(
-                                  initialValue: memo.$2,
-                                  // 更新
-                                  onChanged: (newMemo) {
-                                    profile.memos[memo.$1] = newMemo;
-                                    // DB保存
-                                    widget.service.putProfile(profile);
-                                  },
-                                  decoration: const InputDecoration(
-                                    // labelText: 'Memo',
-                                    hintText: 'Enter the memo',
-                                    border: InputBorder.none,
-                                  ),
-                                ))
-                            .toList(),
-
-                        TextFormField(
-                          // 更新
-                          onFieldSubmitted: (newMemo) {
-                            profile.memos = [...profile.memos, newMemo];
-                            // DB保存
-                            widget.service.putProfile(profile);
-                          },
-                          decoration: const InputDecoration(
-                            // labelText: 'Memo',
-                            hintText: 'Enter the Memo',
-                            border: InputBorder.none,
-                          ),
-                        ),
-
-                        const SizedBox(height: 20),
-
-                        // 削除ボタン
-                        ElevatedButton(
-                          child: const Text('Delete'),
-                          onPressed: () {
-                            // 確認ダイアログを表示
-                            showDialog(
-                              context: context,
-                              builder: (context) {
-                                return _deleteDialog(context,
-                                    profile: profile, service: widget.service);
-                              },
-                            );
-                          },
-                        )
-                      ],
-                    ),
+                  return Column(
+                    children: [
+                      // 名前
+                      Text(
+                        profile.name,
+                        style: const TextStyle(fontSize: 30),
+                      ),
+                    ],
                   );
                 }
               },
             ),
           ),
-        ),
+
+          // memos
+          Expanded(
+            child: Padding(
+              padding: const EdgeInsets.all(30),
+              child: StreamBuilder<Profile>(
+                stream: widget.service.listenToProfile(widget.id),
+                builder:
+                    (BuildContext context, AsyncSnapshot<Profile> snapshot) {
+                  Profile profile = snapshot.data ??
+                      Profile(
+                        name: '',
+                        imageBytes: null,
+                        memos: List<String>.empty(),
+                      );
+                  if (snapshot.connectionState == ConnectionState.waiting) {
+                    return const Center(child: CircularProgressIndicator());
+                  } else if (snapshot.hasError) {
+                    return Text('Error: ${snapshot.error}');
+                  } else if (!snapshot.hasData) {
+                    return const Center(child: Text('No data'));
+                  } else {
+                    // 問題なくデータがある場合
+                    return ReorderableListView.builder(
+                      itemBuilder: (context, index) => ListTile(
+                        key: ValueKey(index),
+                        title: Text(profile.memos[index]),
+                      ),
+                      itemCount: profile.memos.length,
+                      onReorder: (oldIndex, newIndex) => setState(
+                        () {
+                          // 下に移動した場合は、自分が消える分、newIndexを1減らす
+                          if (oldIndex < newIndex) {
+                            newIndex -= 1;
+                          }
+                          // TODO: removeAtをうまく定義しなおし、reorderを実装する
+                          // oldIndex番目の要素を削除し、その要素をitemに格納
+                          // final item = profile.memos.removeAt(oldIndex);
+                          // newIndex番目にitemを挿入
+                          // profile.memos.insert(newIndex, item);
+                        },
+                      ),
+                    );
+                  }
+                },
+              ),
+            ),
+          ),
+
+          // 削除ボタン
+          Padding(
+            padding: const EdgeInsets.all(30),
+            child: StreamBuilder<Profile>(
+              stream: widget.service.listenToProfile(widget.id),
+              builder: (BuildContext context, AsyncSnapshot<Profile> snapshot) {
+                Profile profile = snapshot.data ??
+                    Profile(
+                      name: '',
+                      imageBytes: null,
+                      memos: List<String>.empty(),
+                    );
+                if (snapshot.connectionState == ConnectionState.waiting) {
+                  return const Center(child: CircularProgressIndicator());
+                } else if (snapshot.hasError) {
+                  return Text('Error: ${snapshot.error}');
+                } else if (!snapshot.hasData) {
+                  return const Center(child: Text('No data'));
+                } else {
+                  // 問題なくデータがある場合
+                  return ElevatedButton(
+                    onPressed: () {
+                      showDialog(
+                        context: context,
+                        builder: (_) => _deleteDialog(
+                          context,
+                          profile: profile,
+                          service: widget.service,
+                        ),
+                      );
+                    },
+                    child: const Text('Delete'),
+                  );
+                }
+              },
+            ),
+          ),
+        ],
       ),
     );
   }

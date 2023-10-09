@@ -24,7 +24,7 @@ class _RegisterProfilePageState extends State<RegisterProfilePage> {
   // 名前を入力するTextField
   // final _nameTextController = TextEditingController();
   // メモを入力するTextField
-  // final _memoTextController = TextEditingController();
+  final _memoTextController = TextEditingController();
   // Stateの更新
   void updateProfile() {
     setState(() {});
@@ -43,6 +43,7 @@ class _RegisterProfilePageState extends State<RegisterProfilePage> {
             child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
               mainAxisSize: MainAxisSize.min,
+              crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 const SizedBox(height: 20),
                 // 名前を入力するTextField
@@ -77,25 +78,24 @@ class _RegisterProfilePageState extends State<RegisterProfilePage> {
 
                 // memosを表示
                 Container(
-                  padding: const EdgeInsets.only(left: 30, right: 30),
+                  padding: const EdgeInsets.only(left: 30.0, right: 30.0),
                   child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       const Text('Memos'),
                       const SizedBox(height: 10),
+
                       // memosを表示
-                      if (newProfile.memos.isNotEmpty)
-                        Wrap(
-                          spacing: 4,
-                          runSpacing: -12,
-                          children: newProfile.memos
-                              .map((memo) => Chip(
-                                    label: Text(
-                                      memo,
-                                      style: const TextStyle(fontSize: 12),
-                                    ),
-                                  ))
-                              .toList(),
-                        ),
+                      // if (newProfile.memos.isNotEmpty)
+
+                      ...newProfile.memos
+                          .map((memo) => Chip(
+                                label: Text(
+                                  memo,
+                                  style: const TextStyle(fontSize: 16),
+                                ),
+                              ))
+                          .toList(),
                     ],
                   ),
                 ),
@@ -105,17 +105,21 @@ class _RegisterProfilePageState extends State<RegisterProfilePage> {
                 // memosを作成
                 Container(
                   padding: const EdgeInsets.only(left: 30, right: 30),
+                  // memoを入力するTextField
                   child: TextFormField(
                     onFieldSubmitted: (text) {
-                      // メモが入力されたとき、newProfileに反映
+                      // Enterされたとき、memosに新しくmemoを追加
                       newProfile.memos = [...newProfile.memos, text];
+                      // textを空にする
+                      _memoTextController.clear();
                       setState(() {});
                     },
-                    // controller: _memoTextController,
+                    // initialValue: '',
+                    controller: _memoTextController,
                     // maxLines: 10,
                     decoration: const InputDecoration(
-                      labelText: 'Memos',
-                      border: InputBorder.none,
+                      // labelText: 'Memo',
+                      border: OutlineInputBorder(),
                     ),
                   ),
                 ),
