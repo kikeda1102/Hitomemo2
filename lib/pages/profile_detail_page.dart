@@ -20,7 +20,7 @@ class _ProfileDetailPageState extends State<ProfileDetailPage> {
   //   super.initState();
   //   // widget.service.listenToProfile(widget.id);
   // }
-  final _formKey = GlobalKey<FormState>(); // Validation用
+  final _formKey = GlobalKey<FormState>(); // TODO: Validation
 
   @override
   Widget build(BuildContext context) {
@@ -77,7 +77,7 @@ class _ProfileDetailPageState extends State<ProfileDetailPage> {
                       Profile(
                         name: '',
                         imageBytes: null,
-                        memos: List<String>.empty(),
+                        memos: List<String>.empty(growable: true),
                       );
                   if (snapshot.connectionState == ConnectionState.waiting) {
                     return const Center(child: CircularProgressIndicator());
@@ -87,25 +87,31 @@ class _ProfileDetailPageState extends State<ProfileDetailPage> {
                     return const Center(child: Text('No data'));
                   } else {
                     // 問題なくデータがある場合
+                    // memosを新変数に格納
+                    List<String> memos = profile.memos;
                     return ReorderableListView.builder(
                       itemBuilder: (context, index) => ListTile(
                         key: ValueKey(index),
-                        title: Text(profile.memos[index]),
+                        title: Text(memos[index]),
                       ),
-                      itemCount: profile.memos.length,
-                      onReorder: (oldIndex, newIndex) => setState(
-                        () {
-                          // 下に移動した場合は、自分が消える分、newIndexを1減らす
-                          if (oldIndex < newIndex) {
-                            newIndex -= 1;
-                          }
-                          // TODO: removeAtをうまく定義しなおし、reorderを実装する
-                          // oldIndex番目の要素を削除し、その要素をitemに格納
-                          // final item = profile.memos.removeAt(oldIndex);
-                          // newIndex番目にitemを挿入
-                          // profile.memos.insert(newIndex, item);
-                        },
-                      ),
+                      itemCount: memos.length,
+                      onReorder: (oldIndex, newIndex) {
+                        // 下に移動した場合は、自分が消える分、newIndexを1減らす
+                        if (oldIndex < newIndex) {
+                          newIndex -= 1;
+                        }
+                        // oldIndex番目の要素を削除し、その要素をitemに格納
+                        final item = memos[oldIndex];
+                        // memosからoldIndex番目の要素を削除
+                        memos = memos
+                            .where((memo) => memo != memos[oldIndex])
+                            .toList();
+                        // newIndex番目にitemを挿入
+                        memos.insert(newIndex, item);
+                        // DB更新
+                        profile.memos = memos;
+                        widget.service.putProfile(profile);
+                      },
                     );
                   }
                 },
