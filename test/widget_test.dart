@@ -14,7 +14,8 @@ import 'package:hito_memo_2/services/isar_service.dart';
 void main() {
   testWidgets('Counter increments smoke test', (WidgetTester tester) async {
     // Build our app and trigger a frame.
-    await tester.pumpWidget(const MyApp());
+    final IsarService service = IsarService();
+    await tester.pumpWidget(MyApp(service: service));
 
     // Verify that our counter starts at 0.
     expect(find.text('0'), findsOneWidget);

@@ -6,25 +6,21 @@ import 'package:hito_memo_2/pages/profile_detail_page.dart';
 import 'package:hito_memo_2/models/profile.dart';
 import 'package:hito_memo_2/services/isar_service.dart';
 // import 'package:navigator_scope/navigator_scope.dart'; // BottomAppBarを固定した画面遷移
+import 'package:hito_memo_2/pages/quiz_gate_page.dart';
+import 'package:hito_memo_2/pages/setting_page.dart';
 
 // メイン画面
 class MainPage extends StatefulWidget {
-  const MainPage({super.key});
+  final IsarService service;
+  const MainPage({super.key, required this.service});
 
   @override
   State<MainPage> createState() => _MainPageState();
 }
 
 class _MainPageState extends State<MainPage> {
-  // Isar service
-  final IsarService service = IsarService();
   // ページのindex BottomNavigationBarで切り替える
   int _currentIndex = 0;
-  final _pageWidgets = [
-    HomeWidget(),
-    QuizWidget(),
-    SettingWidget(),
-  ];
   // BottomNavigationBarのindexを変更する関数
   void _onItemTapped(int index) => setState(() => _currentIndex = index);
 
@@ -49,6 +45,13 @@ class _MainPageState extends State<MainPage> {
 
   @override
   Widget build(BuildContext context) {
+    // 切り替えるページたち
+    final pageWidgets = [
+      HomePage(service: widget.service),
+      QuizGatePage(service: widget.service),
+      SettingsPage(),
+    ];
+
     return Scaffold(
       drawer: Drawer(
         child: ListView(
@@ -92,28 +95,28 @@ class _MainPageState extends State<MainPage> {
             onPressed: () {
               showSearch(
                 context: context,
-                delegate: ProfileSearchDelegate(service: service),
+                delegate: ProfileSearchDelegate(service: widget.service),
               );
             },
           ),
         ],
       ),
       // profileの一覧表示
-      body: _pageWidgets.elementAt(_currentIndex),
+      body: pageWidgets.elementAt(_currentIndex),
 
       // 新規追加
       floatingActionButton: FloatingActionButton(
         onPressed: () {
           // 現在のprofilesを取得
-          Future<List<Profile>> profiles = service.getAllProfiles();
+          Future<List<Profile>> profiles = widget.service.getAllProfiles();
           // orderの更新
-          refreshOrderFuture(profiles, service);
+          refreshOrderFuture(profiles, widget.service);
           // RegisterProfilePageへ遷移
           Navigator.push(
             context,
             MaterialPageRoute(
               builder: (context) => RegisterProfilePage(
-                service: service,
+                service: widget.service,
               ),
             ),
           );
@@ -145,9 +148,8 @@ class _MainPageState extends State<MainPage> {
 }
 
 // ホーム画面
-class HomeWidget extends StatelessWidget {
-  // Isar serviceを起動
-  final IsarService service = IsarService();
+class HomePage extends StatelessWidget {
+  final IsarService service;
 
   // profilesのorderを現状順に更新する関数
   void refreshOrder(List<Profile> profiles, IsarService service) {
@@ -158,7 +160,7 @@ class HomeWidget extends StatelessWidget {
     }
   }
 
-  HomeWidget({Key? key}) : super(key: key);
+  const HomePage({Key? key, required this.service}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -199,37 +201,24 @@ class HomeWidget extends StatelessWidget {
                     itemBuilder: (BuildContext context, int index) {
                       // profileを取得
                       final profile = data[index];
+                      // profileを表示
                       return Card(
                         key: ValueKey(profile.id),
                         child: ListTile(
                           title: Text(profile.name),
-                          // タグをChipで表示
+                          // memosをsubtitleに表示
                           subtitle: Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
-                              // memosをTextで表示
                               Text(
                                 // profile.order.toString(), // for debug
                                 profile.memos
                                     .join('     '), // memosの要素を改行で結合して表示
                               ),
-
-                              // memosをchipで表示
-                              // if (profile.memos.isNotEmpty)
-                              //   Wrap(
-                              //     spacing: 4,
-                              //     runSpacing: -12,
-                              //     children: profile.memos
-                              //         .map((memo) => Chip(
-                              //               label: Text(memo,
-                              //                   style: const TextStyle(
-                              //                       fontSize: 12)),
-                              //             ))
-                              //         .toList(),
-                              //   ),
                             ],
                           ),
 
+                          // profile detailへ遷移
                           onTap: () => Navigator.of(context).push(
                             MaterialPageRoute(
                                 builder: (context) => ProfileDetailPage(
@@ -245,30 +234,6 @@ class HomeWidget extends StatelessWidget {
           ),
         ),
       ],
-    );
-  }
-}
-
-// クイズ画面
-class QuizWidget extends StatelessWidget {
-  const QuizWidget({Key? key}) : super(key: key);
-
-  @override
-  Widget build(BuildContext context) {
-    return const Center(
-      child: Text('Quiz'),
-    );
-  }
-}
-
-// 設定画面
-class SettingWidget extends StatelessWidget {
-  const SettingWidget({Key? key}) : super(key: key);
-
-  @override
-  Widget build(BuildContext context) {
-    return const Center(
-      child: Text('Setting'),
     );
   }
 }
