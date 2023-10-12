@@ -15,6 +15,16 @@
 
 ### 進捗記録
 
+- 2023/10/12:
+  - detailsのmemosをreorderableにした
+  - UI改善: Material3 / Card表示にした / BottomNavigationBar
+  - TODO: details画面での更新
+    - 更新ボタンはなしにし、onSubmittedでDB更新する仕様にする
+  - TODO: BottomNavigationBarの遷移
+    - 各ボタンの状態を保持したまま切り替えしたい → navigator_scope パッケージ
+  - TODO: クイズ機能
+    - 1日1回通知が飛んできて、クイズを促してくれる ←Sazaさんの神アイデア
+
 - 2023/10/4: 
   - memoを長文ではなく、箇条書き風に再設計したい: 細かい点を除けばdone
   - クイズ機能をつけたい: todo

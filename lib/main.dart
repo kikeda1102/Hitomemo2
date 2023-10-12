@@ -4,17 +4,14 @@ import 'package:hito_memo_2/pages/home_page.dart'; // 開始画面用
 import 'package:hito_memo_2/services/isar_service.dart'; // IsarDBの操作用
 
 void main() async {
-  // IsarDBの初期化
+  // IsarDBを使うための初期化の保証
   WidgetsFlutterBinding.ensureInitialized();
-  // isar_service.dartで定義した、IsarServiceクラスのインスタンス化
-  final isarService = IsarService();
   // アプリの起動
-  runApp(MyApp(service: isarService));
+  runApp(MyApp());
 }
 
 class MyApp extends StatelessWidget {
-  final IsarService service;
-  const MyApp({Key? key, required this.service}) : super(key: key);
+  const MyApp({Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -25,7 +22,7 @@ class MyApp extends StatelessWidget {
         useMaterial3: true,
         primarySwatch: Colors.blueGrey,
       ),
-      home: HomePage(service: service),
+      home: MainPage(),
       // home: const Placeholder(), // for debug
     );
   }

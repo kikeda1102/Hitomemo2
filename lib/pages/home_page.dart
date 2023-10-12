@@ -5,10 +5,28 @@ import 'package:hito_memo_2/pages/register_profile_page.dart';
 import 'package:hito_memo_2/pages/profile_detail_page.dart';
 import 'package:hito_memo_2/models/profile.dart';
 import 'package:hito_memo_2/services/isar_service.dart';
+// import 'package:navigator_scope/navigator_scope.dart'; // BottomAppBarを固定した画面遷移
 
-// ホーム画面
-class HomePage extends StatelessWidget {
-  final IsarService service;
+// メイン画面
+class MainPage extends StatefulWidget {
+  const MainPage({super.key});
+
+  @override
+  State<MainPage> createState() => _MainPageState();
+}
+
+class _MainPageState extends State<MainPage> {
+  // Isar service
+  final IsarService service = IsarService();
+  // ページのindex BottomNavigationBarで切り替える
+  int _currentIndex = 0;
+  final _pageWidgets = [
+    HomeWidget(),
+    QuizWidget(),
+    SettingWidget(),
+  ];
+  // BottomNavigationBarのindexを変更する関数
+  void _onItemTapped(int index) => setState(() => _currentIndex = index);
 
   // profilesのorderを現状順に更新する関数
   void refreshOrder(List<Profile> profiles, IsarService service) {
@@ -29,177 +47,228 @@ class HomePage extends StatelessWidget {
     profiles.then((value) => refreshOrder(value, service));
   }
 
-  const HomePage({Key? key, required this.service}) : super(key: key);
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-        drawer: Drawer(
-          child: ListView(
-            children: [
-              const ListTile(
-                title: Padding(
-                  padding: EdgeInsets.all(10.0),
-                  child: Column(
-                    children: [
-                      Text('Hitomemo'),
-                      SizedBox(height: 10),
-                      Text('Version 1.0.0'),
-                    ],
-                  ),
+      drawer: Drawer(
+        child: ListView(
+          children: [
+            const ListTile(
+              title: Padding(
+                padding: EdgeInsets.all(10.0),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  children: [
+                    Text('HitoMemo', style: TextStyle(fontSize: 25)),
+                    SizedBox(height: 10),
+                    Text('Version 1.0.0'),
+                  ],
                 ),
               ),
-              const SizedBox(
-                height: 20,
-              ),
-              Link(
-                // 開きたいURL
-                uri: Uri.parse('https://kikeda1102.github.io/Hitomemo2/'),
-                target: LinkTarget.self, // 独立したブラウゼで開く
-                builder: (BuildContext context, FollowLink? followLink) {
-                  return TextButton.icon(
-                    icon: const Icon(Icons.open_in_new),
-                    onPressed: followLink,
-                    label: const Text('Privacy Policy'),
-                  );
-                },
-              ),
-            ],
-          ),
-        ),
-        appBar: AppBar(
-          // title: const Text('People List'),
-          actions: [
-            IconButton(
-              icon: const Icon(Icons.search),
-              onPressed: () {
-                showSearch(
-                  context: context,
-                  delegate: ProfileSearchDelegate(service: service),
+            ),
+            const SizedBox(
+              height: 20,
+            ),
+            Link(
+              // 開きたいURL
+              uri: Uri.parse('https://kikeda1102.github.io/Hitomemo2/'),
+              target: LinkTarget.self, // 独立したブラウゼで開く
+              builder: (BuildContext context, FollowLink? followLink) {
+                return TextButton.icon(
+                  icon: const Icon(Icons.open_in_new),
+                  onPressed: followLink,
+                  label: const Text('Privacy Policy'),
                 );
               },
             ),
           ],
         ),
-        // profileの一覧表示
-        body: Column(
-          children: [
-            Expanded(
-              child: Padding(
-                padding: const EdgeInsets.all(8.0),
-                // profileの一覧をStreamとして表示
-                child: StreamBuilder<List<Profile>>(
-                  stream: service.listenToAllProfiles(),
-                  builder: (BuildContext context,
-                      AsyncSnapshot<List<Profile>> snapshot) {
-                    final data = snapshot.data; // 静的解析が効くように変数に格納
-                    if (snapshot.hasError) {
-                      return const Text('Something went wrong');
-                    } else if (data == null || data.isEmpty) {
-                      return const Center();
-                    } else {
-                      // dataをorder順にソートする
-                      data.sort((a, b) => a.order.compareTo(b.order));
-                      // ReorderableListViewで表示
-                      return ReorderableListView.builder(
-                        onReorder: (int oldIndex, int newIndex) {
-                          // 下に移動した場合は、自分が消える分、newIndexを1減らす
-                          if (oldIndex < newIndex) {
-                            newIndex -= 1;
-                          }
-                          // oldIndex番目の要素を削除し、その要素をitemに格納
-                          final Profile item = data.removeAt(oldIndex);
-                          // newIndex番目にitemを挿入
-                          data.insert(newIndex, item);
-                          // orderを更新
-                          refreshOrder(data, service);
-                        },
-                        itemCount: data.length,
-                        // ListViewの各要素を表示
-                        itemBuilder: (BuildContext context, int index) {
-                          // profileを取得
-                          final profile = data[index];
-                          return Card(
-                            key: ValueKey(profile.id),
-                            child: ListTile(
-                              title: Text(profile.name),
-                              // タグをChipで表示
-                              subtitle: Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                                  // memosをTextで表示
-                                  Text(
-                                    // profile.order.toString(), // for debug
-                                    profile.memos
-                                        .join('     '), // memosの要素を改行で結合して表示
-                                  ),
+      ),
+      appBar: AppBar(
+        // title: const Text('People List'),
+        actions: [
+          IconButton(
+            icon: const Icon(Icons.search),
+            onPressed: () {
+              showSearch(
+                context: context,
+                delegate: ProfileSearchDelegate(service: service),
+              );
+            },
+          ),
+        ],
+      ),
+      // profileの一覧表示
+      body: _pageWidgets.elementAt(_currentIndex),
 
-                                  // memosをchipで表示
-                                  // if (profile.memos.isNotEmpty)
-                                  //   Wrap(
-                                  //     spacing: 4,
-                                  //     runSpacing: -12,
-                                  //     children: profile.memos
-                                  //         .map((memo) => Chip(
-                                  //               label: Text(memo,
-                                  //                   style: const TextStyle(
-                                  //                       fontSize: 12)),
-                                  //             ))
-                                  //         .toList(),
-                                  //   ),
-                                ],
+      // 新規追加
+      floatingActionButton: FloatingActionButton(
+        onPressed: () {
+          // 現在のprofilesを取得
+          Future<List<Profile>> profiles = service.getAllProfiles();
+          // orderの更新
+          refreshOrderFuture(profiles, service);
+          // RegisterProfilePageへ遷移
+          Navigator.push(
+            context,
+            MaterialPageRoute(
+              builder: (context) => RegisterProfilePage(
+                service: service,
+              ),
+            ),
+          );
+        },
+        child: const Icon(Icons.add),
+      ),
+
+      bottomNavigationBar: BottomNavigationBar(
+        items: const <BottomNavigationBarItem>[
+          BottomNavigationBarItem(
+            icon: Icon(Icons.home),
+            label: 'Home',
+          ),
+          BottomNavigationBarItem(
+            icon: Icon(Icons.quiz),
+            label: 'Quiz',
+          ),
+          BottomNavigationBarItem(
+            icon: Icon(Icons.settings),
+            label: 'Settings',
+          ),
+        ],
+        currentIndex: _currentIndex, // 現在選択されているIndex
+        type: BottomNavigationBarType.fixed,
+        onTap: _onItemTapped, // 選択された時の処理
+      ),
+    );
+  }
+}
+
+// ホーム画面
+class HomeWidget extends StatelessWidget {
+  // Isar serviceを起動
+  final IsarService service = IsarService();
+
+  // profilesのorderを現状順に更新する関数
+  void refreshOrder(List<Profile> profiles, IsarService service) {
+    for (int i = 0; i < profiles.length; i++) {
+      profiles[i] = profiles[i].copyWith(newOrder: i);
+      // 更新をDBに保存
+      service.putProfile(profiles[i]);
+    }
+  }
+
+  HomeWidget({Key? key}) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return Column(
+      children: [
+        Expanded(
+          child: Padding(
+            padding: const EdgeInsets.all(8.0),
+            // profileの一覧をStreamとして表示
+            child: StreamBuilder<List<Profile>>(
+              stream: service.listenToAllProfiles(),
+              builder: (BuildContext context,
+                  AsyncSnapshot<List<Profile>> snapshot) {
+                final data = snapshot.data; // 静的解析が効くように変数に格納
+                if (snapshot.hasError) {
+                  return const Text('Something went wrong');
+                } else if (data == null || data.isEmpty) {
+                  return const Center();
+                } else {
+                  // dataをorder順にソートする
+                  data.sort((a, b) => a.order.compareTo(b.order));
+                  // ReorderableListViewで表示
+                  return ReorderableListView.builder(
+                    onReorder: (int oldIndex, int newIndex) {
+                      // 下に移動した場合は、自分が消える分、newIndexを1減らす
+                      if (oldIndex < newIndex) {
+                        newIndex -= 1;
+                      }
+                      // oldIndex番目の要素を削除し、その要素をitemに格納
+                      final Profile item = data.removeAt(oldIndex);
+                      // newIndex番目にitemを挿入
+                      data.insert(newIndex, item);
+                      // orderを更新
+                      refreshOrder(data, service);
+                    },
+                    itemCount: data.length,
+                    // ListViewの各要素を表示
+                    itemBuilder: (BuildContext context, int index) {
+                      // profileを取得
+                      final profile = data[index];
+                      return Card(
+                        key: ValueKey(profile.id),
+                        child: ListTile(
+                          title: Text(profile.name),
+                          // タグをChipで表示
+                          subtitle: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              // memosをTextで表示
+                              Text(
+                                // profile.order.toString(), // for debug
+                                profile.memos
+                                    .join('     '), // memosの要素を改行で結合して表示
                               ),
 
-                              onTap: () => Navigator.of(context).push(
-                                MaterialPageRoute(
-                                    builder: (context) => ProfileDetailPage(
-                                        id: profile.id, service: service)),
-                              ),
-                            ),
-                          );
-                        },
+                              // memosをchipで表示
+                              // if (profile.memos.isNotEmpty)
+                              //   Wrap(
+                              //     spacing: 4,
+                              //     runSpacing: -12,
+                              //     children: profile.memos
+                              //         .map((memo) => Chip(
+                              //               label: Text(memo,
+                              //                   style: const TextStyle(
+                              //                       fontSize: 12)),
+                              //             ))
+                              //         .toList(),
+                              //   ),
+                            ],
+                          ),
+
+                          onTap: () => Navigator.of(context).push(
+                            MaterialPageRoute(
+                                builder: (context) => ProfileDetailPage(
+                                    id: profile.id, service: service)),
+                          ),
+                        ),
                       );
-                    }
-                  },
-                ),
-              ),
+                    },
+                  );
+                }
+              },
             ),
-            // TODO: クイズ機能
-          ],
+          ),
         ),
-        floatingActionButton: FloatingActionButton(
-          onPressed: () {
-            // 現在のprofilesを取得
-            Future<List<Profile>> profiles = service.getAllProfiles();
-            // orderの更新
-            refreshOrderFuture(profiles, service);
-            // RegisterProfilePageへ遷移
-            Navigator.push(
-              context,
-              MaterialPageRoute(
-                builder: (context) => RegisterProfilePage(
-                  service: service,
-                ),
-              ),
-            );
-          },
-          child: const Icon(Icons.add),
-        ),
-        bottomNavigationBar: BottomNavigationBar(
-          items: const [
-            BottomNavigationBarItem(
-              icon: Icon(Icons.home),
-              label: 'Home',
-            ),
-            BottomNavigationBarItem(
-              icon: Icon(Icons.quiz),
-              label: 'Quiz',
-            ),
-            BottomNavigationBarItem(
-              icon: Icon(Icons.settings),
-              label: 'Settings',
-            ),
-          ],
-        ));
+      ],
+    );
+  }
+}
+
+// クイズ画面
+class QuizWidget extends StatelessWidget {
+  const QuizWidget({Key? key}) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return const Center(
+      child: Text('Quiz'),
+    );
+  }
+}
+
+// 設定画面
+class SettingWidget extends StatelessWidget {
+  const SettingWidget({Key? key}) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return const Center(
+      child: Text('Setting'),
+    );
   }
 }
