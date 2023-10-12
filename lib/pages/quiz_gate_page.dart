@@ -15,7 +15,7 @@ class QuizGatePage extends StatefulWidget {
 
 class _QuizGatePageState extends State<QuizGatePage> {
   // スライダーの値
-  double _value = 10;
+  double _value = 6;
   double _startValue = 0;
   double _endValue = 0;
 
@@ -62,30 +62,48 @@ class _QuizGatePageState extends State<QuizGatePage> {
 
           // Startボタン
           ElevatedButton(
-            child: const Text('Start'),
-            onPressed: () => Navigator.of(context).push(
-              MaterialPageRoute(
-                  builder: (context) => QuizWidget(service: widget.service)),
-            ),
-          ),
+              child: const Text('Start'),
+              onPressed: () async {
+                // データの取得
+                List<Profile> randomlySelectedProfiles =
+                    await widget.service.getProfilesRomdomly(_value.toInt());
+
+                if (!context.mounted) {
+                  return; // asyncを使ったbuild対策. このページが表示されていない時は何もしない
+                }
+                Navigator.of(context).push(
+                  MaterialPageRoute(
+                      builder: (context) => QuizWidget(
+                          service: widget.service,
+                          randomlySelectedProfiles: randomlySelectedProfiles)),
+                );
+              }),
         ],
       ),
     );
   }
 }
 
+// Quizクラスの定義
+// class Quiz {
+//   Profile profile;
+
+// }
+
 // クイズのページ
 class QuizWidget extends StatefulWidget {
   final IsarService service;
-  const QuizWidget({super.key, required this.service});
+  List<Profile> randomlySelectedProfiles;
+  QuizWidget(
+      {super.key,
+      required this.service,
+      required this.randomlySelectedProfiles});
 
   @override
   State<QuizWidget> createState() => _QuizWidgetState();
 }
 
 class _QuizWidgetState extends State<QuizWidget> {
-  // TODO: 乱数を生成、profileのランダム表示
-
   @override
   Widget build(BuildContext context) {
     // // profilesを取得
@@ -95,7 +113,7 @@ class _QuizWidgetState extends State<QuizWidget> {
 
     return Scaffold(
         appBar: AppBar(
-          title: const Text('Quiz'),
+          title: const Text('Quiz'), // TODO: 何問目か表示
         ),
         body: Column(
           mainAxisAlignment: MainAxisAlignment.center,
@@ -104,41 +122,51 @@ class _QuizWidgetState extends State<QuizWidget> {
             // memos
             Expanded(
               child: Padding(
-                padding: const EdgeInsets.all(30),
-                child: StreamBuilder<List<Profile>>(
-                  stream: widget.service.listenToAllProfiles(),
-                  builder: (BuildContext context,
-                      AsyncSnapshot<List<Profile>> snapshot) {
-                    if (snapshot.connectionState == ConnectionState.waiting) {
-                      return const Center(child: CircularProgressIndicator());
-                    } else if (snapshot.hasError) {
-                      return Text('Error: ${snapshot.error}');
-                    } else if (!snapshot.hasData) {
-                      return const Center(child: Text('No data'));
-                    } else {
-                      // 問題なくデータがある場合
-                      Profile profile = snapshot.data!.first;
+                  padding: const EdgeInsets.all(30),
+                  child: ListView.builder(
+                    itemBuilder: (context, index) => Card(
+                      key: ValueKey(index),
+                      child: ListTile(
+                        title: Text(
+                            widget.randomlySelectedProfiles[0].memos[index]),
+                      ),
+                    ),
+                    itemCount: widget.randomlySelectedProfiles[0].memos.length,
+                  )
 
-                      // memosを新変数に格納
-                      List<String> memos = profile.memos;
-                      return ListView.builder(
-                        itemBuilder: (context, index) => Card(
-                          key: ValueKey(index),
-                          child: ListTile(
-                            title: Text(memos[index]),
-                          ),
-                        ),
-                        itemCount: memos.length,
-                      );
-                    }
-                  },
-                ),
-              ),
+                  //  StreamBuilder<List<Profile>>(
+                  //   stream: widget.service.listenToAllProfiles(),
+                  //   builder: (BuildContext context,
+                  //       AsyncSnapshot<List<Profile>> snapshot) {
+                  //     if (snapshot.connectionState == ConnectionState.waiting) {
+                  //       return const Center(child: CircularProgressIndicator());
+                  //     } else if (snapshot.hasError) {
+                  //       return Text('Error: ${snapshot.error}');
+                  //     } else if (!snapshot.hasData) {
+                  //       return const Center(child: Text('No data'));
+                  //     } else {
+                  //       // 問題なくデータがある場合
+                  //       Profile profile = snapshot.data!.first;
+
+                  //       // memosを新変数に格納
+                  //       List<String> memos = profile.memos;
+                  //       return ListView.builder(
+                  //         itemBuilder: (context, index) => Card(
+                  //           key: ValueKey(index),
+                  //           child: ListTile(
+                  //             title: Text(memos[index]),
+                  //           ),
+                  //         ),
+                  //         itemCount: memos.length,
+                  //       );
+                  //     }
+                  //   },
+                  // ),
+                  ),
             ),
 
             // 入力欄
             const Text('Who is this?'),
-
             Padding(
               padding: const EdgeInsets.all(30),
               child: TextField(
@@ -154,6 +182,8 @@ class _QuizWidgetState extends State<QuizWidget> {
               child: const Text('Submit'),
               onPressed: () {},
             ),
+            // TODO: 採点
+            // TODO: 次のクイズへ遷移
 
             const SizedBox(height: 200),
           ],

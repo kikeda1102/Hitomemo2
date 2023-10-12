@@ -79,6 +79,25 @@ class IsarService {
     return isar.profiles.where().findAll();
   }
 
+  // 取得する件数を指定してランダムに取得
+  // memoを持たないprofileは除外する
+  Future<List<Profile>> getProfilesRomdomly(int number) async {
+    final isar = await _isar;
+    // ランダムに取得する
+    return isar.profiles.where().findAll().then((value) {
+      // memoを持たないprofileを除外
+      value = value.where((profile) => profile.memos.isNotEmpty).toList();
+      // 取得した要素をシャッフル
+      value.shuffle();
+      // numberがprofilesの長さより大きい時は、profilesの長さで返す
+      if (number > value.length) {
+        number = value.length;
+      }
+      // 先頭からnumber個を返す
+      return value.sublist(0, number);
+    });
+  }
+
   // Delete
   Future<void> deleteProfile(int id) async {
     final isar = await _isar;
