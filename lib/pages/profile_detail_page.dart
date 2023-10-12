@@ -90,9 +90,11 @@ class _ProfileDetailPageState extends State<ProfileDetailPage> {
                     // memosを新変数に格納
                     List<String> memos = profile.memos;
                     return ReorderableListView.builder(
-                      itemBuilder: (context, index) => ListTile(
+                      itemBuilder: (context, index) => Card(
                         key: ValueKey(index),
-                        title: Text(memos[index]),
+                        child: ListTile(
+                          title: Text(memos[index]),
+                        ),
                       ),
                       itemCount: memos.length,
                       onReorder: (oldIndex, newIndex) {
@@ -139,18 +141,32 @@ class _ProfileDetailPageState extends State<ProfileDetailPage> {
                   return const Center(child: Text('No data'));
                 } else {
                   // 問題なくデータがある場合
-                  return ElevatedButton(
-                    onPressed: () {
-                      showDialog(
-                        context: context,
-                        builder: (_) => _deleteDialog(
-                          context,
-                          profile: profile,
-                          service: widget.service,
-                        ),
-                      );
-                    },
-                    child: const Text('Delete'),
+                  return Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                    children: [
+                      // 更新ボタン
+                      ElevatedButton(
+                        onPressed: () {
+                          // TODO: 更新処理
+                        },
+                        child: const Text('Save changes'),
+                      ),
+
+                      // 削除ボタン
+                      ElevatedButton(
+                        onPressed: () {
+                          showDialog(
+                            context: context,
+                            builder: (_) => _deleteDialog(
+                              context,
+                              profile: profile,
+                              service: widget.service,
+                            ),
+                          );
+                        },
+                        child: const Text('Delete'),
+                      ),
+                    ],
                   );
                 }
               },

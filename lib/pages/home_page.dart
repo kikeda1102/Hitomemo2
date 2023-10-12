@@ -34,154 +34,172 @@ class HomePage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      drawer: Drawer(
-        child: ListView(
-          children: [
-            const ListTile(
-              title: Padding(
-                padding: EdgeInsets.all(10.0),
-                child: Column(
-                  children: [
-                    Text('Hitomemo'),
-                    SizedBox(height: 10),
-                    Text('Version 1.0.0'),
-                  ],
+        drawer: Drawer(
+          child: ListView(
+            children: [
+              const ListTile(
+                title: Padding(
+                  padding: EdgeInsets.all(10.0),
+                  child: Column(
+                    children: [
+                      Text('Hitomemo'),
+                      SizedBox(height: 10),
+                      Text('Version 1.0.0'),
+                    ],
+                  ),
                 ),
               ),
-            ),
-            const SizedBox(
-              height: 20,
-            ),
-            Link(
-              // 開きたいURL
-              uri: Uri.parse('https://kikeda1102.github.io/Hitomemo2/'),
-              target: LinkTarget.self, // 独立したブラウゼで開く
-              builder: (BuildContext context, FollowLink? followLink) {
-                return TextButton.icon(
-                  icon: const Icon(Icons.open_in_new),
-                  onPressed: followLink,
-                  label: const Text('Privacy Policy'),
+              const SizedBox(
+                height: 20,
+              ),
+              Link(
+                // 開きたいURL
+                uri: Uri.parse('https://kikeda1102.github.io/Hitomemo2/'),
+                target: LinkTarget.self, // 独立したブラウゼで開く
+                builder: (BuildContext context, FollowLink? followLink) {
+                  return TextButton.icon(
+                    icon: const Icon(Icons.open_in_new),
+                    onPressed: followLink,
+                    label: const Text('Privacy Policy'),
+                  );
+                },
+              ),
+            ],
+          ),
+        ),
+        appBar: AppBar(
+          // title: const Text('People List'),
+          actions: [
+            IconButton(
+              icon: const Icon(Icons.search),
+              onPressed: () {
+                showSearch(
+                  context: context,
+                  delegate: ProfileSearchDelegate(service: service),
                 );
               },
             ),
           ],
         ),
-      ),
-      appBar: AppBar(
-        // title: const Text('People List'),
-        actions: [
-          IconButton(
-            icon: const Icon(Icons.search),
-            onPressed: () {
-              showSearch(
-                context: context,
-                delegate: ProfileSearchDelegate(service: service),
-              );
-            },
-          ),
-        ],
-      ),
-      // profileの一覧表示
-      body: Column(
-        children: [
-          Expanded(
-            child: Padding(
-              padding: const EdgeInsets.all(8.0),
-              // profileの一覧をStreamとして表示
-              child: StreamBuilder<List<Profile>>(
-                stream: service.listenToAllProfiles(),
-                builder: (BuildContext context,
-                    AsyncSnapshot<List<Profile>> snapshot) {
-                  final data = snapshot.data; // 静的解析が効くように変数に格納
-                  if (snapshot.hasError) {
-                    return const Text('Something went wrong');
-                  } else if (data == null || data.isEmpty) {
-                    return const Center();
-                  } else {
-                    // dataをorder順にソートする
-                    data.sort((a, b) => a.order.compareTo(b.order));
-                    // ReorderableListViewで表示
-                    return ReorderableListView.builder(
-                      onReorder: (int oldIndex, int newIndex) {
-                        // 下に移動した場合は、自分が消える分、newIndexを1減らす
-                        if (oldIndex < newIndex) {
-                          newIndex -= 1;
-                        }
-                        // oldIndex番目の要素を削除し、その要素をitemに格納
-                        final Profile item = data.removeAt(oldIndex);
-                        // newIndex番目にitemを挿入
-                        data.insert(newIndex, item);
-                        // orderを更新
-                        refreshOrder(data, service);
-                      },
-                      itemCount: data.length,
-                      // ListViewの各要素を表示
-                      itemBuilder: (BuildContext context, int index) {
-                        // profileを取得
-                        final profile = data[index];
-                        return ListTile(
-                          key: ValueKey(profile.id),
-                          title: Text(profile.name),
-                          // タグをChipで表示
-                          subtitle: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              // memosをTextで表示
-                              Text(
-                                // profile.order.toString(), // for debug
-                                profile.memos
-                                    .join('     '), // memosの要素を改行で結合して表示
-                              ),
-                              // memosをchipで表示
-                              // if (profile.memos.isNotEmpty)
-                              //   Wrap(
-                              //     spacing: 4,
-                              //     runSpacing: -12,
-                              //     children: profile.memos
-                              //         .map((memo) => Chip(
-                              //               label: Text(memo,
-                              //                   style: const TextStyle(
-                              //                       fontSize: 12)),
-                              //             ))
-                              //         .toList(),
-                              //   ),
-                            ],
-                          ),
+        // profileの一覧表示
+        body: Column(
+          children: [
+            Expanded(
+              child: Padding(
+                padding: const EdgeInsets.all(8.0),
+                // profileの一覧をStreamとして表示
+                child: StreamBuilder<List<Profile>>(
+                  stream: service.listenToAllProfiles(),
+                  builder: (BuildContext context,
+                      AsyncSnapshot<List<Profile>> snapshot) {
+                    final data = snapshot.data; // 静的解析が効くように変数に格納
+                    if (snapshot.hasError) {
+                      return const Text('Something went wrong');
+                    } else if (data == null || data.isEmpty) {
+                      return const Center();
+                    } else {
+                      // dataをorder順にソートする
+                      data.sort((a, b) => a.order.compareTo(b.order));
+                      // ReorderableListViewで表示
+                      return ReorderableListView.builder(
+                        onReorder: (int oldIndex, int newIndex) {
+                          // 下に移動した場合は、自分が消える分、newIndexを1減らす
+                          if (oldIndex < newIndex) {
+                            newIndex -= 1;
+                          }
+                          // oldIndex番目の要素を削除し、その要素をitemに格納
+                          final Profile item = data.removeAt(oldIndex);
+                          // newIndex番目にitemを挿入
+                          data.insert(newIndex, item);
+                          // orderを更新
+                          refreshOrder(data, service);
+                        },
+                        itemCount: data.length,
+                        // ListViewの各要素を表示
+                        itemBuilder: (BuildContext context, int index) {
+                          // profileを取得
+                          final profile = data[index];
+                          return Card(
+                            key: ValueKey(profile.id),
+                            child: ListTile(
+                              title: Text(profile.name),
+                              // タグをChipで表示
+                              subtitle: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  // memosをTextで表示
+                                  Text(
+                                    // profile.order.toString(), // for debug
+                                    profile.memos
+                                        .join('     '), // memosの要素を改行で結合して表示
+                                  ),
 
-                          onTap: () => Navigator.of(context).push(
-                            MaterialPageRoute(
-                                builder: (context) => ProfileDetailPage(
-                                    id: profile.id, service: service)),
-                          ),
-                        );
-                      },
-                    );
-                  }
-                },
+                                  // memosをchipで表示
+                                  // if (profile.memos.isNotEmpty)
+                                  //   Wrap(
+                                  //     spacing: 4,
+                                  //     runSpacing: -12,
+                                  //     children: profile.memos
+                                  //         .map((memo) => Chip(
+                                  //               label: Text(memo,
+                                  //                   style: const TextStyle(
+                                  //                       fontSize: 12)),
+                                  //             ))
+                                  //         .toList(),
+                                  //   ),
+                                ],
+                              ),
+
+                              onTap: () => Navigator.of(context).push(
+                                MaterialPageRoute(
+                                    builder: (context) => ProfileDetailPage(
+                                        id: profile.id, service: service)),
+                              ),
+                            ),
+                          );
+                        },
+                      );
+                    }
+                  },
+                ),
               ),
             ),
-          ),
-          // TODO: クイズ機能
-        ],
-      ),
-      floatingActionButton: FloatingActionButton(
-        onPressed: () {
-          // 現在のprofilesを取得
-          Future<List<Profile>> profiles = service.getAllProfiles();
-          // orderの更新
-          refreshOrderFuture(profiles, service);
-          // RegisterProfilePageへ遷移
-          Navigator.push(
-            context,
-            MaterialPageRoute(
-              builder: (context) => RegisterProfilePage(
-                service: service,
+            // TODO: クイズ機能
+          ],
+        ),
+        floatingActionButton: FloatingActionButton(
+          onPressed: () {
+            // 現在のprofilesを取得
+            Future<List<Profile>> profiles = service.getAllProfiles();
+            // orderの更新
+            refreshOrderFuture(profiles, service);
+            // RegisterProfilePageへ遷移
+            Navigator.push(
+              context,
+              MaterialPageRoute(
+                builder: (context) => RegisterProfilePage(
+                  service: service,
+                ),
               ),
+            );
+          },
+          child: const Icon(Icons.add),
+        ),
+        bottomNavigationBar: BottomNavigationBar(
+          items: const [
+            BottomNavigationBarItem(
+              icon: Icon(Icons.home),
+              label: 'Home',
             ),
-          );
-        },
-        child: const Icon(Icons.add),
-      ),
-    );
+            BottomNavigationBarItem(
+              icon: Icon(Icons.quiz),
+              label: 'Quiz',
+            ),
+            BottomNavigationBarItem(
+              icon: Icon(Icons.settings),
+              label: 'Settings',
+            ),
+          ],
+        ));
   }
 }
