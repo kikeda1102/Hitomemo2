@@ -22,7 +22,9 @@ class _MainPageState extends State<MainPage> {
   // ページのindex BottomNavigationBarで切り替える
   int _currentIndex = 0;
   // BottomNavigationBarのindexを変更する関数
-  void _onItemTapped(int index) => setState(() => _currentIndex = index);
+  void _onItemTapped(int index) {
+    setState(() => _currentIndex = index);
+  }
 
   // profilesのorderを現状順に更新する関数
   void refreshOrder(List<Profile> profiles, IsarService service) {

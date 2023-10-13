@@ -80,6 +80,7 @@ class IsarService {
   }
 
   // 取得する件数を指定してランダムに取得
+  // Quiz用
   // memoを持たないprofileは除外する
   Future<List<Profile>> getProfilesRomdomly(int number) async {
     final isar = await _isar;
@@ -95,6 +96,18 @@ class IsarService {
       }
       // 先頭からnumber個を返す
       return value.sublist(0, number);
+    });
+  }
+
+  // 全件の数を取得
+  // スライダー用
+  // memoがないprofileは除外
+  Future<int> getNumberOfProfiles() async {
+    final isar = await _isar;
+    return isar.profiles.where().findAll().then((value) {
+      // memoを持たないprofileを除外
+      value = value.where((profile) => profile.memos.isNotEmpty).toList();
+      return value.length;
     });
   }
 
