@@ -47,7 +47,7 @@ class _QuizGatePageState extends State<QuizGatePage> {
 
           const Text('Number of questions'),
 
-          // TODO: スライダーの実装
+          // TODO: スライダーのvalidation
 
           // 問題数を選択するスライダー
           FutureBuilder(
@@ -122,7 +122,6 @@ class _QuizWidgetState extends State<QuizWidget> {
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              // const SizedBox(height: 40),
               // memos
               SizedBox(
                 height: 250,
@@ -197,7 +196,8 @@ class _AnswerButtonWidgetState extends State<AnswerButtonWidget> {
   Widget build(BuildContext context) {
     return ElevatedButton(
       onPressed: () {
-        // 最後の文字まで回答したら、成績発表
+        // TODO: エフェクトをつける
+        // TODO: 最後の文字まで回答したら、成績発表
         if (widget.count < widget.name.length - 1) {
           widget.count++;
           setState(() {});
