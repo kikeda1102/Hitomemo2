@@ -23,7 +23,10 @@ class MyApp extends StatelessWidget {
       title: 'hitomemo',
       theme: ThemeData(
         useMaterial3: true,
-        primarySwatch: Colors.blueGrey,
+        colorSchemeSeed: Colors.orange,
+        // brightness: Brightness.dark,
+        // primarySwatch: Colors.blueGrey,
+        // accentColor: Colors.blueAccent,
       ),
       home: MainPage(service: service),
       // home: const Placeholder(), // for debug
