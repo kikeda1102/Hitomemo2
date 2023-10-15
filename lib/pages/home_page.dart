@@ -180,7 +180,7 @@ class HomePage extends StatelessWidget {
                 if (snapshot.hasError) {
                   return const Text('Something went wrong');
                 } else if (data == null || data.isEmpty) {
-                  return const Center();
+                  return const Center(child: Text('Tap + button to register.'));
                 } else {
                   // dataをorder順にソートする
                   data.sort((a, b) => a.order.compareTo(b.order));

@@ -23,8 +23,8 @@ class MyApp extends StatelessWidget {
       title: 'hitomemo',
       theme: ThemeData(
         useMaterial3: true,
-        colorSchemeSeed: Colors.orange,
-        // brightness: Brightness.dark,
+        colorSchemeSeed: Colors.lightBlue,
+        // brightness: Brightness.dark, // ダークモード
         // primarySwatch: Colors.blueGrey,
         // accentColor: Colors.blueAccent,
       ),
