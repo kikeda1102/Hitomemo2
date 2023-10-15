@@ -148,11 +148,7 @@ class _QuizWidgetState extends State<QuizWidget> {
 
               const SizedBox(height: 40),
 
-              // 次へボタン
-              ElevatedButton(
-                child: const Text('Submit'),
-                onPressed: () {},
-              ),
+              ResultWidget(),
               // TODO: 採点
               // TODO: 次のクイズへ遷移
 
@@ -163,9 +159,15 @@ class _QuizWidgetState extends State<QuizWidget> {
   }
 }
 
-class AnswerPanelWidget extends StatelessWidget {
+// 回答パネル
+class AnswerPanelWidget extends StatefulWidget {
   const AnswerPanelWidget({super.key});
 
+  @override
+  State<AnswerPanelWidget> createState() => _AnswerPanelWidgetState();
+}
+
+class _AnswerPanelWidgetState extends State<AnswerPanelWidget> {
   @override
   Widget build(BuildContext context) {
     return Row(
@@ -182,9 +184,10 @@ class AnswerPanelWidget extends StatelessWidget {
 
 // 一つの回答ボタン
 class AnswerButtonWidget extends StatefulWidget {
-  String name; // 表示する名前
-  int count = 0; // 回答数
-  bool isComplete = false; // 回答が完了したかどうか
+  final String name; // 表示する名前
+
+  final bool isCorrectOne = false; // 正解のボタンかどうか
+
   AnswerButtonWidget({super.key, required this.name});
 
   @override
@@ -192,17 +195,20 @@ class AnswerButtonWidget extends StatefulWidget {
 }
 
 class _AnswerButtonWidgetState extends State<AnswerButtonWidget> {
+  int count = 0; // 回答数
+  bool isComplete = false; // 回答が完了したかどうか
+
   @override
   Widget build(BuildContext context) {
     return ElevatedButton(
       onPressed: () {
         // TODO: エフェクトをつける
         // TODO: 最後の文字まで回答したら、成績発表
-        if (widget.count < widget.name.length - 1) {
-          widget.count++;
+        if (count < widget.name.length - 1) {
+          count++;
           setState(() {});
         } else {
-          widget.isComplete = true;
+          isComplete = true;
         }
       },
       style: ElevatedButton.styleFrom(
@@ -211,7 +217,22 @@ class _AnswerButtonWidgetState extends State<AnswerButtonWidget> {
           borderRadius: BorderRadius.circular(5),
         ),
       ),
-      child: Text(widget.name[widget.count]),
+      child: Text(widget.name[count]),
     );
+  }
+}
+
+// 結果表示
+class ResultWidget extends StatefulWidget {
+  const ResultWidget({super.key});
+
+  @override
+  State<ResultWidget> createState() => _ResultWidgetState();
+}
+
+class _ResultWidgetState extends State<ResultWidget> {
+  @override
+  Widget build(BuildContext context) {
+    return const Text('RESULT');
   }
 }
