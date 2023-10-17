@@ -64,6 +64,9 @@ class _MainPageState extends State<MainPage> {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.center,
                   children: [
+                    SizedBox(
+                      height: 20,
+                    ),
                     Text('HitoMemo', style: TextStyle(fontSize: 25)),
                     SizedBox(height: 10),
                     Text('Version 1.0.0'),
@@ -71,9 +74,20 @@ class _MainPageState extends State<MainPage> {
                 ),
               ),
             ),
-            const SizedBox(
-              height: 20,
+            const SizedBox(height: 20),
+            // TODO: 使い方
+            Link(
+              uri: Uri.parse('https://kikeda1102.github.io/Hitomemo2/'),
+              target: LinkTarget.self, // 独立したブラウゼで開く
+              builder: (BuildContext context, FollowLink? followLink) {
+                return TextButton.icon(
+                  icon: const Icon(Icons.open_in_new),
+                  onPressed: followLink,
+                  label: const Text('How to use'),
+                );
+              },
             ),
+            const SizedBox(height: 20),
             Link(
               // 開きたいURL
               uri: Uri.parse('https://kikeda1102.github.io/Hitomemo2/'),
@@ -82,7 +96,7 @@ class _MainPageState extends State<MainPage> {
                 return TextButton.icon(
                   icon: const Icon(Icons.open_in_new),
                   onPressed: followLink,
-                  label: const Text('Privacy Policy'),
+                  label: const Text('Privacy policy'),
                 );
               },
             ),

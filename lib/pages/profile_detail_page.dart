@@ -14,26 +14,18 @@ class ProfileDetailPage extends StatefulWidget {
 }
 
 class _ProfileDetailPageState extends State<ProfileDetailPage> {
-  // profileの読み込み
-  // @override
-  // void initState() {
-  //   super.initState();
-  //   // widget.service.listenToProfile(widget.id);
-  // }
   final _formKey = GlobalKey<FormState>(); // TODO: Validation
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-          // title: const Text('Profile')
-          ),
+      appBar: AppBar(),
       body: Column(
         children: [
           Padding(
             padding: const EdgeInsets.all(30),
 
-            // 名前
+            // 名前表示
             child: StreamBuilder<Profile>(
               stream: widget.service.listenToProfile(widget.id),
               builder: (BuildContext context, AsyncSnapshot<Profile> snapshot) {
@@ -86,9 +78,9 @@ class _ProfileDetailPageState extends State<ProfileDetailPage> {
                   } else if (!snapshot.hasData) {
                     return const Center(child: Text('No data'));
                   } else {
-                    // 問題なくデータがある場合
                     // memosを新変数に格納
                     List<String> memos = profile.memos;
+                    // memosをReorderableListViewで表示
                     return ReorderableListView.builder(
                       itemBuilder: (context, index) => Card(
                         key: ValueKey(index),
@@ -121,7 +113,7 @@ class _ProfileDetailPageState extends State<ProfileDetailPage> {
             ),
           ),
 
-          // 削除ボタン
+          // 更新/削除ボタン
           Padding(
             padding: const EdgeInsets.all(30),
             child: StreamBuilder<Profile>(

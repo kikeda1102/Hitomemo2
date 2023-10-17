@@ -45,8 +45,6 @@ class _QuizGatePageState extends State<QuizGatePage> {
 
           const SizedBox(height: 40),
 
-          const Text('Number of questions'),
-
           // TODO: スライダーのvalidation
 
           // 問題数を選択するスライダー
@@ -54,43 +52,56 @@ class _QuizGatePageState extends State<QuizGatePage> {
               future: widget.service.getNumberOfProfiles(),
               builder: (context, snapshot) {
                 int? numberOfProfiles = snapshot.data;
-                // TODO: 0件の時の処理
-                if (snapshot.hasData && numberOfProfiles != null) {
-                  _endValue = numberOfProfiles;
-                  return Slider(
-                    value: _value.toDouble(),
-                    min: _startValue.toDouble(),
-                    max: _endValue.toDouble(),
-                    divisions: _endValue.toInt(),
-                    label: _value.toInt().toString(),
-                    onChanged: _changeSlider,
+                if (snapshot.connectionState == ConnectionState.waiting) {
+                  return const Center(child: CircularProgressIndicator());
+                } else if (!snapshot.hasData || numberOfProfiles == null) {
+                  return const CircularProgressIndicator();
+                } else if (numberOfProfiles <= 3) {
+                  // profilesが4件未満の時の処理
+                  return const Text(
+                    'Register at least 4 people to start quiz.',
                   );
                 } else {
-                  return const CircularProgressIndicator();
+                  _endValue = numberOfProfiles;
+                  return Column(
+                    children: [
+                      const Text('Number of questions'),
+                      Slider(
+                        value: _value.toDouble(),
+                        min: _startValue.toDouble(),
+                        max: _endValue.toDouble(),
+                        divisions: _endValue.toInt(),
+                        label: _value.toInt().toString(),
+                        onChanged: _changeSlider,
+                      ),
+
+                      // Startボタン
+                      ElevatedButton(
+                          child: const Text('Start'),
+                          onPressed: () async {
+                            // データのランダム取得
+                            List<Profile> randomlySelectedProfiles =
+                                await widget.service
+                                    .getProfilesRomdomly(_value.toInt());
+
+                            if (!context.mounted) {
+                              return; // asyncを使ったbuild対策. このページが表示されていない時は何もしない
+                            }
+
+                            Navigator.of(context).push(
+                              MaterialPageRoute(
+                                  builder: (context) => QuizWidget(
+                                      service: widget.service,
+                                      randomlySelectedProfiles:
+                                          randomlySelectedProfiles)),
+                            );
+                          }),
+                    ],
+                  );
                 }
               }),
 
           const SizedBox(height: 60),
-
-          // Startボタン
-          ElevatedButton(
-              child: const Text('Start'),
-              onPressed: () async {
-                // データのランダム取得
-                List<Profile> randomlySelectedProfiles =
-                    await widget.service.getProfilesRomdomly(_value.toInt());
-
-                if (!context.mounted) {
-                  return; // asyncを使ったbuild対策. このページが表示されていない時は何もしない
-                }
-
-                Navigator.of(context).push(
-                  MaterialPageRoute(
-                      builder: (context) => QuizWidget(
-                          service: widget.service,
-                          randomlySelectedProfiles: randomlySelectedProfiles)),
-                );
-              }),
         ],
       ),
     );
