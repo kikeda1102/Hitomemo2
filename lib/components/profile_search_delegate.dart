@@ -8,19 +8,7 @@ class ProfileSearchDelegate extends SearchDelegate<Profile> {
   final IsarService service;
   ProfileSearchDelegate({
     required this.service,
-    // super.searchFieldStyle = const TextStyle(color: Colors.white),
   });
-
-  // 色の設定
-  // @override
-  // ThemeData appBarTheme(BuildContext context) {
-  //   return Theme.of(context).copyWith(
-  //     primaryColor: Colors.blueGrey,
-  //     inputDecorationTheme: InputDecorationTheme(
-  //       hintStyle: TextStyle(color: Colors.white.withOpacity(0.9)),
-  //     ),
-  //   );
-  // }
 
   @override
   List<Widget> buildActions(BuildContext context) {
@@ -79,25 +67,6 @@ class ProfileSearchDelegate extends SearchDelegate<Profile> {
                 return ListTile(
                   title: Text(profile.name),
                   trailing: Text(profile.memos.join(' ')),
-                  // タグ
-                  subtitle: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      if (profile.memos.isNotEmpty)
-                        Wrap(
-                          spacing: 4,
-                          runSpacing: -12,
-                          children: profile.memos
-                              .map((memo) => Chip(
-                                    label: Text(
-                                      memo,
-                                      style: const TextStyle(fontSize: 12),
-                                    ),
-                                  ))
-                              .toList(),
-                        ),
-                    ],
-                  ),
                   onTap: () => Navigator.of(context).push(
                     MaterialPageRoute(
                       builder: (context) =>
@@ -148,25 +117,6 @@ class ProfileSearchDelegate extends SearchDelegate<Profile> {
                 return ListTile(
                   title: Text(profile.name),
                   trailing: Text(profile.memos.join(' ')),
-                  // タグ
-                  subtitle: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      if (profile.memos.isNotEmpty)
-                        Wrap(
-                          spacing: 4,
-                          runSpacing: -12,
-                          children: profile.memos
-                              .map((memo) => Chip(
-                                    label: Text(
-                                      memo,
-                                      style: const TextStyle(fontSize: 12),
-                                    ),
-                                  ))
-                              .toList(),
-                        ),
-                    ],
-                  ),
                   onTap: () => Navigator.of(context).push(
                     MaterialPageRoute(
                       builder: (context) =>

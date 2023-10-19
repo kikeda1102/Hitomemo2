@@ -20,6 +20,33 @@
 
 ### 進捗記録
 
+- 2023/10/19:
+  - クイズ画面を作った
+    - QuizGatePageで問題数選択
+    - QuizPageでクイズ表示
+    - QuizResultPageで結果表示 (未実装)
+  中身の機能の実装が未完成
+  - スライダーの挙動がカクつく問題が発生中
+    →FutureBuilderのfutureで関数を読んでいるためsetState()で再度読み込まれていたのが原因
+    lateを使ってstate変数としてとってくることで解決
+  - クイズ機能の仕様検討
+    - 正解の名前を渡す
+    - それに応じてハズレの名前を選ぶ
+    - 選択された文字列の情報を保持する
+
+  AnswerPanelWidget:
+  - メンバ変数リスト
+    - 正解文字列 String correctName
+    - ハズレの文字列群 List<String> incorrectNames
+    - step数 (いま何文字目) int step
+    - 誤答数 (減点数) int numOfIncorrectTap
+  - メソッドリスト
+    - 正誤判定 judge
+    - 正解+誤答*3を生成する関数 generateQuiz
+
+  - 来週までに、クイズのメソッドの実装をしてくる
+
+
 - 2023/10/12:
   - detailsのmemosをreorderableにした
   - UI改善: Material3 / Card表示にした / BottomNavigationBar
