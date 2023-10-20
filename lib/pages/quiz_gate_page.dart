@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:hito_memo_2/models/profile.dart';
 // import 'package:isar/isar.dart';
 import 'package:hito_memo_2/services/isar_service.dart';
-import 'package:hito_memo_2/models/quiz.dart';
+// import 'package:hito_memo_2/models/quiz.dart';
 import 'package:hito_memo_2/pages/quiz_page.dart';
 
 // クイズの開始ページ

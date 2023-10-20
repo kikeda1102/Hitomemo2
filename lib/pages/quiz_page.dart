@@ -28,6 +28,21 @@ class _QuizPageState extends State<QuizPage> {
     incorrectNames: widget.allProfiles.map((e) => e.name).toList(),
     // TODO: incorrectNamesのうち、correctNameに含まれる文字列を含むものを除外する
   );
+
+  // setStateを呼び出す関数
+  void setStateOfParent() {
+    setState(() {});
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    // 問題を生成する
+    List<List<String>> generatedQuiz = quiz.generateQuiz(
+        widget.randomlySelectedProfiles[widget.quizIndex].name,
+        widget.allProfiles.map((e) => e.name).toList());
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -39,6 +54,13 @@ class _QuizPageState extends State<QuizPage> {
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
+              const Text('Who is this?',
+                  style: TextStyle(
+                    fontSize: 20,
+                  )),
+
+              const SizedBox(height: 20),
+
               // memos
               SizedBox(
                 height: 250,
@@ -56,12 +78,28 @@ class _QuizPageState extends State<QuizPage> {
 
               const SizedBox(height: 40),
 
-              const Text('Who is this?'),
-
-              const SizedBox(height: 40),
-
               // 回答パネル
-              AnswerPanelWidget(),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                children: [
+                  AnswerButtonWidget(
+                      name: quiz.correctName,
+                      id: 0,
+                      setStateOfParent: setStateOfParent),
+                  AnswerButtonWidget(
+                      name: quiz.correctName,
+                      id: 1,
+                      setStateOfParent: setStateOfParent),
+                  AnswerButtonWidget(
+                      name: quiz.correctName,
+                      id: 2,
+                      setStateOfParent: setStateOfParent),
+                  AnswerButtonWidget(
+                      name: quiz.correctName,
+                      id: 3,
+                      setStateOfParent: setStateOfParent),
+                ],
+              ),
 
               const SizedBox(height: 40),
 
@@ -81,40 +119,33 @@ class _QuizPageState extends State<QuizPage> {
   }
 }
 
-// 回答パネル
-class AnswerPanelWidget extends StatelessWidget {
-  const AnswerPanelWidget({super.key});
-
-  @override
-  Widget build(BuildContext context) {
-    return Row(
-      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-      children: [
-        AnswerButtonWidget(name: '池田けんや'),
-        AnswerButtonWidget(name: '山田たろう'),
-        AnswerButtonWidget(name: '佐々木はなこ'),
-        AnswerButtonWidget(name: '田中じろう'),
-      ],
-    );
-  }
-}
-
 // 一つの回答ボタン
 class AnswerButtonWidget extends StatelessWidget {
   final String name; // 表示する名前
-  const AnswerButtonWidget({super.key, required this.name});
+  final int id; // このボタンのid
+  final Function() setStateOfParent;
+  int index = 0;
+  AnswerButtonWidget(
+      {super.key,
+      required this.name,
+      required this.id,
+      required this.setStateOfParent});
 
   @override
   Widget build(BuildContext context) {
     return ElevatedButton(
-      onPressed: () {},
+      onPressed: () {
+        // 次の文字を表示
+        index++;
+        setStateOfParent();
+      },
       style: ElevatedButton.styleFrom(
         minimumSize: const Size(60, 60),
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(5),
         ),
       ),
-      child: Text(name),
+      child: Text(name[index]),
     );
   }
 }
