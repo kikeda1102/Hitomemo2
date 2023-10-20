@@ -6,7 +6,7 @@ import 'package:hito_memo_2/pages/profile_detail_page.dart';
 import 'package:hito_memo_2/models/profile.dart';
 import 'package:hito_memo_2/services/isar_service.dart';
 // import 'package:navigator_scope/navigator_scope.dart'; // BottomAppBarを固定した画面遷移
-import 'package:hito_memo_2/pages/quiz_page.dart';
+// import 'package:hito_memo_2/pages/quiz_page.dart';
 import 'package:hito_memo_2/pages/setting_page.dart';
 import 'package:hito_memo_2/pages/quiz_gate_page.dart';
 
@@ -51,7 +51,9 @@ class _MainPageState extends State<MainPage> {
     // 切り替えるページたち
     final pageWidgets = [
       HomePage(service: widget.service),
-      QuizGatePage(service: widget.service),
+      QuizGatePage(
+        service: widget.service,
+      ),
       SettingsPage(),
     ];
 

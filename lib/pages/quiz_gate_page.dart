@@ -18,18 +18,13 @@ class QuizGatePage extends StatefulWidget {
 class _QuizGatePageState extends State<QuizGatePage> {
   // スライダーの値
   int _value = 1;
-  int _startValue = 1;
-  int _endValue = 0;
-
+  final int _minValue = 1;
+  int _maxValue = 0;
+  // スライダーの値を変更する関数
   void _changeSlider(double e) => setState(() {
         _value = e.toInt();
       });
-  // void _startSlider(double e) => setState(() {
-  //       _startValue = e.toInt();
-  //     });
-  // void _endSlider(double e) => setState(() {
-  //       _endValue = e.toInt();
-  //     });
+  // 全profilesの数を取得
   late final numberOfProfiles = widget.service.getNumberOfProfiles();
 
   @override
@@ -63,21 +58,18 @@ class _QuizGatePageState extends State<QuizGatePage> {
                     'Register at least 4 people to start quiz.',
                   );
                 } else {
-                  _endValue = numberOfProfiles; // スライダーの最大値を設定
-                  // _value = numberOfProfiles; // スライダーの初期値を設定
+                  _maxValue = numberOfProfiles; // スライダーの最大値を設定
+
                   return Column(
                     children: [
                       const Text('Number of questions'),
-                      // TODO: スライダーのカクつきを改善
                       Slider(
                         value: _value.toDouble(),
-                        min: _startValue.toDouble(),
-                        max: _endValue.toDouble(),
-                        divisions: (_endValue - 1).toInt(),
+                        min: _minValue.toDouble(),
+                        max: _maxValue.toDouble(),
+                        divisions: (_maxValue - 1).toInt(),
                         label: _value.toInt().toString(),
                         onChanged: _changeSlider,
-                        // onChangeStart: _startSlider,
-                        // onChangeEnd: _endSlider,
                       ),
 
                       // Startボタン
@@ -103,7 +95,7 @@ class _QuizGatePageState extends State<QuizGatePage> {
                                         service: widget.service,
                                         randomlySelectedProfiles:
                                             randomlySelectedProfiles,
-                                        numberOfQuestions: 0,
+                                        quizIndex: 0,
                                         allProfiles: allProfiles,
                                       )),
                             );

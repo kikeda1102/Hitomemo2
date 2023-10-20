@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:hito_memo_2/models/profile.dart';
-// import 'package:isar/isar.dart';
 import 'package:hito_memo_2/services/isar_service.dart';
 import 'package:hito_memo_2/models/quiz.dart';
 
@@ -8,13 +7,13 @@ import 'package:hito_memo_2/models/quiz.dart';
 class QuizPage extends StatefulWidget {
   final IsarService service;
   final List<Profile> randomlySelectedProfiles;
-  final int numberOfQuestions; // いま何問目か
+  final int quizIndex; // いま何問目か
   final List<Profile> allProfiles;
   const QuizPage(
       {super.key,
       required this.service,
       required this.randomlySelectedProfiles,
-      required this.numberOfQuestions,
+      required this.quizIndex,
       required this.allProfiles});
 
   @override
@@ -22,10 +21,12 @@ class QuizPage extends StatefulWidget {
 }
 
 class _QuizPageState extends State<QuizPage> {
-  // Quizクラス
+  // Quizクラスのインスタンス
   late final Quiz quiz = Quiz(
-    correctName: widget.randomlySelectedProfiles[widget.numberOfQuestions].name,
+    // 正解の名前
+    correctName: widget.randomlySelectedProfiles[widget.quizIndex].name,
     incorrectNames: widget.allProfiles.map((e) => e.name).toList(),
+    // TODO: incorrectNamesのうち、correctNameに含まれる文字列を含むものを除外する
   );
   @override
   Widget build(BuildContext context) {
@@ -67,7 +68,7 @@ class _QuizPageState extends State<QuizPage> {
               CorrectAnswerWidget(
                 service: widget.service,
                 randomlySelectedProfiles: widget.randomlySelectedProfiles,
-                numberOfQuestions: widget.numberOfQuestions,
+                quizIndex: widget.quizIndex,
                 allProfiles: widget.allProfiles,
               ),
               // TODO: 採点
@@ -101,7 +102,6 @@ class AnswerPanelWidget extends StatelessWidget {
 // 一つの回答ボタン
 class AnswerButtonWidget extends StatelessWidget {
   final String name; // 表示する名前
-
   const AnswerButtonWidget({super.key, required this.name});
 
   @override
@@ -123,13 +123,13 @@ class AnswerButtonWidget extends StatelessWidget {
 class CorrectAnswerWidget extends StatelessWidget {
   final IsarService service;
   List<Profile> randomlySelectedProfiles;
-  final int numberOfQuestions; // いま何問目か
+  final int quizIndex; // いま何問目か
   final List<Profile> allProfiles;
   CorrectAnswerWidget(
       {super.key,
       required this.service,
       required this.randomlySelectedProfiles,
-      required this.numberOfQuestions,
+      required this.quizIndex,
       required this.allProfiles});
 
   @override
@@ -145,7 +145,7 @@ class CorrectAnswerWidget extends StatelessWidget {
               builder: (context) => QuizPage(
                   service: service,
                   randomlySelectedProfiles: randomlySelectedProfiles,
-                  numberOfQuestions: numberOfQuestions + 1,
+                  quizIndex: quizIndex + 1,
                   allProfiles: allProfiles)),
         );
       },
