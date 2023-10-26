@@ -12,27 +12,79 @@ class Quiz {
     required this.incorrectNames,
   });
 
-  // TODO: メソッドの定義
-  // Statefulの中で書いた方がよさそう
-  // 正解かどうかを判定するメソッド
-  // 問題を生成するメソッド
+  // TODO: 正解かどうかを判定するメソッド
+
+  // TODO: 問題を生成するメソッド
   List<List<String>> generateQuiz(
       String correctName, List<String> incorrectNames) {
-    // 正解の名前をランダムに配置する場所を決める
-    final correctNaameLength = correctName.length;
-    List<String> correctNameList = correctName.split('');
-    // correctNameListの各文字に対し、0~3の乱数を割り当てる
-    List<int> correctNamePosition = [
-      for (int i = 0; i < correctNaameLength; i++) math.Random().nextInt(4)
+    // 例: quiz = [['山', '田', '鈴', 'J'], ['中', '田', 'o', '木'], ['花', 'h', '山', '太'], ['n', '夫', '郎', '子']]
+    // incorrectNamesのうち、correctNameに含まれる文字列を含むものを除外する
+
+    // 1. correctNameを1文字ずつ分割する
+    List<String> correctNameSplit = correctName.split('');
+
+    // 2. incorrectNamesを1文字ずつ分割する
+    List<List<String>> incorrectNamesSplit = incorrectNames
+        .map((String incorrectName) => incorrectName.split(''))
+        .toList();
+
+    // スペース除外
+    incorrectNamesSplit = incorrectNamesSplit
+        .map((List<String> incorrectNameSplit) => incorrectNameSplit
+            .where((String incorrectNameSplit) => incorrectNameSplit != ' ')
+            .toList())
+        .toList();
+
+    // 3. incorrectNamesSplitの各要素について、correctNameSplitに含まれる文字列を含むものを除外する
+    List<List<String>> incorrectNamesSplitFiltered = incorrectNamesSplit
+        .map((List<String> incorrectNameSplit) => incorrectNameSplit
+            .where((String incorrectNameSplit) =>
+                !correctNameSplit.contains(incorrectNameSplit))
+            .toList())
+        .toList();
+
+    // 空のリスト除外
+    incorrectNamesSplitFiltered = incorrectNamesSplitFiltered
+        .where((List<String> element) => element.isNotEmpty)
+        .toList();
+
+    // 中身を取り出してList<String>にする
+    List<String> incorrectLetters = [
+      for (List<String> element in incorrectNamesSplitFiltered) ...element
     ];
-    // correctNameとincorrectNamesから問題を生成
-    List<List<String>> quiz = [
-      for (int i = 0; i < 4; i++)
-        if (i == correctNamePosition[i])
-          [correctNameList[i], 'correct']
-        else
-          [incorrectNames[i], 'incorrect']
+
+    // 4. 頭文字だけを取り出す
+    List<String> incorrectFirstLetters = incorrectNamesSplitFiltered
+        .map((List<String> element) => element[0])
+        .toList();
+
+    // quizの1要素め
+    // incorrectFirstLettersをshuffleして最初の３つを取り出す
+
+    // List<String> incorrectFirstLettersShuffled =
+    incorrectFirstLetters.shuffle();
+
+    List<String> quizFirstLine = [
+      correctNameSplit[0],
     ];
+
+    // quizの2要素め以降
+    // incorrectLettersをshuffleして最初の３つを取り出す
+    List<List<String>> quizFollowingLines = [
+      for (int i = 1; i < correctNameSplit.length - 1; i++)
+        [
+          correctNameSplit[i],
+          ...incorrectLetters
+            ..shuffle()
+            ..take(3)
+        ]
+    ];
+    // TODO: カスケード演算子の使い方を直す
+
+    // 結合
+    List<List<String>> quiz = [quizFirstLine, ...quizFollowingLines];
+
+    print(quiz);
 
     return quiz;
   }

@@ -25,7 +25,8 @@ class _QuizPageState extends State<QuizPage> {
   late final Quiz quiz = Quiz(
     // 正解の名前
     correctName: widget.randomlySelectedProfiles[widget.quizIndex].name,
-    incorrectNames: widget.allProfiles.map((e) => e.name).toList(),
+    incorrectNames:
+        widget.allProfiles.map((e) => e.name).toList(), // とりあえず全部渡している
     // TODO: incorrectNamesのうち、correctNameに含まれる文字列を含むものを除外する
   );
 
