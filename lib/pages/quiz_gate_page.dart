@@ -81,21 +81,20 @@ class _QuizGatePageState extends State<QuizGatePage> {
                                 await widget.service
                                     .getProfilesRomdomly(_value.toInt());
 
-                            if (!context.mounted) {
-                              return; // asyncを使ったbuild対策. このページが表示されていない時は何もしない
-                            }
-
-                            // クイズページへ遷移
                             final List<Profile> allProfiles =
                                 await widget.service.getAllProfiles();
 
+                            // クイズページへ遷移
+                            if (!context.mounted) {
+                              return; // asyncを使ったbuild対策. このページが表示されていない時は何もしない
+                            }
                             Navigator.of(context).push(
                               MaterialPageRoute(
                                   builder: (context) => QuizPage(
                                         service: widget.service,
                                         randomlySelectedProfiles:
                                             randomlySelectedProfiles,
-                                        quizIndex: 0,
+                                        quizPageIndex: 0,
                                         allProfiles: allProfiles,
                                       )),
                             );

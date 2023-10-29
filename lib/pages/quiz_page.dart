@@ -7,13 +7,13 @@ import 'package:hito_memo_2/models/quiz.dart';
 class QuizPage extends StatefulWidget {
   final IsarService service;
   final List<Profile> randomlySelectedProfiles;
-  final int quizIndex; // いま何問目か
+  final int quizPageIndex; // いま何問目か
   final List<Profile> allProfiles;
   const QuizPage(
       {super.key,
       required this.service,
       required this.randomlySelectedProfiles,
-      required this.quizIndex,
+      required this.quizPageIndex,
       required this.allProfiles});
 
   @override
@@ -21,14 +21,14 @@ class QuizPage extends StatefulWidget {
 }
 
 class _QuizPageState extends State<QuizPage> {
-  // Quizクラスのインスタンス
-  late final Quiz quiz = Quiz(
+  // QuizManagerクラスのインスタンスを生成
+  late final QuizManager quizManager = QuizManager(
     // 正解の名前
-    correctName: widget.randomlySelectedProfiles[widget.quizIndex].name,
+    correctName: widget.randomlySelectedProfiles[widget.quizPageIndex].name,
     incorrectNames:
-        widget.allProfiles.map((e) => e.name).toList(), // とりあえず全部渡している
-    // TODO: incorrectNamesのうち、correctNameに含まれる文字列を含むものを除外する
+        widget.allProfiles.map((e) => e.name).toList(), // 全部のprofileを渡している
   );
+  late List<List<String>> generatedQuiz;
 
   // setStateを呼び出す関数
   void setStateOfParent() {
@@ -39,9 +39,9 @@ class _QuizPageState extends State<QuizPage> {
   void initState() {
     super.initState();
     // 問題を生成する
-    List<List<String>> generatedQuiz = quiz.generateQuiz(
-        widget.randomlySelectedProfiles[widget.quizIndex].name,
-        widget.allProfiles.map((e) => e.name).toList());
+    generatedQuiz = quizManager.generateQuiz();
+    // print('incorrectNames=${quiz.incorrectNames}');
+    // print('generatedQuiz=$generatedQuiz');
   }
 
   @override
@@ -84,19 +84,19 @@ class _QuizPageState extends State<QuizPage> {
                 mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                 children: [
                   AnswerButtonWidget(
-                      name: quiz.correctName,
+                      name: generatedQuiz[widget.quizPageIndex][0],
                       id: 0,
                       setStateOfParent: setStateOfParent),
                   AnswerButtonWidget(
-                      name: quiz.correctName,
+                      name: generatedQuiz[widget.quizPageIndex][1],
                       id: 1,
                       setStateOfParent: setStateOfParent),
                   AnswerButtonWidget(
-                      name: quiz.correctName,
+                      name: generatedQuiz[widget.quizPageIndex][2],
                       id: 2,
                       setStateOfParent: setStateOfParent),
                   AnswerButtonWidget(
-                      name: quiz.correctName,
+                      name: generatedQuiz[widget.quizPageIndex][3],
                       id: 3,
                       setStateOfParent: setStateOfParent),
                 ],
@@ -107,11 +107,10 @@ class _QuizPageState extends State<QuizPage> {
               CorrectAnswerWidget(
                 service: widget.service,
                 randomlySelectedProfiles: widget.randomlySelectedProfiles,
-                quizIndex: widget.quizIndex,
+                quizPageIndex: widget.quizPageIndex,
                 allProfiles: widget.allProfiles,
               ),
-              // TODO: 採点
-              // TODO: 次のクイズへ遷移
+              // TODO: 採点、次のクイズへ遷移
 
               // const SizedBox(height: 200),
             ],
@@ -155,13 +154,13 @@ class AnswerButtonWidget extends StatelessWidget {
 class CorrectAnswerWidget extends StatelessWidget {
   final IsarService service;
   List<Profile> randomlySelectedProfiles;
-  final int quizIndex; // いま何問目か
+  final int quizPageIndex; // いま何問目か
   final List<Profile> allProfiles;
   CorrectAnswerWidget(
       {super.key,
       required this.service,
       required this.randomlySelectedProfiles,
-      required this.quizIndex,
+      required this.quizPageIndex,
       required this.allProfiles});
 
   @override
@@ -177,7 +176,7 @@ class CorrectAnswerWidget extends StatelessWidget {
               builder: (context) => QuizPage(
                   service: service,
                   randomlySelectedProfiles: randomlySelectedProfiles,
-                  quizIndex: quizIndex + 1,
+                  quizPageIndex: quizPageIndex + 1,
                   allProfiles: allProfiles)),
         );
       },

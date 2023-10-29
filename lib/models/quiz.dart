@@ -1,22 +1,21 @@
 import 'dart:math' as math;
 
-// Quizクラス
-class Quiz {
+// Quizを管理するクラス
+class QuizManager {
   String correctName; // 正解の名前
   List<String> incorrectNames; // 不正解の名前
   int step = 1; // いま何文字目か
   int numberOfIncorrectAnswers = 0; // 誤タップした数
 
-  Quiz({
+  QuizManager({
     required this.correctName,
     required this.incorrectNames,
   });
 
   // TODO: 正解かどうかを判定するメソッド
 
-  // TODO: 問題を生成するメソッド
-  List<List<String>> generateQuiz(
-      String correctName, List<String> incorrectNames) {
+  // 問題を生成するメソッド
+  List<List<String>> generateQuiz() {
     // 例: quiz = [['山', '田', '鈴', 'J'], ['中', '田', 'o', '木'], ['花', 'h', '山', '太'], ['n', '夫', '郎', '子']]
     // incorrectNamesのうち、correctNameに含まれる文字列を含むものを除外する
 
@@ -35,7 +34,14 @@ class Quiz {
             .toList())
         .toList();
 
+    // 重複の除外
+    incorrectNamesSplit = incorrectNamesSplit
+        .map((List<String> incorrectNameSplit) =>
+            incorrectNameSplit.toSet().toList())
+        .toList();
+
     // 3. incorrectNamesSplitの各要素について、correctNameSplitに含まれる文字列を含むものを除外する
+    // これにより、correctNameとの重複をなくす
     List<List<String>> incorrectNamesSplitFiltered = incorrectNamesSplit
         .map((List<String> incorrectNameSplit) => incorrectNameSplit
             .where((String incorrectNameSplit) =>
@@ -60,31 +66,35 @@ class Quiz {
 
     // quizの1要素め
     // incorrectFirstLettersをshuffleして最初の３つを取り出す
-
-    // List<String> incorrectFirstLettersShuffled =
     incorrectFirstLetters.shuffle();
+    List<String> incorrect3FirstLetters =
+        incorrectFirstLetters.take(3).toList();
+    incorrect3FirstLetters.shuffle();
 
     List<String> quizFirstLine = [
       correctNameSplit[0],
+      ...incorrect3FirstLetters
     ];
+    quizFirstLine.shuffle();
 
     // quizの2要素め以降
     // incorrectLettersをshuffleして最初の３つを取り出す
-    List<List<String>> quizFollowingLines = [
-      for (int i = 1; i < correctNameSplit.length - 1; i++)
-        [
-          correctNameSplit[i],
-          ...incorrectLetters
-            ..shuffle()
-            ..take(3)
-        ]
-    ];
+    incorrectLetters.shuffle();
+    List<String> incorrect3Letters = incorrectLetters.take(3).toList();
+
+    List<List<String>> quizFollowingLines = [];
+    List<String> quizFollowingElement = [];
+    for (int i = 1; i < correctNameSplit.length; i++) {
+      quizFollowingElement = [correctNameSplit[i], ...incorrect3Letters];
+      quizFollowingElement.shuffle();
+      quizFollowingLines.add(quizFollowingElement);
+    }
+
     // TODO: カスケード演算子の使い方を直す
 
-    // 結合
     List<List<String>> quiz = [quizFirstLine, ...quizFollowingLines];
 
-    print(quiz);
+    // print(quiz);
 
     return quiz;
   }
