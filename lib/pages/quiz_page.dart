@@ -56,7 +56,8 @@ class _QuizPageState extends State<QuizPage> {
   Widget build(BuildContext context) {
     return Scaffold(
         appBar: AppBar(
-          title: const Text('Quiz'), // TODO: 何問目か表示
+          title: Text(
+              '${widget.quizPageIndex + 1} / ${widget.randomlySelectedProfiles.length}'), // TODO: 何問目か表示
         ),
         body: Padding(
           padding: const EdgeInsets.all(30.0),
@@ -70,18 +71,22 @@ class _QuizPageState extends State<QuizPage> {
 
               const SizedBox(height: 20),
 
-              // memos
+              // memosを表示
               SizedBox(
                 height: 250,
                 child: ListView.builder(
                   itemBuilder: (context, index) => Card(
                     key: ValueKey(index),
                     child: ListTile(
-                      title:
-                          Text(widget.randomlySelectedProfiles[0].memos[index]),
+                      title: Text(widget
+                          .randomlySelectedProfiles[widget.quizPageIndex]
+                          .memos[index]),
                     ),
                   ),
-                  itemCount: widget.randomlySelectedProfiles[0].memos.length,
+                  itemCount: widget
+                      .randomlySelectedProfiles[widget.quizPageIndex]
+                      .memos
+                      .length,
                 ),
               ),
 
@@ -151,7 +156,7 @@ class AnswerButtonWidget extends StatelessWidget {
   final bool quizCompleted;
   final Function() setStateOfParent;
   final Function() updateQuizCompleted;
-  AnswerButtonWidget(
+  const AnswerButtonWidget(
       {super.key,
       required this.quizManager,
       required this.generatedQuiz,
@@ -165,9 +170,14 @@ class AnswerButtonWidget extends StatelessWidget {
     return ElevatedButton(
       onPressed: () {
         // 最後の文字で正解が選択されたら、結果表示に遷移
-        if (quizManager.quizStep >= quizManager.correctName.length - 1 &&
+        if (quizManager.quizStep >=
+                quizManager.correctName
+                        .split('')
+                        .where((char) => char != ' ')
+                        .length -
+                    1 &&
             id == quizManager.correctNameIndexes[quizManager.quizStep]) {
-          updateQuizCompleted();
+          updateQuizCompleted(); // quizCompletedをtrueにする
         } else if (id == quizManager.correctNameIndexes[quizManager.quizStep]) {
           quizManager.quizStep++;
           // TODO: 正解のエフェクトを出す
@@ -187,8 +197,7 @@ class AnswerButtonWidget extends StatelessWidget {
           borderRadius: BorderRadius.circular(5),
         ),
       ),
-      child: Text(
-          generatedQuiz[quizManager.quizStep][id]), // TODO: なんか動作おかしいので訂正必要
+      child: Text(generatedQuiz[quizManager.quizStep][id]),
     );
   }
 }
@@ -216,7 +225,10 @@ class NextQuizButton extends StatelessWidget {
           if (quizPageIndex == randomlySelectedProfiles.length - 1) {
             // Resultページへ遷移
             Navigator.of(context).push(
-              MaterialPageRoute(builder: (context) => QuizResultPage()),
+              MaterialPageRoute(
+                  builder: (context) => QuizResultPage(
+                        service: service,
+                      )),
             );
           } else {
             Navigator.of(context).push(

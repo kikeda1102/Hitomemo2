@@ -28,6 +28,14 @@ class _QuizGatePageState extends State<QuizGatePage> {
   late final numberOfProfiles = widget.service.getNumberOfProfiles();
 
   @override
+  void initState() {
+    super.initState();
+    Future(() async {
+      _value = await numberOfProfiles;
+    });
+  }
+
+  @override
   Widget build(BuildContext context) {
     return Container(
       padding: const EdgeInsets.all(50),
@@ -63,6 +71,9 @@ class _QuizGatePageState extends State<QuizGatePage> {
                   return Column(
                     children: [
                       const Text('Number of questions'),
+
+                      const SizedBox(height: 20),
+
                       Slider(
                         value: _value.toDouble(),
                         min: _minValue.toDouble(),
@@ -71,6 +82,8 @@ class _QuizGatePageState extends State<QuizGatePage> {
                         label: _value.toInt().toString(),
                         onChanged: _changeSlider,
                       ),
+
+                      const SizedBox(height: 40),
 
                       // Startボタン
                       ElevatedButton(

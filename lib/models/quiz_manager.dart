@@ -15,31 +15,33 @@ class QuizManager {
 
   // 問題を生成するメソッド
   List<List<String>> generateQuiz() {
-    // correctNameSplitを生成する
-    List<String> correctNameSplit =
-        generateCorrectNameSplit(); // 例: ['A', 'l', 'i', 'c', 'e']
+    // correctLettersを生成する
+    List<String> correctLetters =
+        generateCorrectLetters(); // 例: ['A', 'l', 'i', 'c', 'e']
 
     // correctNameIndexを生成する
     correctNameIndexes = generateCorrectNameIndex(); // 例: [3, 1, 0, 2, 2]
 
-    // incorrectNamesSplitFilteredを生成する
-    List<List<String>> incorrectNamesSplitFiltered =
-        generateIncorrectNamesSplitFiltered(); // 例: [['B', 'o', 'b'], ['C', 'a', 'r', 'o', 'l']]
+    // incorrectNames, incorrectNameInitialsを生成する
+    List<String> incorrectLetters =
+        generateIncorrectLetters(); // ['B', 'o', 'b', 'C', 'a', 'r', 'o', 'l',....]
+
+    List<String> incorrectInitials =
+        generateIncorrectInitials(); // ['B', 'C',....]
 
     // quizの1行めを生成する
     List<String> quizFirstLine =
-        generateQuizFirstLine(correctNameSplit, incorrectNamesSplitFiltered);
+        generateQuizFirstLine(correctLetters, incorrectInitials);
 
     // quizの2要素め以降
-
     List<List<String>> quizFollowingLines = [];
-    // correctNameSplitの2文字目以降を、incorrect3Lettersに挿入する
-    for (int i = 1; i < correctNameSplit.length; i++) {
+    // correctLettersの2文字目以降を、incorrect3Lettersに挿入する
+    for (int i = 1; i < correctLetters.length; i++) {
       // incorrect3Lettersを生成
-      List<String> incorrect3Letters =
-          generateIncorrect3Letters(incorrectNamesSplitFiltered);
-      // correctNameIndexesの位置に、correctNameSplit[i]を挿入する
-      incorrect3Letters.insert(correctNameIndexes[i], correctNameSplit[i]);
+      incorrectLetters.shuffle();
+      List<String> incorrect3Letters = incorrectLetters.take(3).toList();
+      // correctNameIndexesの位置に、correctLetters[i]を挿入する
+      incorrect3Letters.insert(correctNameIndexes[i], correctLetters[i]);
 
       // quizFollowingLinesに追加
       quizFollowingLines.add(incorrect3Letters);
@@ -53,12 +55,12 @@ class QuizManager {
     return quiz;
   }
 
-  // correctNameSplitを生成するメソッド
-  List<String> generateCorrectNameSplit() {
+  // correctLettersを生成するメソッド
+  List<String> generateCorrectLetters() {
     // correctNameを1文字ずつ分割し、空白を除外
-    List<String> correctNameSplit =
+    List<String> correctLetters =
         correctName.split('').where((char) => char != ' ').toList();
-    return correctNameSplit;
+    return correctLetters;
   }
 
   // correctNameIndexを生成するメソッド
@@ -70,77 +72,58 @@ class QuizManager {
   }
 
   // quizFirstLineを生成するメソッド
-  List<String> generateQuizFirstLine(List<String> correctNameSplit,
-      List<List<String>> incorrectNamesSplitFiltered) {
+  List<String> generateQuizFirstLine(
+      List<String> correctLetters, List<String> incorrectLetters) {
     // quizの1要素め
-    // incorrectNamesSplitFilteredから、頭文字だけを取り出す
-    List<String> incorrectFirstLetters = incorrectNamesSplitFiltered
-        .map((List<String> element) => element[0])
-        .toList();
+    // incorrectLettersから、頭文字だけを取り出す
+    List<String> incorrectFirstLetters = generateIncorrectInitials();
     // incorrectFirstLettersをshuffleして最初の３つを取り出す
     incorrectFirstLetters.shuffle();
     List<String> incorrect3FirstLetters =
         incorrectFirstLetters.take(3).toList();
     incorrect3FirstLetters.shuffle();
-    // correctNameIndexesの位置に、correctNameSplit[0]を挿入する
-    incorrect3FirstLetters.insert(correctNameIndexes[0], correctNameSplit[0]);
+    // correctNameIndexesの位置に、correctLetters[0]を挿入する
+    incorrect3FirstLetters.insert(correctNameIndexes[0], correctLetters[0]);
     List<String> quizFirstLine = incorrect3FirstLetters;
     return quizFirstLine;
   }
 
-  // incorrectNamesSplitFilteredを生成するメソッド
-  List<List<String>> generateIncorrectNamesSplitFiltered() {
-    // 1. correctNameを1文字ずつ分割する
-    List<String> correctNameSplit = correctName.split('');
-
-    // 2. incorrectNamesを1文字ずつ分割する
-    List<List<String>> incorrectNamesSplit = incorrectNames
-        .map((String incorrectName) => incorrectName.split(''))
-        .toList();
-
+  // incorrectLettersを生成するメソッド
+  List<String> generateIncorrectLetters() {
+    // incorrectNamesを1文字ずつ分割する
+    List<String> incorrectLetters = incorrectNames.join('').split('');
     // スペース文字を除外
-    incorrectNamesSplit = incorrectNamesSplit
-        .map((List<String> incorrectNameSplit) => incorrectNameSplit
-            .where((String incorrectNameSplit) => incorrectNameSplit != ' ')
-            .toList())
-        .toList();
+    incorrectLetters =
+        incorrectLetters.where((String char) => char != ' ').toList();
+    // 全体の中で複数回登場する文字の除外 ユニークにする
+    incorrectLetters = incorrectLetters.toSet().toList();
 
-    // 複数回登場する文字の除外
-    incorrectNamesSplit = incorrectNamesSplit
-        .map((List<String> incorrectNameSplit) =>
-            incorrectNameSplit.toSet().toList())
+    // correctLettersに含まれる文字列を含むものを除外、correctNameとの文字の重複をなくす
+    // correctNameを1文字ずつ分割する
+    List<String> correctLetters = correctName.split('');
+    incorrectLetters = incorrectLetters
+        .where((String char) => !correctLetters.contains(char))
         .toList();
-
-    // correctNameSplitに含まれる文字列を含むものを除外、correctNameとの文字の重複をなくす
-    List<List<String>> incorrectNamesSplitFiltered = incorrectNamesSplit
-        .map((List<String> incorrectNameSplit) => incorrectNameSplit
-            .where((String incorrectNameSplit) =>
-                !correctNameSplit.contains(incorrectNameSplit))
-            .toList())
-        .toList();
-
-    // 空のリスト除外
-    // incorrectNamesにはcorrectNameが含まれているので、空のリストができている
-    incorrectNamesSplitFiltered = incorrectNamesSplitFiltered
-        .where((List<String> element) => element.isNotEmpty)
-        .toList();
-
-    return incorrectNamesSplitFiltered;
+    return incorrectLetters;
   }
 
-  // incorrect3Lettersを生成するメソッド
-  List<String> generateIncorrect3Letters(
-      List<List<String>> incorrectNamesSplitFiltered) {
-    // incorrectNamesSplitFilteredの中身を展開
-    // List<List<String>> から List<String> にする
-    List<String> incorrectLetters = [
-      for (List<String> element in incorrectNamesSplitFiltered) ...element
-    ];
-    // 文字の重複をなくす
-    incorrectLetters = incorrectLetters.toSet().toList();
-    // incorrectLettersをshuffleして最初の３つを取り出す
-    incorrectLetters.shuffle();
-    List<String> incorrect3Letters = incorrectLetters.take(3).toList();
-    return incorrect3Letters;
+  // incorrectInitialsを生成するメソッド
+  List<String> generateIncorrectInitials() {
+    // incorrectNamesの頭文字を取り出す
+    List<String> incorrectInitials =
+        incorrectNames.map((String name) => name[0]).toList();
+    // correctNameの頭文字を取り出す
+    List<String> correctInitials = correctName.split('').map((char) {
+      if (char == ' ') {
+        return '';
+      } else {
+        return char;
+      }
+    }).toList();
+    // correctInitialsに含まれる文字列を含むものを除外、correctNameとの文字の重複をなくす
+    incorrectInitials = incorrectInitials
+        .where((String char) => !correctInitials.contains(char))
+        .toList();
+    return incorrectInitials;
   }
 }
