@@ -3,6 +3,7 @@ import 'package:hito_memo_2/models/profile.dart';
 import 'package:hito_memo_2/services/isar_service.dart';
 import 'package:hito_memo_2/models/quiz_manager.dart';
 import 'package:hito_memo_2/pages/quiz_result_page.dart';
+import 'dart:math';
 
 // クイズのページ
 class QuizPage extends StatefulWidget {
@@ -54,10 +55,22 @@ class _QuizPageState extends State<QuizPage> {
 
   @override
   Widget build(BuildContext context) {
+    // 正解/不正解を表示するテキスト
+    Icon resultIcon = const Icon(Icons.done);
+    if (quizCompleted == true) {
+      resultIcon = const Icon(Icons.celebration, size: 40, color: Colors.green);
+    } else if (quizManager.currentResult == true) {
+      resultIcon =
+          const Icon(Icons.done, size: 40, color: Colors.green); // 正解のアイコンを表示
+    } else if (quizManager.currentResult == false) {
+      resultIcon =
+          const Icon(Icons.close, size: 40, color: Colors.red); // 不正解のアイコンを表示
+    }
+
     return Scaffold(
         appBar: AppBar(
           title: Text(
-              '${widget.quizPageIndex + 1} / ${widget.randomlySelectedProfiles.length}'), // TODO: 何問目か表示
+              '${widget.quizPageIndex + 1} / ${widget.randomlySelectedProfiles.length}'),
         ),
         body: Padding(
           padding: const EdgeInsets.all(30.0),
@@ -129,6 +142,18 @@ class _QuizPageState extends State<QuizPage> {
 
               const SizedBox(height: 40),
 
+              // 正解/不正解を表示
+              AnimatedOpacity(
+                opacity: quizManager.quizStep > 0 ||
+                        quizManager.numberOfIncorrectAnswers > 0
+                    ? 1.0
+                    : 0.0,
+                duration: const Duration(milliseconds: 0),
+                child: resultIcon,
+              ),
+
+              const SizedBox(height: 40),
+
               // 次へボタン
               Visibility(
                 visible: quizCompleted,
@@ -177,19 +202,23 @@ class AnswerButtonWidget extends StatelessWidget {
                         .length -
                     1 &&
             id == quizManager.correctNameIndexes[quizManager.quizStep]) {
+          // 最後の文字で正解が選択された場合
           updateQuizCompleted(); // quizCompletedをtrueにする
+          quizManager.currentResult = true;
         } else if (id == quizManager.correctNameIndexes[quizManager.quizStep]) {
+          // 正解が選択された場合
           quizManager.quizStep++;
-          // TODO: 正解のエフェクトを出す
+          quizManager.currentResult = true;
         } else {
+          // 間違いが選択された場合
           quizManager.numberOfIncorrectAnswers++;
-          // TODO: 間違っているエフェクトを出す
+          quizManager.currentResult = false;
         }
         setStateOfParent();
-        print('quizManager.quizStep=${quizManager.quizStep}');
-        print(
-            'quizManager.numberOfIncorrectAnswers=${quizManager.numberOfIncorrectAnswers}');
-        print('quizCompleted=$quizCompleted');
+        // print('quizManager.quizStep=${quizManager.quizStep}');
+        // print(
+        //     'quizManager.numberOfIncorrectAnswers=${quizManager.numberOfIncorrectAnswers}');
+        // print('quizCompleted=$quizCompleted');
       },
       style: ElevatedButton.styleFrom(
         minimumSize: const Size(60, 60),

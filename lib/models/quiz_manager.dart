@@ -7,6 +7,7 @@ class QuizManager {
   List<String> incorrectNames; // 不正解の名前
   int quizStep = 0; // いま何文字目か
   int numberOfIncorrectAnswers = 0; // 誤タップした数
+  bool currentResult = false; // いまの回答の正誤
 
   QuizManager({
     required this.correctName,
@@ -50,8 +51,8 @@ class QuizManager {
     // quizFirstLineとquizFollowingLinesを結合し、最終的に返すquizを作る
     List<List<String>> quiz = [quizFirstLine, ...quizFollowingLines];
 
-    print('correctNameIndexes=$correctNameIndexes');
-    print('quiz=$quiz');
+    // print('correctNameIndexes=$correctNameIndexes');
+    // print('quiz=$quiz');
     return quiz;
   }
 
