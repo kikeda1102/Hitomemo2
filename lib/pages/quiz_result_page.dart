@@ -14,6 +14,13 @@ class QuizResultPage extends StatefulWidget {
 class _QuizResultPageState extends State<QuizResultPage> {
   @override
   Widget build(BuildContext context) {
-    return const Placeholder();
+    return Scaffold(
+      appBar: AppBar(
+        title: const Text('Result'),
+      ),
+      body: const Center(
+        child: Text('Result'),
+      ),
+    );
   }
 }

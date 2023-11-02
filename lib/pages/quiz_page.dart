@@ -127,16 +127,14 @@ class _QuizPageState extends State<QuizPage> {
               // 次へボタン
               Visibility(
                 visible: quizCompleted,
-                child: Text('test'),
+                child: NextQuizButton(
+                  service: widget.service,
+                  randomlySelectedProfiles: widget.randomlySelectedProfiles,
+                  quizPageIndex: widget.quizPageIndex,
+                  allProfiles: widget.allProfiles,
+                  quizCompleted: quizCompleted,
+                ),
               ),
-
-              // NextQuizButton(
-              //     service: widget.service,
-              //     randomlySelectedProfiles: widget.randomlySelectedProfiles,
-              //     quizPageIndex: widget.quizPageIndex,
-              //     allProfiles: widget.allProfiles,
-              //     quizCompleted: quizCompleted,
-              //   ),
 
               // const SizedBox(height: 200),
             ],
@@ -189,7 +187,8 @@ class AnswerButtonWidget extends StatelessWidget {
           borderRadius: BorderRadius.circular(5),
         ),
       ),
-      child: Text(generatedQuiz[quizManager.quizStep][id]),
+      child: Text(
+          generatedQuiz[quizManager.quizStep][id]), // TODO: なんか動作おかしいので訂正必要
     );
   }
 }
