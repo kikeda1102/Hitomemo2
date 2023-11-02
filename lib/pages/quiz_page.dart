@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:hito_memo_2/models/profile.dart';
 import 'package:hito_memo_2/services/isar_service.dart';
-import 'package:hito_memo_2/models/quiz.dart';
+import 'package:hito_memo_2/models/quiz_manager.dart';
+import 'package:hito_memo_2/pages/quiz_result_page.dart';
 
 // クイズのページ
 class QuizPage extends StatefulWidget {
@@ -28,17 +29,24 @@ class _QuizPageState extends State<QuizPage> {
     incorrectNames:
         widget.allProfiles.map((e) => e.name).toList(), // 全部のprofileを渡している
   );
-  late List<List<String>> generatedQuiz;
+  late List<List<String>> generatedQuiz; // initStateで生成されるクイズ
+  bool quizCompleted = false; // クイズが終了したかどうか
 
   // setStateを呼び出す関数
   void setStateOfParent() {
     setState(() {});
   }
 
+  // quizCompletedをtrueにする関数
+  void updateQuizCompleted() {
+    quizCompleted = true;
+    setState(() {});
+  }
+
   @override
   void initState() {
     super.initState();
-    // 問題を生成する
+    // クイズを生成する
     generatedQuiz = quizManager.generateQuiz();
     // print('incorrectNames=${quiz.incorrectNames}');
     // print('generatedQuiz=$generatedQuiz');
@@ -84,33 +92,51 @@ class _QuizPageState extends State<QuizPage> {
                 mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                 children: [
                   AnswerButtonWidget(
-                      name: generatedQuiz[widget.quizPageIndex][0],
+                      quizManager: quizManager,
+                      generatedQuiz: generatedQuiz,
                       id: 0,
-                      setStateOfParent: setStateOfParent),
+                      quizCompleted: quizCompleted,
+                      setStateOfParent: setStateOfParent,
+                      updateQuizCompleted: updateQuizCompleted),
                   AnswerButtonWidget(
-                      name: generatedQuiz[widget.quizPageIndex][1],
+                      quizManager: quizManager,
+                      generatedQuiz: generatedQuiz,
                       id: 1,
-                      setStateOfParent: setStateOfParent),
+                      quizCompleted: quizCompleted,
+                      setStateOfParent: setStateOfParent,
+                      updateQuizCompleted: updateQuizCompleted),
                   AnswerButtonWidget(
-                      name: generatedQuiz[widget.quizPageIndex][2],
+                      quizManager: quizManager,
+                      generatedQuiz: generatedQuiz,
                       id: 2,
-                      setStateOfParent: setStateOfParent),
+                      quizCompleted: quizCompleted,
+                      setStateOfParent: setStateOfParent,
+                      updateQuizCompleted: updateQuizCompleted),
                   AnswerButtonWidget(
-                      name: generatedQuiz[widget.quizPageIndex][3],
+                      quizManager: quizManager,
+                      generatedQuiz: generatedQuiz,
                       id: 3,
-                      setStateOfParent: setStateOfParent),
+                      quizCompleted: quizCompleted,
+                      setStateOfParent: setStateOfParent,
+                      updateQuizCompleted: updateQuizCompleted),
                 ],
               ),
 
               const SizedBox(height: 40),
 
-              CorrectAnswerWidget(
-                service: widget.service,
-                randomlySelectedProfiles: widget.randomlySelectedProfiles,
-                quizPageIndex: widget.quizPageIndex,
-                allProfiles: widget.allProfiles,
+              // 次へボタン
+              Visibility(
+                visible: quizCompleted,
+                child: Text('test'),
               ),
-              // TODO: 採点、次のクイズへ遷移
+
+              // NextQuizButton(
+              //     service: widget.service,
+              //     randomlySelectedProfiles: widget.randomlySelectedProfiles,
+              //     quizPageIndex: widget.quizPageIndex,
+              //     allProfiles: widget.allProfiles,
+              //     quizCompleted: quizCompleted,
+              //   ),
 
               // const SizedBox(height: 200),
             ],
@@ -121,23 +147,41 @@ class _QuizPageState extends State<QuizPage> {
 
 // 一つの回答ボタン
 class AnswerButtonWidget extends StatelessWidget {
-  final String name; // 表示する名前
+  final QuizManager quizManager;
+  final List<List<String>> generatedQuiz;
   final int id; // このボタンのid
+  final bool quizCompleted;
   final Function() setStateOfParent;
-  int index = 0;
+  final Function() updateQuizCompleted;
   AnswerButtonWidget(
       {super.key,
-      required this.name,
+      required this.quizManager,
+      required this.generatedQuiz,
       required this.id,
-      required this.setStateOfParent});
+      required this.quizCompleted,
+      required this.setStateOfParent,
+      required this.updateQuizCompleted});
 
   @override
   Widget build(BuildContext context) {
     return ElevatedButton(
       onPressed: () {
-        // 次の文字を表示
-        index++;
+        // 最後の文字で正解が選択されたら、結果表示に遷移
+        if (quizManager.quizStep >= quizManager.correctName.length - 1 &&
+            id == quizManager.correctNameIndexes[quizManager.quizStep]) {
+          updateQuizCompleted();
+        } else if (id == quizManager.correctNameIndexes[quizManager.quizStep]) {
+          quizManager.quizStep++;
+          // TODO: 正解のエフェクトを出す
+        } else {
+          quizManager.numberOfIncorrectAnswers++;
+          // TODO: 間違っているエフェクトを出す
+        }
         setStateOfParent();
+        print('quizManager.quizStep=${quizManager.quizStep}');
+        print(
+            'quizManager.numberOfIncorrectAnswers=${quizManager.numberOfIncorrectAnswers}');
+        print('quizCompleted=$quizCompleted');
       },
       style: ElevatedButton.styleFrom(
         minimumSize: const Size(60, 60),
@@ -145,42 +189,50 @@ class AnswerButtonWidget extends StatelessWidget {
           borderRadius: BorderRadius.circular(5),
         ),
       ),
-      child: Text(name[index]),
+      child: Text(generatedQuiz[quizManager.quizStep][id]),
     );
   }
 }
 
-// 結果表示
-class CorrectAnswerWidget extends StatelessWidget {
+// 次へボタン
+class NextQuizButton extends StatelessWidget {
   final IsarService service;
-  List<Profile> randomlySelectedProfiles;
+  final List<Profile> randomlySelectedProfiles;
   final int quizPageIndex; // いま何問目か
   final List<Profile> allProfiles;
-  CorrectAnswerWidget(
+  final bool quizCompleted;
+  const NextQuizButton(
       {super.key,
       required this.service,
       required this.randomlySelectedProfiles,
       required this.quizPageIndex,
-      required this.allProfiles});
+      required this.allProfiles,
+      required this.quizCompleted});
 
   @override
   Widget build(BuildContext context) {
-    // TODO: ランダム選択を再実行
-
-    return ElevatedButton(
-      // TODO: onPressedを外から渡す設計にすれば省略できる
-      // というか、括り出す必要がない
-      onPressed: () {
-        Navigator.of(context).push(
-          MaterialPageRoute(
-              builder: (context) => QuizPage(
-                  service: service,
-                  randomlySelectedProfiles: randomlySelectedProfiles,
-                  quizPageIndex: quizPageIndex + 1,
-                  allProfiles: allProfiles)),
-        );
-      },
-      child: Text('Next'),
-    );
+    if (quizCompleted == true) {
+      return ElevatedButton(
+        onPressed: () {
+          if (quizPageIndex == randomlySelectedProfiles.length - 1) {
+            // Resultページへ遷移
+            Navigator.of(context).push(
+              MaterialPageRoute(builder: (context) => QuizResultPage()),
+            );
+          } else {
+            Navigator.of(context).push(
+              MaterialPageRoute(
+                  builder: (context) => QuizPage(
+                      service: service,
+                      randomlySelectedProfiles: randomlySelectedProfiles,
+                      quizPageIndex: quizPageIndex + 1,
+                      allProfiles: allProfiles)),
+            );
+          }
+        },
+        child: const Text('Next'),
+      );
+    }
+    return const SizedBox.shrink();
   }
 }
