@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:url_launcher/link.dart'; // プライバシーポリシーのページに飛ぶ用
+import 'package:hito_memo_2/models/settings.dart';
 import 'package:hito_memo_2/components/profile_search_delegate.dart';
 import 'package:hito_memo_2/pages/register_profile_page.dart';
 import 'package:hito_memo_2/pages/profile_detail_page.dart';
@@ -54,7 +55,9 @@ class _MainPageState extends State<MainPage> {
       QuizGatePage(
         service: widget.service,
       ),
-      SettingsPage(),
+      SettingsPage(
+        service: widget.service,
+      ),
     ];
 
     return Scaffold(
@@ -184,9 +187,10 @@ class HomePage extends StatelessWidget {
                 if (snapshot.hasError) {
                   return const Text('Something went wrong');
                 } else if (data == null || data.isEmpty) {
+                  print(data);
                   return const Center(child: Text('Tap + button to register.'));
                 } else {
-                  // TODO: createdAt/updatedAt順での表示への変更を可能に
+                  // TODO: createdAt/updatedAtの並び順での表示への変更を可能に
                   // dataをorder順にソートする
                   data.sort((a, b) => a.order.compareTo(b.order));
                   // ReorderableListViewで表示
@@ -209,42 +213,67 @@ class HomePage extends StatelessWidget {
                       // profileを取得
                       final profile = data[index];
                       // profileを表示
-                      return Card(
+                      return StreamBuilder(
                         key: ValueKey(profile.id),
-                        child: ListTile(
-                          title: Text(profile.name),
-                          // memosをsubtitleに表示
-                          subtitle: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Text(
-                                // profile.order.toString(), // for debug
-                                profile.memos
-                                    .join('     '), // memosの要素を改行で結合して表示
-                              ),
-                            ],
-                          ),
-                          // quizのscore表示
-                          trailing: Text(
-                            // nullなら何も表示しない
-                            profile.numberOfIncorrectTaps == null
-                                ? ''
-                                : '${profile.calculateCorrectRate()}%',
-                            // correctRateRankに従って色を変える
-                            style: profile.correctRateRank() == 'perfect'
-                                ? const TextStyle(color: Colors.green)
-                                : profile.correctRateRank() == 'good'
-                                    ? const TextStyle(color: Colors.orange)
-                                    : const TextStyle(color: Colors.red),
-                          ),
+                        stream: service.listenToSettings(),
+                        builder: (BuildContext context,
+                            AsyncSnapshot<Settings> snapshot) {
+                          final data = snapshot.data; // 静的解析が効くように変数に格納
+                          if (snapshot.hasError) {
+                            return const Text('Something went wrong');
+                          } else if (data == null) {
+                            return const Center(
+                                child: Text('Tap + button to register.'));
+                          } else {
+                            return Card(
+                              key: ValueKey(profile.id),
+                              child: ListTile(
+                                title: Text(profile.name),
+                                // memosをsubtitleに表示
+                                subtitle: Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    Text(
+                                      // profile.order.toString(), // for debug
+                                      profile.memos
+                                          .join('     '), // memosの要素を改行で結合して表示
+                                    ),
+                                  ],
+                                ),
+                                // quizのscore表示
+                                trailing: data.presentQuizScore == true
+                                    ? Text(
+                                        // nullなら何も表示しない
+                                        profile.numberOfIncorrectTaps == null
+                                            ? ''
+                                            : '${profile.calculateCorrectRate()}',
+                                        // correctRateRankに従って色を変える
+                                        style: profile.correctRateRank() ==
+                                                'perfect'
+                                            ? const TextStyle(
+                                                color: Colors.green,
+                                                fontSize: 15)
+                                            : profile.correctRateRank() ==
+                                                    'good'
+                                                ? const TextStyle(
+                                                    color: Colors.orange,
+                                                    fontSize: 15)
+                                                : const TextStyle(
+                                                    color: Colors.red,
+                                                    fontSize: 15),
+                                      )
+                                    : null,
 
-                          // profile detailへ遷移
-                          onTap: () => Navigator.of(context).push(
-                            MaterialPageRoute(
-                                builder: (context) => ProfileDetailPage(
-                                    id: profile.id, service: service)),
-                          ),
-                        ),
+                                // profile detailへ遷移
+                                onTap: () => Navigator.of(context).push(
+                                  MaterialPageRoute(
+                                      builder: (context) => ProfileDetailPage(
+                                          id: profile.id, service: service)),
+                                ),
+                              ),
+                            );
+                          }
+                        },
                       );
                     },
                   );

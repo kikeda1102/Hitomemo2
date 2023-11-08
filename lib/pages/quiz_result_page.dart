@@ -41,44 +41,62 @@ class _QuizResultPageState extends State<QuizResultPage> {
       ),
       body: Padding(
         padding: const EdgeInsets.all(8.0),
-        child: ListView.builder(
-          itemCount: widget.quizResultManager.correctProfiles.length,
-          itemBuilder: (BuildContext context, int index) {
-            return Card(
-              child: ListTile(
-                title:
-                    Text(widget.quizResultManager.correctProfiles[index].name),
-                subtitle: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      widget.quizResultManager.correctProfiles[index].memos
-                          .join('     '), // memosの要素を改行で結合して表示
+        child: Column(
+          children: [
+            Expanded(
+              child: ListView.builder(
+                itemCount: widget.quizResultManager.correctProfiles.length,
+                itemBuilder: (BuildContext context, int index) {
+                  return Card(
+                    child: ListTile(
+                      title: Text(
+                          widget.quizResultManager.correctProfiles[index].name),
+                      subtitle: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            widget
+                                .quizResultManager.correctProfiles[index].memos
+                                .join('     '), // memosの要素を改行で結合して表示
+                          ),
+                        ],
+                      ),
+                      // 正答率
+                      trailing: Text(
+                        // nullなら何も表示しない
+                        widget.quizResultManager.correctProfiles[index]
+                                    .numberOfIncorrectTaps ==
+                                null
+                            ? ''
+                            : '${widget.quizResultManager.correctProfiles[index].calculateCorrectRate()}',
+                        // correctRateRankに従って色を変える
+                        style: widget.quizResultManager.correctProfiles[index]
+                                    .correctRateRank() ==
+                                'perfect'
+                            ? const TextStyle(color: Colors.green, fontSize: 20)
+                            : widget.quizResultManager.correctProfiles[index]
+                                        .correctRateRank() ==
+                                    'good'
+                                ? const TextStyle(
+                                    color: Colors.orange, fontSize: 20)
+                                : const TextStyle(
+                                    color: Colors.red, fontSize: 20),
+                      ),
                     ),
-                  ],
-                ),
-                // 正答率
-                trailing: Text(
-                  // nullなら何も表示しない
-                  widget.quizResultManager.correctProfiles[index]
-                              .numberOfIncorrectTaps ==
-                          null
-                      ? ''
-                      : '${widget.quizResultManager.correctProfiles[index].calculateCorrectRate()}%',
-                  // correctRateRankに従って色を変える
-                  style: widget.quizResultManager.correctProfiles[index]
-                              .correctRateRank() ==
-                          'perfect'
-                      ? const TextStyle(color: Colors.green)
-                      : widget.quizResultManager.correctProfiles[index]
-                                  .correctRateRank() ==
-                              'good'
-                          ? const TextStyle(color: Colors.orange)
-                          : const TextStyle(color: Colors.red),
-                ),
+                  );
+                },
               ),
-            );
-          },
+            ),
+            // 戻るボタン
+            ElevatedButton(
+              child: const Text('Back to Quiz Top'),
+              onPressed: () {
+                // quiz gate pageに遷移
+                Navigator.of(context).popUntil((route) => route.isFirst);
+              },
+            ),
+            const SizedBox(height: 80),
+          ],
         ),
       ),
     );

@@ -12,9 +12,6 @@ void main() async {
   runApp(MyApp(service: service));
 }
 
-// settings_uiのための設定
-late _MyAppState settingUI;
-
 class MyApp extends StatefulWidget {
   final IsarService service;
   const MyApp({Key? key, required this.service}) : super(key: key);
@@ -25,13 +22,9 @@ class MyApp extends StatefulWidget {
 
 class _MyAppState extends State<MyApp> {
   bool presentQuizScore = true;
-  void callSetState() {
-    setState(() {});
-  }
 
   @override
   Widget build(BuildContext context) {
-    settingUI = this;
     return MaterialApp(
       debugShowCheckedModeBanner: false, // デバッグバナーを非表示
       title: 'hitomemo',

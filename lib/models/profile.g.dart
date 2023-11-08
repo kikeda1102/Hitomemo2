@@ -116,11 +116,11 @@ Profile _profileDeserialize(
     imageBytes: reader.readByteList(offsets[1]),
     memos: reader.readStringList(offsets[2]) ?? [],
     name: reader.readString(offsets[3]),
+    numberOfIncorrectTaps: reader.readLongOrNull(offsets[4]),
     order: reader.readLongOrNull(offsets[5]) ?? -1,
     updated: reader.readDateTimeOrNull(offsets[6]),
   );
   object.created = reader.readDateTime(offsets[0]);
-  object.numberOfIncorrectTaps = reader.readLongOrNull(offsets[4]);
   return object;
 }
 

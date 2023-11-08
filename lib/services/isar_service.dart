@@ -1,7 +1,7 @@
 import 'package:isar/isar.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:hito_memo_2/models/profile.dart';
-// import 'package:hito_memo_2/models/general_tag.dart';
+import 'package:hito_memo_2/models/settings.dart';
 
 // IsarServcie: DBを操作するためのメソッドを持つserviceクラス
 class IsarService {
@@ -18,7 +18,7 @@ class IsarService {
     if (Isar.instanceNames.isEmpty) {
       final dir = await getApplicationDocumentsDirectory();
       return await Isar.open(
-        [ProfileSchema],
+        [ProfileSchema, SettingsSchema],
         inspector: true,
         directory: dir.path,
       );
@@ -44,6 +44,14 @@ class IsarService {
     isar.writeTxnSync<int>(() => isar.profiles.putSync(newProfile));
   }
 
+  // settingsのput
+  Future<void> putSettings(Settings newSettings) async {
+    final isar = await _isar;
+    isar.writeTxn(() async {
+      isar.settings.put(newSettings);
+    });
+  }
+
   // Read
   // 全件をStreamとして取得
   Stream<List<Profile>> listenToAllProfiles() async* {
@@ -51,6 +59,31 @@ class IsarService {
     yield* isar.profiles.where().watch(
           fireImmediately: true,
         ); // 初回の要素リストを最初に返す
+  }
+
+  // streamで取得
+  Stream<Settings> listenToSettings() async* {
+    final isar = await _isar;
+    Stream<Settings?> stream = isar.settings.watchObject(
+      0,
+      fireImmediately: true,
+    );
+    // nullの場合に対応
+    Stream<Settings> nonNullableStream = stream
+        .where((settings) => settings != null) // nullでない要素だけをフィルタリング
+        .map((settings) {
+      if (settings == null) {
+        throw Exception("Null settings encountered."); // エラーをスロー
+      }
+      return settings; // nullでない場合、settingsを返す
+    });
+    yield* nonNullableStream;
+  }
+
+  // Futureで取得
+  Future<Settings?> getSettings() async {
+    final isar = await _isar;
+    return isar.settings.get(0);
   }
 
   // idで1件をStreamとして取得
