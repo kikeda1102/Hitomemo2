@@ -12,6 +12,7 @@ class Profile {
   String name;
   List<byte>? imageBytes; // 画像
   List<String> memos; //箇条書きのメモ
+  int? numberOfIncorrectTaps; // quizで誤タップされた回数
 
   // コンストラクタ
   Profile({
@@ -21,6 +22,7 @@ class Profile {
     required this.name,
     this.imageBytes,
     required this.memos,
+    this.numberOfIncorrectTaps,
   }) : created = DateTime.now();
 
   // copyWithメソッドを定義
@@ -32,6 +34,7 @@ class Profile {
     String? newName,
     List<int>? newImageBytes,
     List<String>? newMemos,
+    int? newNumberOfIncorrectTaps,
   }) {
     return Profile(
       id: newId ?? id,
@@ -41,6 +44,40 @@ class Profile {
       name: newName ?? name,
       imageBytes: newImageBytes ?? imageBytes,
       memos: newMemos ?? memos,
+      numberOfIncorrectTaps: newNumberOfIncorrectTaps ?? numberOfIncorrectTaps,
     );
+  }
+
+  // 正答率を計算するメソッド %単位
+  int? calculateCorrectRate() {
+    if (numberOfIncorrectTaps == null) {
+      return null;
+    } else {
+      int correctRate = 0;
+      // スペースを除外
+      String correctName = name.replaceAll(' ', '');
+      correctRate = 100 *
+          (correctName.length - numberOfIncorrectTaps!) ~/
+          correctName.length;
+      // 0未満にならないようにする
+      if (correctRate < 0) {
+        correctRate = 0;
+      }
+      return correctRate;
+    }
+  }
+
+  // ランクを計算するメソッド
+  String correctRateRank() {
+    int? correctRate = calculateCorrectRate();
+    if (correctRate == null) {
+      return 'null';
+    } else if (correctRate == 100) {
+      return 'perfect';
+    } else if (correctRate >= 70) {
+      return 'good';
+    } else {
+      return 'bad';
+    }
   }
 }

@@ -37,13 +37,18 @@ const ProfileSchema = CollectionSchema(
       name: r'name',
       type: IsarType.string,
     ),
-    r'order': PropertySchema(
+    r'numberOfIncorrectTaps': PropertySchema(
       id: 4,
+      name: r'numberOfIncorrectTaps',
+      type: IsarType.long,
+    ),
+    r'order': PropertySchema(
+      id: 5,
       name: r'order',
       type: IsarType.long,
     ),
     r'updated': PropertySchema(
-      id: 5,
+      id: 6,
       name: r'updated',
       type: IsarType.dateTime,
     )
@@ -95,8 +100,9 @@ void _profileSerialize(
   writer.writeByteList(offsets[1], object.imageBytes);
   writer.writeStringList(offsets[2], object.memos);
   writer.writeString(offsets[3], object.name);
-  writer.writeLong(offsets[4], object.order);
-  writer.writeDateTime(offsets[5], object.updated);
+  writer.writeLong(offsets[4], object.numberOfIncorrectTaps);
+  writer.writeLong(offsets[5], object.order);
+  writer.writeDateTime(offsets[6], object.updated);
 }
 
 Profile _profileDeserialize(
@@ -110,10 +116,11 @@ Profile _profileDeserialize(
     imageBytes: reader.readByteList(offsets[1]),
     memos: reader.readStringList(offsets[2]) ?? [],
     name: reader.readString(offsets[3]),
-    order: reader.readLongOrNull(offsets[4]) ?? -1,
-    updated: reader.readDateTimeOrNull(offsets[5]),
+    order: reader.readLongOrNull(offsets[5]) ?? -1,
+    updated: reader.readDateTimeOrNull(offsets[6]),
   );
   object.created = reader.readDateTime(offsets[0]);
+  object.numberOfIncorrectTaps = reader.readLongOrNull(offsets[4]);
   return object;
 }
 
@@ -133,8 +140,10 @@ P _profileDeserializeProp<P>(
     case 3:
       return (reader.readString(offset)) as P;
     case 4:
-      return (reader.readLongOrNull(offset) ?? -1) as P;
+      return (reader.readLongOrNull(offset)) as P;
     case 5:
+      return (reader.readLongOrNull(offset) ?? -1) as P;
+    case 6:
       return (reader.readDateTimeOrNull(offset)) as P;
     default:
       throw IsarError('Unknown property with id $propertyId');
@@ -838,6 +847,80 @@ extension ProfileQueryFilter
     });
   }
 
+  QueryBuilder<Profile, Profile, QAfterFilterCondition>
+      numberOfIncorrectTapsIsNull() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(const FilterCondition.isNull(
+        property: r'numberOfIncorrectTaps',
+      ));
+    });
+  }
+
+  QueryBuilder<Profile, Profile, QAfterFilterCondition>
+      numberOfIncorrectTapsIsNotNull() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(const FilterCondition.isNotNull(
+        property: r'numberOfIncorrectTaps',
+      ));
+    });
+  }
+
+  QueryBuilder<Profile, Profile, QAfterFilterCondition>
+      numberOfIncorrectTapsEqualTo(int? value) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.equalTo(
+        property: r'numberOfIncorrectTaps',
+        value: value,
+      ));
+    });
+  }
+
+  QueryBuilder<Profile, Profile, QAfterFilterCondition>
+      numberOfIncorrectTapsGreaterThan(
+    int? value, {
+    bool include = false,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.greaterThan(
+        include: include,
+        property: r'numberOfIncorrectTaps',
+        value: value,
+      ));
+    });
+  }
+
+  QueryBuilder<Profile, Profile, QAfterFilterCondition>
+      numberOfIncorrectTapsLessThan(
+    int? value, {
+    bool include = false,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.lessThan(
+        include: include,
+        property: r'numberOfIncorrectTaps',
+        value: value,
+      ));
+    });
+  }
+
+  QueryBuilder<Profile, Profile, QAfterFilterCondition>
+      numberOfIncorrectTapsBetween(
+    int? lower,
+    int? upper, {
+    bool includeLower = true,
+    bool includeUpper = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.between(
+        property: r'numberOfIncorrectTaps',
+        lower: lower,
+        includeLower: includeLower,
+        upper: upper,
+        includeUpper: includeUpper,
+      ));
+    });
+  }
+
   QueryBuilder<Profile, Profile, QAfterFilterCondition> orderEqualTo(
       int value) {
     return QueryBuilder.apply(this, (query) {
@@ -992,6 +1075,19 @@ extension ProfileQuerySortBy on QueryBuilder<Profile, Profile, QSortBy> {
     });
   }
 
+  QueryBuilder<Profile, Profile, QAfterSortBy> sortByNumberOfIncorrectTaps() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'numberOfIncorrectTaps', Sort.asc);
+    });
+  }
+
+  QueryBuilder<Profile, Profile, QAfterSortBy>
+      sortByNumberOfIncorrectTapsDesc() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'numberOfIncorrectTaps', Sort.desc);
+    });
+  }
+
   QueryBuilder<Profile, Profile, QAfterSortBy> sortByOrder() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'order', Sort.asc);
@@ -1055,6 +1151,19 @@ extension ProfileQuerySortThenBy
     });
   }
 
+  QueryBuilder<Profile, Profile, QAfterSortBy> thenByNumberOfIncorrectTaps() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'numberOfIncorrectTaps', Sort.asc);
+    });
+  }
+
+  QueryBuilder<Profile, Profile, QAfterSortBy>
+      thenByNumberOfIncorrectTapsDesc() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'numberOfIncorrectTaps', Sort.desc);
+    });
+  }
+
   QueryBuilder<Profile, Profile, QAfterSortBy> thenByOrder() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'order', Sort.asc);
@@ -1107,6 +1216,12 @@ extension ProfileQueryWhereDistinct
     });
   }
 
+  QueryBuilder<Profile, Profile, QDistinct> distinctByNumberOfIncorrectTaps() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addDistinctBy(r'numberOfIncorrectTaps');
+    });
+  }
+
   QueryBuilder<Profile, Profile, QDistinct> distinctByOrder() {
     return QueryBuilder.apply(this, (query) {
       return query.addDistinctBy(r'order');
@@ -1149,6 +1264,13 @@ extension ProfileQueryProperty
   QueryBuilder<Profile, String, QQueryOperations> nameProperty() {
     return QueryBuilder.apply(this, (query) {
       return query.addPropertyName(r'name');
+    });
+  }
+
+  QueryBuilder<Profile, int?, QQueryOperations>
+      numberOfIncorrectTapsProperty() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addPropertyName(r'numberOfIncorrectTaps');
     });
   }
 

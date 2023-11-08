@@ -78,19 +78,6 @@ class _MainPageState extends State<MainPage> {
               ),
             ),
             const SizedBox(height: 20),
-            // TODO: 使い方
-            Link(
-              uri: Uri.parse('https://kikeda1102.github.io/Hitomemo2/'),
-              target: LinkTarget.self, // 独立したブラウゼで開く
-              builder: (BuildContext context, FollowLink? followLink) {
-                return TextButton.icon(
-                  icon: const Icon(Icons.open_in_new),
-                  onPressed: followLink,
-                  label: const Text('How to use'),
-                );
-              },
-            ),
-            const SizedBox(height: 20),
             Link(
               // 開きたいURL
               uri: Uri.parse('https://kikeda1102.github.io/Hitomemo2/'),
@@ -199,6 +186,7 @@ class HomePage extends StatelessWidget {
                 } else if (data == null || data.isEmpty) {
                   return const Center(child: Text('Tap + button to register.'));
                 } else {
+                  // TODO: createdAt/updatedAt順での表示への変更を可能に
                   // dataをorder順にソートする
                   data.sort((a, b) => a.order.compareTo(b.order));
                   // ReorderableListViewで表示
@@ -235,6 +223,19 @@ class HomePage extends StatelessWidget {
                                     .join('     '), // memosの要素を改行で結合して表示
                               ),
                             ],
+                          ),
+                          // quizのscore表示
+                          trailing: Text(
+                            // nullなら何も表示しない
+                            profile.numberOfIncorrectTaps == null
+                                ? ''
+                                : '${profile.calculateCorrectRate()}%',
+                            // correctRateRankに従って色を変える
+                            style: profile.correctRateRank() == 'perfect'
+                                ? const TextStyle(color: Colors.green)
+                                : profile.correctRateRank() == 'good'
+                                    ? const TextStyle(color: Colors.orange)
+                                    : const TextStyle(color: Colors.red),
                           ),
 
                           // profile detailへ遷移

@@ -4,6 +4,7 @@ import 'package:hito_memo_2/models/profile.dart';
 import 'package:hito_memo_2/services/isar_service.dart';
 // import 'package:hito_memo_2/models/quiz.dart';
 import 'package:hito_memo_2/pages/quiz_page.dart';
+import 'package:hito_memo_2/models/quiz_result_manager.dart';
 
 // クイズの開始ページ
 
@@ -26,6 +27,8 @@ class _QuizGatePageState extends State<QuizGatePage> {
       });
   // 全profilesの数を取得
   late final numberOfProfiles = widget.service.getNumberOfProfiles();
+  // quizResultManagerを生成
+  late final QuizResultManager quizResultManager;
 
   @override
   void initState() {
@@ -70,9 +73,10 @@ class _QuizGatePageState extends State<QuizGatePage> {
 
                   return Column(
                     children: [
-                      const Text('Number of questions'),
+                      const Text('Number of questions',
+                          style: TextStyle(fontSize: 16)),
 
-                      const SizedBox(height: 20),
+                      const SizedBox(height: 10),
 
                       Slider(
                         value: _value.toDouble(),
@@ -90,9 +94,8 @@ class _QuizGatePageState extends State<QuizGatePage> {
                           child: const Text('Start'),
                           onPressed: () async {
                             // データのランダム取得
-                            List<Profile> randomlySelectedProfiles =
-                                await widget.service
-                                    .getProfilesRomdomly(_value.toInt());
+                            List<Profile> correctProfiles = await widget.service
+                                .getProfilesRomdomly(_value.toInt());
 
                             final List<Profile> allProfiles =
                                 await widget.service.getAllProfiles();
@@ -103,13 +106,18 @@ class _QuizGatePageState extends State<QuizGatePage> {
                             }
                             Navigator.of(context).push(
                               MaterialPageRoute(
-                                  builder: (context) => QuizPage(
-                                        service: widget.service,
-                                        randomlySelectedProfiles:
-                                            randomlySelectedProfiles,
-                                        quizPageIndex: 0,
-                                        allProfiles: allProfiles,
-                                      )),
+                                // QuizPageへ遷移
+                                builder: (context) => QuizPage(
+                                  service: widget.service,
+                                  correctProfiles: correctProfiles,
+                                  quizPageIndex: 0,
+                                  allProfiles: allProfiles,
+                                  quizResultManager: QuizResultManager(
+                                    correctProfiles: correctProfiles,
+                                    numbersOfIncorrectTaps: <int>[],
+                                  ),
+                                ),
+                              ),
                             );
                           }),
                     ],
