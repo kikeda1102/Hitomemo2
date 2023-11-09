@@ -4,7 +4,6 @@ import 'package:hito_memo_2/models/quiz_result_manager.dart';
 import 'package:hito_memo_2/services/isar_service.dart';
 import 'package:hito_memo_2/models/quiz_manager.dart';
 import 'package:hito_memo_2/pages/quiz_result_page.dart';
-// import 'dart:math';
 
 // クイズのページ
 class QuizPage extends StatefulWidget {

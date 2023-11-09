@@ -62,27 +62,17 @@ class IsarService {
   }
 
   // streamで取得
-  Stream<Settings> listenToSettings() async* {
+  Stream<List<Settings>> listenToSettings() async* {
     final isar = await _isar;
-    Stream<Settings?> stream = isar.settings.watchObject(
-      0,
-      fireImmediately: true,
-    );
-    // nullの場合に対応
-    Stream<Settings> nonNullableStream = stream
-        .where((settings) => settings != null) // nullでない要素だけをフィルタリング
-        .map((settings) {
-      if (settings == null) {
-        throw Exception("Null settings encountered."); // エラーをスロー
-      }
-      return settings; // nullでない場合、settingsを返す
-    });
-    yield* nonNullableStream;
+    yield* isar.settings.where().watch(
+          fireImmediately: true,
+        ); // 初回の要素リストを最初に返す
   }
 
   // Futureで取得
   Future<Settings?> getSettings() async {
     final isar = await _isar;
+    // print('isar.settings.get(0) = ${isar.settings.get(0)}');
     return isar.settings.get(0);
   }
 

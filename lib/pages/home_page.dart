@@ -6,8 +6,6 @@ import 'package:hito_memo_2/pages/register_profile_page.dart';
 import 'package:hito_memo_2/pages/profile_detail_page.dart';
 import 'package:hito_memo_2/models/profile.dart';
 import 'package:hito_memo_2/services/isar_service.dart';
-// import 'package:navigator_scope/navigator_scope.dart'; // BottomAppBarを固定した画面遷移
-// import 'package:hito_memo_2/pages/quiz_page.dart';
 import 'package:hito_memo_2/pages/setting_page.dart';
 import 'package:hito_memo_2/pages/quiz_gate_page.dart';
 
@@ -52,12 +50,8 @@ class _MainPageState extends State<MainPage> {
     // 切り替えるページたち
     final pageWidgets = [
       HomePage(service: widget.service),
-      QuizGatePage(
-        service: widget.service,
-      ),
-      SettingsPage(
-        service: widget.service,
-      ),
+      QuizGatePage(service: widget.service),
+      SettingsPage(service: widget.service),
     ];
 
     return Scaffold(
@@ -187,7 +181,7 @@ class HomePage extends StatelessWidget {
                 if (snapshot.hasError) {
                   return const Text('Something went wrong');
                 } else if (data == null || data.isEmpty) {
-                  print(data);
+                  // print(data);
                   return const Center(child: Text('Tap + button to register.'));
                 } else {
                   // TODO: createdAt/updatedAtの並び順での表示への変更を可能に
@@ -217,11 +211,11 @@ class HomePage extends StatelessWidget {
                         key: ValueKey(profile.id),
                         stream: service.listenToSettings(),
                         builder: (BuildContext context,
-                            AsyncSnapshot<Settings> snapshot) {
+                            AsyncSnapshot<List<Settings>> snapshot) {
                           final data = snapshot.data; // 静的解析が効くように変数に格納
                           if (snapshot.hasError) {
                             return const Text('Something went wrong');
-                          } else if (data == null) {
+                          } else if (data == null || data.isEmpty) {
                             return const Center(
                                 child: Text('Tap + button to register.'));
                           } else {
@@ -241,7 +235,7 @@ class HomePage extends StatelessWidget {
                                   ],
                                 ),
                                 // quizのscore表示
-                                trailing: data.presentQuizScore == true
+                                trailing: data[0].presentQuizScore == true
                                     ? Text(
                                         // nullなら何も表示しない
                                         profile.numberOfIncorrectTaps == null

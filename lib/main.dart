@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:hito_memo_2/pages/home_page.dart'; // 開始画面用
+import 'package:hito_memo_2/pages/home_page.dart';
 import 'package:hito_memo_2/services/isar_service.dart';
+import 'package:hito_memo_2/models/settings.dart';
 
 void main() async {
   // IsarDBを使うための初期化の保証
@@ -21,7 +22,34 @@ class MyApp extends StatefulWidget {
 }
 
 class _MyAppState extends State<MyApp> {
-  bool presentQuizScore = true;
+  // 設定
+  late Settings settings;
+
+  @override
+  void initState() {
+    super.initState();
+    // 設定がなければ初期値を設定、DB保存
+    Future(() async {
+      if (await widget.service.getSettings() == null) {
+        // print(
+        //     'widget.service.getSettings() = ${await widget.service.getSettings()}');
+        settings = Settings(
+          language: 'ja',
+          presentQuizScore: true,
+          presentCreatedAt: true,
+        );
+        // 保存
+        widget.service.putSettings(settings);
+      }
+      // load
+      settings = await widget.service.getSettings() ??
+          Settings(
+            language: 'ja',
+            presentQuizScore: true,
+            presentCreatedAt: true,
+          );
+    });
+  }
 
   @override
   Widget build(BuildContext context) {

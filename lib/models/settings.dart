@@ -12,7 +12,7 @@ class Settings {
 
   // コンストラクタ
   Settings({
-    this.id = Isar.autoIncrement,
+    this.id = 0,
     required this.language,
     required this.presentQuizScore,
     required this.presentCreatedAt,
@@ -25,6 +25,7 @@ class Settings {
     bool? newPresentCreatedAt,
   }) {
     return Settings(
+      id: id,
       language: newLanguage ?? language,
       presentQuizScore: newPresentQuizScore ?? presentQuizScore,
       presentCreatedAt: newPresentCreatedAt ?? presentCreatedAt,
