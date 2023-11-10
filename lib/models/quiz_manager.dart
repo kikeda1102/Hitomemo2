@@ -77,15 +77,14 @@ class QuizManager {
       List<String> correctLetters, List<String> incorrectLetters) {
     // quizの1要素め
     // incorrectLettersから、頭文字だけを取り出す
-    List<String> incorrectFirstLetters = generateIncorrectInitials();
-    // incorrectFirstLettersをshuffleして最初の３つを取り出す
-    incorrectFirstLetters.shuffle();
-    List<String> incorrect3FirstLetters =
-        incorrectFirstLetters.take(3).toList();
-    incorrect3FirstLetters.shuffle();
+    List<String> incorrectInitials = generateIncorrectInitials();
+    // incorrectInitialsをshuffleして最初の３つを取り出す
+    incorrectInitials.shuffle();
+    List<String> incorrect3Initials = incorrectInitials.take(3).toList();
+    incorrect3Initials.shuffle();
     // correctNameIndexesの位置に、correctLetters[0]を挿入する
-    incorrect3FirstLetters.insert(correctNameIndexes[0], correctLetters[0]);
-    List<String> quizFirstLine = incorrect3FirstLetters;
+    incorrect3Initials.insert(correctNameIndexes[0], correctLetters[0]);
+    List<String> quizFirstLine = incorrect3Initials;
     return quizFirstLine;
   }
 

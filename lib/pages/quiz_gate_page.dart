@@ -1,8 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:hito_memo_2/models/profile.dart';
-// import 'package:isar/isar.dart';
 import 'package:hito_memo_2/services/isar_service.dart';
-// import 'package:hito_memo_2/models/quiz.dart';
 import 'package:hito_memo_2/pages/quiz_page.dart';
 import 'package:hito_memo_2/models/quiz_result_manager.dart';
 
@@ -25,8 +23,8 @@ class _QuizGatePageState extends State<QuizGatePage> {
   void _changeSlider(double e) => setState(() {
         _value = e.toInt();
       });
-  // 全profilesの数を取得
-  late final numberOfProfiles = widget.service.getNumberOfProfiles();
+  // 有効な全profilesの数を取得
+  late final numberOfValidProfiles = widget.service.getNumberOfValidProfiles();
   // quizResultManagerを生成
   late final QuizResultManager quizResultManager;
 
@@ -34,7 +32,7 @@ class _QuizGatePageState extends State<QuizGatePage> {
   void initState() {
     super.initState();
     Future(() async {
-      _value = await numberOfProfiles;
+      _value = await numberOfValidProfiles;
     });
   }
 
@@ -56,20 +54,21 @@ class _QuizGatePageState extends State<QuizGatePage> {
 
           // 問題数を選択するスライダー
           FutureBuilder(
-              future: numberOfProfiles,
+              future: numberOfValidProfiles,
               builder: (context, snapshot) {
-                int? numberOfProfiles = snapshot.data;
+                int? numberOfValidProfiles = snapshot.data;
                 if (snapshot.connectionState == ConnectionState.waiting) {
                   return const Center(child: CircularProgressIndicator());
-                } else if (!snapshot.hasData || numberOfProfiles == null) {
+                } else if (!snapshot.hasData || numberOfValidProfiles == null) {
                   return const CircularProgressIndicator();
-                } else if (numberOfProfiles <= 3) {
-                  // profilesが4件未満の時の処理
+                } else if (numberOfValidProfiles <= 3) {
+                  // TODO: numberOfValidProfilesが4件未満の時の処理
                   return const Text(
-                    'Register at least 4 people to start quiz.',
+                    'Register at least 4 valid profiles to start quiz.',
+                    textAlign: TextAlign.center,
                   );
                 } else {
-                  _maxValue = numberOfProfiles; // スライダーの最大値を設定
+                  _maxValue = numberOfValidProfiles; // スライダーの最大値を設定
 
                   return Column(
                     children: [

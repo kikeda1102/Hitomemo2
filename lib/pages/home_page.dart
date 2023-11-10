@@ -216,8 +216,7 @@ class HomePage extends StatelessWidget {
                           if (snapshot.hasError) {
                             return const Text('Something went wrong');
                           } else if (data == null || data.isEmpty) {
-                            return const Center(
-                                child: Text('Tap + button to register.'));
+                            return const Text('Tap + button to register.');
                           } else {
                             return Card(
                               key: ValueKey(profile.id),

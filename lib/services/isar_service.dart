@@ -125,7 +125,7 @@ class IsarService {
   // 全件の数を取得
   // スライダー用
   // memoがないprofileは除外
-  Future<int> getNumberOfProfiles() async {
+  Future<int> getNumberOfValidProfiles() async {
     final isar = await _isar;
     return isar.profiles.where().findAll().then((value) {
       // memoを持たないprofileを除外
