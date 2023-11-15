@@ -184,6 +184,7 @@ class HomePage extends StatelessWidget {
                   // print(data);
                   return const Center(child: Text('Tap + button to register.'));
                 } else {
+                  // TODO: UIのoverflowに対処
                   // TODO: createdAt/updatedAtの並び順での表示への変更を可能に
                   // dataをorder順にソートする
                   data.sort((a, b) => a.order.compareTo(b.order));

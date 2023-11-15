@@ -61,10 +61,9 @@ class _QuizGatePageState extends State<QuizGatePage> {
                   return const Center(child: CircularProgressIndicator());
                 } else if (!snapshot.hasData || numberOfValidProfiles == null) {
                   return const CircularProgressIndicator();
-                } else if (numberOfValidProfiles <= 3) {
-                  // TODO: numberOfValidProfilesが4件未満の時の処理
+                } else if (numberOfValidProfiles == 0) {
                   return const Text(
-                    'Register at least 4 valid profiles to start quiz.',
+                    'Register profiles with memos to start quiz.',
                     textAlign: TextAlign.center,
                   );
                 } else {
@@ -72,19 +71,21 @@ class _QuizGatePageState extends State<QuizGatePage> {
 
                   return Column(
                     children: [
-                      const Text('Number of questions',
-                          style: TextStyle(fontSize: 16)),
+                      if (_maxValue > 1)
+                        const Text('Number of questions',
+                            style: TextStyle(fontSize: 16)),
 
                       const SizedBox(height: 10),
 
-                      Slider(
-                        value: _value.toDouble(),
-                        min: _minValue.toDouble(),
-                        max: _maxValue.toDouble(),
-                        divisions: (_maxValue - 1).toInt(),
-                        label: _value.toInt().toString(),
-                        onChanged: _changeSlider,
-                      ),
+                      if (_maxValue > 1)
+                        Slider(
+                          value: _value.toDouble(),
+                          min: _minValue.toDouble(),
+                          max: _maxValue.toDouble(),
+                          divisions: (_maxValue - 1).toInt(),
+                          label: _value.toInt().toString(),
+                          onChanged: _changeSlider,
+                        ),
 
                       const SizedBox(height: 40),
 

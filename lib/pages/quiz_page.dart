@@ -70,11 +70,12 @@ class _QuizPageState extends State<QuizPage> {
     }
 
     return Scaffold(
-        appBar: AppBar(
-          title: Text(
-              '${widget.quizPageIndex + 1} / ${widget.correctProfiles.length}'),
-        ),
-        body: Padding(
+      appBar: AppBar(
+        title: Text(
+            '${widget.quizPageIndex + 1} / ${widget.correctProfiles.length}'),
+      ),
+      body: SingleChildScrollView(
+        child: Padding(
           padding: const EdgeInsets.all(30.0),
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
@@ -158,27 +159,31 @@ class _QuizPageState extends State<QuizPage> {
 
               const SizedBox(height: 40),
 
-              // 次へボタン
-              Visibility(
-                visible: quizCompleted,
-                maintainSize: true,
-                maintainAnimation: true,
-                maintainState: true,
-                child: NextQuizButton(
-                  service: widget.service,
-                  correctProfiles: widget.correctProfiles,
-                  quizPageIndex: widget.quizPageIndex,
-                  allProfiles: widget.allProfiles,
-                  quizCompleted: quizCompleted,
-                  quizManager: quizManager,
-                  quizResultManager: widget.quizResultManager,
-                ),
-              ),
-
               // const SizedBox(height: 200),
             ],
           ),
-        ));
+        ),
+      ),
+      bottomNavigationBar: // 次へボタン
+          Container(
+        padding: const EdgeInsets.all(30),
+        child: Visibility(
+          visible: quizCompleted,
+          maintainSize: true,
+          maintainAnimation: true,
+          maintainState: true,
+          child: NextQuizButton(
+            service: widget.service,
+            correctProfiles: widget.correctProfiles,
+            quizPageIndex: widget.quizPageIndex,
+            allProfiles: widget.allProfiles,
+            quizCompleted: quizCompleted,
+            quizManager: quizManager,
+            quizResultManager: widget.quizResultManager,
+          ),
+        ),
+      ),
+    );
   }
 }
 

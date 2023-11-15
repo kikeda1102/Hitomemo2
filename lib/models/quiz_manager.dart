@@ -98,6 +98,38 @@ class QuizManager {
     // 全体の中で複数回登場する文字の除外 ユニークにする
     incorrectLetters = incorrectLetters.toSet().toList();
 
+    if (incorrectLetters.length <= 3) {
+      // プリセットの文字列を追加
+      incorrectLetters.addAll([
+        'a',
+        'b',
+        'c',
+        'd',
+        'e',
+        'f',
+        'g',
+        'h',
+        'i',
+        'j',
+        'k',
+        'l',
+        'm',
+        'n',
+        'o',
+        'p',
+        'q',
+        'r',
+        's',
+        't',
+        'u',
+        'v',
+        'x',
+        'y',
+        'z'
+      ]);
+      // uniqueにする
+      incorrectLetters = incorrectLetters.toSet().toList();
+    }
     // correctLettersに含まれる文字列を含むものを除外、correctNameとの文字の重複をなくす
     // correctNameを1文字ずつ分割する
     List<String> correctLetters = correctName.split('');
@@ -112,6 +144,21 @@ class QuizManager {
     // incorrectNamesの頭文字を取り出す
     List<String> incorrectInitials =
         incorrectNames.map((String name) => name[0]).toList();
+    if (incorrectInitials.length <= 3) {
+      // プリセットの文字列を追加
+      incorrectInitials.addAll([
+        'A',
+        'B',
+        'C',
+        'D',
+        'E',
+        'F',
+        'G',
+        'H',
+      ]);
+      // uniqueにする
+      incorrectInitials = incorrectInitials.toSet().toList();
+    }
     // correctNameの頭文字を取り出す
     List<String> correctInitials = correctName.split('').map((char) {
       if (char == ' ') {
@@ -124,6 +171,8 @@ class QuizManager {
     incorrectInitials = incorrectInitials
         .where((String char) => !correctInitials.contains(char))
         .toList();
+    // uniqueにする
+    incorrectInitials = incorrectInitials.toSet().toList();
     return incorrectInitials;
   }
 }
