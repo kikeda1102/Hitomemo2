@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:hito_memo_2/pages/home_page.dart';
 import 'package:hito_memo_2/services/isar_service.dart';
 import 'package:hito_memo_2/models/settings.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 void main() async {
   // IsarDBを使うための初期化の保証
@@ -11,6 +12,14 @@ void main() async {
 
   // アプリの起動
   runApp(MyApp(service: service));
+}
+
+// localizations
+mixin AppLocale {
+  static const String title = 'title';
+
+  static const Map<String, dynamic> EN = {title: 'Localization'};
+  static const Map<String, dynamic> JA = {title: 'ローカリゼーション'};
 }
 
 class MyApp extends StatefulWidget {
@@ -53,18 +62,29 @@ class _MyAppState extends State<MyApp> {
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      debugShowCheckedModeBanner: false, // デバッグバナーを非表示
-      title: 'hitomemo',
-      theme: ThemeData(
-        useMaterial3: true,
-        colorSchemeSeed: Colors.lightBlue,
-        // brightness: Brightness.dark, // ダークモード
-        // primarySwatch: Colors.blueGrey,
-        // accentColor: Colors.blueAccent,
+    return ValueListenableBuilder(
+      valueListenable: localeVariable,
+      builder: (context, value, _) => MaterialApp(
+        debugShowCheckedModeBanner: false, // デバッグバナーを非表示
+        title: 'hitomemo',
+        locale: value,
+        localizationsDelegates: AppLocalizations.localizationsDelegates, // 追加
+        supportedLocales: AppLocalizations.supportedLocales,
+        theme: ThemeData(
+          useMaterial3: true,
+          colorSchemeSeed: Colors.lightBlue,
+          // brightness: Brightness.dark, // ダークモード
+          // primarySwatch: Colors.blueGrey,
+          // accentColor: Colors.blueAccent,
+        ),
+        home: MainPage(service: widget.service),
+        // home: const Placeholder(), // for debug
       ),
-      home: MainPage(service: widget.service),
-      // home: const Placeholder(), // for debug
     );
   }
 }
+
+// TODO: 永続化
+var localeVariable = ValueNotifier<Locale>(
+  Locale('en'),
+);

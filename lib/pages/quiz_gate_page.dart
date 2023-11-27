@@ -3,6 +3,7 @@ import 'package:hito_memo_2/models/profile.dart';
 import 'package:hito_memo_2/services/isar_service.dart';
 import 'package:hito_memo_2/pages/quiz_page.dart';
 import 'package:hito_memo_2/models/quiz_result_manager.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 // クイズの開始ページ
 
@@ -72,8 +73,12 @@ class _QuizGatePageState extends State<QuizGatePage> {
                   return Column(
                     children: [
                       if (_maxValue > 1)
-                        const Text('Number of questions',
-                            style: TextStyle(fontSize: 16)),
+                        // const Text('Number of questions',
+                        //     style: TextStyle(fontSize: 16)),
+                        Text(
+                          AppLocalizations.of(context)!.title,
+                          style: const TextStyle(fontSize: 16),
+                        ),
 
                       const SizedBox(height: 10),
 
