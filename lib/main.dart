@@ -18,8 +18,8 @@ void main() async {
 mixin AppLocale {
   static const String title = 'title';
 
-  static const Map<String, dynamic> EN = {title: 'Localization'};
-  static const Map<String, dynamic> JA = {title: 'ローカリゼーション'};
+  static const Map<String, dynamic> en = {title: 'Localization'};
+  static const Map<String, dynamic> ja = {title: 'ローカリゼーション'};
 }
 
 class MyApp extends StatefulWidget {
@@ -62,29 +62,31 @@ class _MyAppState extends State<MyApp> {
 
   @override
   Widget build(BuildContext context) {
-    return ValueListenableBuilder(
-      valueListenable: localeVariable,
-      builder: (context, value, _) => MaterialApp(
-        debugShowCheckedModeBanner: false, // デバッグバナーを非表示
-        title: 'hitomemo',
-        locale: value,
-        localizationsDelegates: AppLocalizations.localizationsDelegates, // 追加
-        supportedLocales: AppLocalizations.supportedLocales,
-        theme: ThemeData(
-          useMaterial3: true,
-          colorSchemeSeed: Colors.lightBlue,
-          // brightness: Brightness.dark, // ダークモード
-          // primarySwatch: Colors.blueGrey,
-          // accentColor: Colors.blueAccent,
-        ),
-        home: MainPage(service: widget.service),
-        // home: const Placeholder(), // for debug
-      ),
+    return StreamBuilder(
+      stream: widget.service.listenToSettings(),
+      builder: (context, AsyncSnapshot<List<Settings>> snapshot) {
+        if (snapshot.hasData) {
+          return MaterialApp(
+            debugShowCheckedModeBanner: false, // デバッグバナーを非表示
+            title: 'hitomemo',
+            locale: Locale(snapshot.data![0].language),
+            localizationsDelegates:
+                AppLocalizations.localizationsDelegates, // 追加
+            supportedLocales: AppLocalizations.supportedLocales,
+            theme: ThemeData(
+              useMaterial3: true,
+              colorSchemeSeed: Colors.lightBlue,
+              // brightness: Brightness.dark, // ダークモード
+              // primarySwatch: Colors.blueGrey,
+              // accentColor: Colors.blueAccent,
+            ),
+            home: MainPage(service: widget.service),
+            // home: const Placeholder(), // for debug
+          );
+        } else {
+          return const Center(child: CircularProgressIndicator());
+        }
+      },
     );
   }
 }
-
-// TODO: 永続化
-var localeVariable = ValueNotifier<Locale>(
-  Locale('en'),
-);
