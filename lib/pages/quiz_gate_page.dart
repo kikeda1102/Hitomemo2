@@ -64,9 +64,9 @@ class _QuizGatePageState extends State<QuizGatePage> {
                   return const CircularProgressIndicator();
                 } else if (numberOfValidProfiles == 0) {
                   // 有効なprofile数が0の場合
-                  return const Text(
-                    'Register profiles with memos to start quiz.',
-                    textAlign: TextAlign.center,
+                  return Center(
+                    child: Text(
+                        AppLocalizations.of(context)!.registerProfileWithMemos),
                   );
                 } else {
                   // 有効なprofile数が1以上の場合
@@ -96,7 +96,7 @@ class _QuizGatePageState extends State<QuizGatePage> {
 
                       // Startボタン
                       ElevatedButton(
-                          child: const Text('Start'),
+                          child: Text(AppLocalizations.of(context)!.start),
                           onPressed: () async {
                             // データのランダム取得
                             List<Profile> correctProfiles = await widget.service

@@ -98,6 +98,13 @@ class QuizManager {
     // 全体の中で複数回登場する文字の除外 ユニークにする
     incorrectLetters = incorrectLetters.toSet().toList();
 
+    // correctLettersに含まれる文字列を含むものを除外、correctNameとの文字の重複をなくす
+    // correctNameを1文字ずつ分割する
+    List<String> correctLetters = correctName.split('');
+    incorrectLetters = incorrectLetters
+        .where((String char) => !correctLetters.contains(char))
+        .toList();
+
     if (incorrectLetters.length <= 3) {
       // プリセットの文字列を追加
       incorrectLetters.addAll([
@@ -130,12 +137,7 @@ class QuizManager {
       // uniqueにする
       incorrectLetters = incorrectLetters.toSet().toList();
     }
-    // correctLettersに含まれる文字列を含むものを除外、correctNameとの文字の重複をなくす
-    // correctNameを1文字ずつ分割する
-    List<String> correctLetters = correctName.split('');
-    incorrectLetters = incorrectLetters
-        .where((String char) => !correctLetters.contains(char))
-        .toList();
+
     return incorrectLetters;
   }
 

@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:hito_memo_2/services/isar_service.dart';
 import 'package:hito_memo_2/models/profile.dart';
-// import 'package:hito_memo_2/components/add_tag_component.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 // プロフィール新規追加画面
 
@@ -51,9 +51,9 @@ class _RegisterProfilePageState extends State<RegisterProfilePage> {
                   padding: const EdgeInsets.only(left: 30.0, right: 30.0),
                   child: TextFormField(
                     // controller: _nameTextController,
-                    decoration: const InputDecoration(
+                    decoration: InputDecoration(
                       // labelText: 'Name',
-                      hintText: 'Enter the name',
+                      hintText: AppLocalizations.of(context)!.enterTheName,
                     ),
                     onChanged: (text) {
                       // 名前が入力されるとnewProfileに反映
@@ -67,7 +67,7 @@ class _RegisterProfilePageState extends State<RegisterProfilePage> {
                     validator: (text) {
                       // 名前が入力されていない場合はエラーを返す
                       if (text == null || text.isEmpty) {
-                        return 'Please enter the name';
+                        return AppLocalizations.of(context)!.pleaseEnterTheName;
                       }
                       return null;
                     },
@@ -82,7 +82,7 @@ class _RegisterProfilePageState extends State<RegisterProfilePage> {
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      const Text('Memos'),
+                      Text(AppLocalizations.of(context)!.memos),
                       const SizedBox(height: 10),
 
                       // memosを表示
@@ -128,7 +128,7 @@ class _RegisterProfilePageState extends State<RegisterProfilePage> {
 
                 // 登録ボタン
                 ElevatedButton(
-                  child: const Text('Register'),
+                  child: Text(AppLocalizations.of(context)!.register),
                   onPressed: () {
                     // validation
                     FormState? formKeyState = _formKey.currentState;

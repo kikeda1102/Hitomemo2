@@ -84,7 +84,7 @@ class _MainPageState extends State<MainPage> {
                 return TextButton.icon(
                   icon: const Icon(Icons.open_in_new),
                   onPressed: followLink,
-                  label: const Text('Privacy policy'),
+                  label: Text(AppLocalizations.of(context)!.privacyPolicy),
                 );
               },
             ),
@@ -129,7 +129,7 @@ class _MainPageState extends State<MainPage> {
       ),
 
       bottomNavigationBar: BottomNavigationBar(
-        items: const <BottomNavigationBarItem>[
+        items: <BottomNavigationBarItem>[
           BottomNavigationBarItem(
             icon: Icon(Icons.home),
             label: 'Home',
@@ -140,7 +140,7 @@ class _MainPageState extends State<MainPage> {
           ),
           BottomNavigationBarItem(
             icon: Icon(Icons.settings),
-            label: 'Settings',
+            label: AppLocalizations.of(context)!.settings,
           ),
         ],
         currentIndex: _currentIndex, // 現在選択されているIndex

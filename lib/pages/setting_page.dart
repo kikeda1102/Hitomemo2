@@ -33,7 +33,7 @@ class _SettingsPageState extends State<SettingsPage> {
         if (snapshot.hasData) {
           return SettingsList(
             sections: [
-              // TODO: internationalization
+              // TODO: l10n
               SettingsSection(
                 title: Text(AppLocalizations.of(context)!.languageSettings),
                 tiles: <SettingsTile>[

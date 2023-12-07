@@ -1,8 +1,16 @@
 {
   "@@locale":"en",
   "title":"Hito Memo",
+  "settings":"Settings",
+  "privacyPolicy":"Privacy policy",
   "registerProfile":"Tap + button to register a new profile.",
+  "registerProfileWithMemos":"Register profiles with memos to start quiz.",
+  "enterTheName":"Enter the name",
+  "memos":"Memos",
+  "register":"Register",
+  "pleaseEnterTheName":"Please enter the name.",
   "numberOfQuestions":"Number of questions",
+  "start":"Start",
   "languageSettings":"Language",
   "generalSetttings":"General",
   "presentQuizScore":"Show scores of quiz"

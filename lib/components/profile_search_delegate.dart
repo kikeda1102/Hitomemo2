@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:hito_memo_2/models/profile.dart';
 import 'package:hito_memo_2/services/isar_service.dart';
 import 'package:hito_memo_2/pages/profile_detail_page.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 // 検索機能
 class ProfileSearchDelegate extends SearchDelegate<Profile> {
@@ -79,11 +80,12 @@ class ProfileSearchDelegate extends SearchDelegate<Profile> {
           } else if (snapshot.hasError) {
             return const Center(child: Text('Error occurred'));
           } else {
-            return const Center(
-                child: Text(
-              'Add a new person by tapping the + button.',
-              style: TextStyle(fontSize: 15),
-            ));
+            return Center(
+              child: Text(
+                AppLocalizations.of(context)!.registerProfile,
+                style: const TextStyle(fontSize: 15),
+              ),
+            );
           }
         },
       ),
@@ -129,11 +131,12 @@ class ProfileSearchDelegate extends SearchDelegate<Profile> {
           } else if (snapshot.hasError) {
             return const Center(child: Text('Error occurred'));
           } else {
-            return const Center(
-                child: Text(
-              'Add a new person by tapping the + button.',
-              style: TextStyle(fontSize: 15),
-            ));
+            return Center(
+              child: Text(
+                AppLocalizations.of(context)!.registerProfile,
+                style: const TextStyle(fontSize: 15),
+              ),
+            );
           }
         },
       ),
