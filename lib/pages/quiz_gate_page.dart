@@ -63,20 +63,20 @@ class _QuizGatePageState extends State<QuizGatePage> {
                 } else if (!snapshot.hasData || numberOfValidProfiles == null) {
                   return const CircularProgressIndicator();
                 } else if (numberOfValidProfiles == 0) {
+                  // 有効なprofile数が0の場合
                   return const Text(
                     'Register profiles with memos to start quiz.',
                     textAlign: TextAlign.center,
                   );
                 } else {
+                  // 有効なprofile数が1以上の場合
                   _maxValue = numberOfValidProfiles; // スライダーの最大値を設定
 
                   return Column(
                     children: [
                       if (_maxValue > 1)
-                        // const Text('Number of questions',
-                        //     style: TextStyle(fontSize: 16)),
                         Text(
-                          AppLocalizations.of(context)!.title,
+                          AppLocalizations.of(context)!.numberOfQuestions,
                           style: const TextStyle(fontSize: 16),
                         ),
 

@@ -39,7 +39,8 @@ class _SettingsPageState extends State<SettingsPage> {
                   SettingsTile.navigation(
                       leading: const Icon(Icons.language),
                       title: const Text('Language'),
-                      value: Text(snapshot.data![0].language.toString()),
+                      value:
+                          Text(_getDisplayLanguage(snapshot.data![0].language)),
                       onPressed: (BuildContext context) {
                         Navigator.of(context).push(
                           MaterialPageRoute(
@@ -71,6 +72,17 @@ class _SettingsPageState extends State<SettingsPage> {
         }
       },
     );
+  }
+}
+
+String _getDisplayLanguage(String languageCode) {
+  switch (languageCode) {
+    case 'ja':
+      return '日本語';
+    case 'en':
+      return 'English';
+    default:
+      return '-';
   }
 }
 

@@ -1,5 +1,5 @@
 {
   "@@locale":"en",
   "title":"Hito Memo",
-  "message": "You have pushed the button this many times:"
+  "numberOfQuestions":"Number of Questions"
 }

@@ -14,14 +14,6 @@ void main() async {
   runApp(MyApp(service: service));
 }
 
-// localizations
-mixin AppLocale {
-  static const String title = 'title';
-
-  static const Map<String, dynamic> en = {title: 'Localization'};
-  static const Map<String, dynamic> ja = {title: 'ローカリゼーション'};
-}
-
 class MyApp extends StatefulWidget {
   final IsarService service;
   const MyApp({Key? key, required this.service}) : super(key: key);
