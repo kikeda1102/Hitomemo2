@@ -9,8 +9,9 @@
   "memos":"Memos",
   "register":"Register",
   "pleaseEnterTheName":"Please enter the name.",
-  "numberOfQuestions":"Number of questions",
+  "numberOfQuestions":"Select number of questions",
   "start":"Start",
+  "backToQuizTop":"Back to quiz top",
   "languageSettings":"Language",
   "generalSetttings":"General",
   "presentQuizScore":"Show scores of quiz"

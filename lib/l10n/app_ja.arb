@@ -9,8 +9,9 @@
   "memos":"メモ",
   "register":"登録",
   "pleaseEnterTheName":"名前を入力してください。",
-  "numberOfQuestions":"問題数",
+  "numberOfQuestions":"問題数を選択",
   "start":"スタート",
+  "backToQuizTop":"Quizトップに戻る",
   "languageSettings":"言語",
   "generalSetttings":"一般",
   "presentQuizScore":"クイズのスコアを表示する"

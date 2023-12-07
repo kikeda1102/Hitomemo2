@@ -1,9 +1,7 @@
 import 'package:flutter/material.dart';
-// import 'package:hito_memo_2/models/profile.dart';
 import 'package:hito_memo_2/services/isar_service.dart';
-// import 'package:hito_memo_2/models/quiz_manager.dart';
 import 'package:hito_memo_2/models/quiz_result_manager.dart';
-// import 'package:hito_memo_2/pages/quiz_gate_page.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 // 結果を表示するページ
 class QuizResultPage extends StatefulWidget {
@@ -89,7 +87,7 @@ class _QuizResultPageState extends State<QuizResultPage> {
             ),
             // 戻るボタン
             ElevatedButton(
-              child: const Text('Back to Quiz Top'),
+              child: Text(AppLocalizations.of(context)!.backToQuizTop),
               onPressed: () {
                 // quiz gate pageに遷移
                 Navigator.of(context).popUntil((route) => route.isFirst);
