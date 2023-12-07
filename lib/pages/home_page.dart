@@ -8,6 +8,7 @@ import 'package:hito_memo_2/models/profile.dart';
 import 'package:hito_memo_2/services/isar_service.dart';
 import 'package:hito_memo_2/pages/setting_page.dart';
 import 'package:hito_memo_2/pages/quiz_gate_page.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 // メイン画面
 class MainPage extends StatefulWidget {
@@ -182,7 +183,9 @@ class HomePage extends StatelessWidget {
                   return const Text('Something went wrong');
                 } else if (data == null || data.isEmpty) {
                   // print(data);
-                  return const Center(child: Text('Tap + button to register.'));
+                  return Center(
+                      child:
+                          Text(AppLocalizations.of(context)!.registerProfile));
                 } else {
                   // TODO: UIのoverflowに対処
                   // TODO: createdAt/updatedAtの並び順での表示への変更を可能に

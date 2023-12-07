@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:settings_ui/settings_ui.dart';
 import 'package:hito_memo_2/services/isar_service.dart';
 import 'package:hito_memo_2/models/settings.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 // 設定ページ
 
@@ -34,11 +35,12 @@ class _SettingsPageState extends State<SettingsPage> {
             sections: [
               // TODO: internationalization
               SettingsSection(
-                title: const Text('言語'),
+                title: Text(AppLocalizations.of(context)!.languageSettings),
                 tiles: <SettingsTile>[
                   SettingsTile.navigation(
                       leading: const Icon(Icons.language),
-                      title: const Text('Language'),
+                      title:
+                          Text(AppLocalizations.of(context)!.languageSettings),
                       value:
                           Text(_getDisplayLanguage(snapshot.data![0].language)),
                       onPressed: (BuildContext context) {
@@ -54,10 +56,10 @@ class _SettingsPageState extends State<SettingsPage> {
                 ],
               ),
               SettingsSection(
-                title: const Text('一般'),
+                title: Text(AppLocalizations.of(context)!.generalSetttings),
                 tiles: <SettingsTile>[
                   SettingsTile.switchTile(
-                    title: const Text('クイズの正答率を表示する'),
+                    title: Text(AppLocalizations.of(context)!.presentQuizScore),
                     initialValue: snapshot.data![0].presentQuizScore,
                     onToggle: toggleQuizScore,
                   ),

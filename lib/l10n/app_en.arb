@@ -1,5 +1,9 @@
 {
   "@@locale":"en",
   "title":"Hito Memo",
-  "numberOfQuestions":"Number of Questions"
-}
+  "registerProfile":"Tap + button to register a new profile.",
+  "numberOfQuestions":"Number of questions",
+  "languageSettings":"Language",
+  "generalSetttings":"General",
+  "presentQuizScore":"Show scores of quiz"
+  }

@@ -34,6 +34,7 @@ class _MyAppState extends State<MyApp> {
       if (await widget.service.getSettings() == null) {
         // print(
         //     'widget.service.getSettings() = ${await widget.service.getSettings()}');
+        // 初期値を設定
         settings = Settings(
           language: 'ja',
           presentQuizScore: true,
@@ -41,14 +42,9 @@ class _MyAppState extends State<MyApp> {
         );
         // 保存
         widget.service.putSettings(settings);
+      } else {
+        // print('settings = ${await widget.service.getSettings()}');
       }
-      // load
-      settings = await widget.service.getSettings() ??
-          Settings(
-            language: 'ja',
-            presentQuizScore: true,
-            presentCreatedAt: true,
-          );
     });
   }
 
@@ -82,3 +78,4 @@ class _MyAppState extends State<MyApp> {
     );
   }
 }
+// 

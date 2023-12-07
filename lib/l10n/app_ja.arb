@@ -1,5 +1,9 @@
 {
   "@@locale":"ja",
   "title":"Flutterのデモページ",
-  "numberOfQuestions":"問題数"
+  "registerProfile":"+ボタンを押して新規プロフィールを登録",
+  "numberOfQuestions":"問題数",
+  "languageSettings":"言語",
+  "generalSetttings":"一般",
+  "presentQuizScore":"クイズのスコアを表示する"
 }
