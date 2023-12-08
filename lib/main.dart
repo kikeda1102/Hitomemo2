@@ -32,9 +32,6 @@ class _MyAppState extends State<MyApp> {
     // 設定がなければ初期値を設定、DB保存
     Future(() async {
       if (await widget.service.getSettings() == null) {
-        // print(
-        //     'widget.service.getSettings() = ${await widget.service.getSettings()}');
-        // 初期値を設定
         settings = Settings(
           language: 'ja',
           presentQuizScore: true,
@@ -42,8 +39,6 @@ class _MyAppState extends State<MyApp> {
         );
         // 保存
         widget.service.putSettings(settings);
-      } else {
-        // print('settings = ${await widget.service.getSettings()}');
       }
     });
   }
@@ -53,23 +48,20 @@ class _MyAppState extends State<MyApp> {
     return StreamBuilder(
       stream: widget.service.listenToSettings(),
       builder: (context, AsyncSnapshot<List<Settings>> snapshot) {
-        if (snapshot.hasData) {
+        if (snapshot.hasData && snapshot.data != null) {
+          settings = snapshot.data![0];
           return MaterialApp(
             debugShowCheckedModeBanner: false, // デバッグバナーを非表示
             title: 'hitomemo',
-            locale: Locale(snapshot.data![0].language),
+            locale: Locale(settings.language),
             localizationsDelegates:
                 AppLocalizations.localizationsDelegates, // 追加
             supportedLocales: AppLocalizations.supportedLocales,
             theme: ThemeData(
               useMaterial3: true,
               colorSchemeSeed: Colors.lightBlue,
-              // brightness: Brightness.dark, // ダークモード
-              // primarySwatch: Colors.blueGrey,
-              // accentColor: Colors.blueAccent,
             ),
             home: MainPage(service: widget.service),
-            // home: const Placeholder(), // for debug
           );
         } else {
           return const Center(child: CircularProgressIndicator());
@@ -78,4 +70,3 @@ class _MyAppState extends State<MyApp> {
     );
   }
 }
-// 

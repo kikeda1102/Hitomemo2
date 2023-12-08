@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:hito_memo_2/models/profile.dart';
 import 'package:hito_memo_2/services/isar_service.dart';
+// import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 // プロフィール詳細ページ
 

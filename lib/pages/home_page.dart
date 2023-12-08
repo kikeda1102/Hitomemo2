@@ -1,12 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:url_launcher/link.dart'; // プライバシーポリシーのページに飛ぶ用
 import 'package:hito_memo_2/models/settings.dart';
+import 'package:hito_memo_2/models/profile.dart';
 import 'package:hito_memo_2/components/profile_search_delegate.dart';
+import 'package:hito_memo_2/components/score_icon.dart';
 import 'package:hito_memo_2/pages/register_profile_page.dart';
 import 'package:hito_memo_2/pages/profile_detail_page.dart';
-import 'package:hito_memo_2/models/profile.dart';
 import 'package:hito_memo_2/services/isar_service.dart';
-import 'package:hito_memo_2/pages/setting_page.dart';
+import 'package:hito_memo_2/pages/settings_page.dart';
 import 'package:hito_memo_2/pages/quiz_gate_page.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
@@ -56,6 +57,7 @@ class _MainPageState extends State<MainPage> {
     ];
 
     return Scaffold(
+      // backgroundColor: Colors.grey[100],
       drawer: Drawer(
         child: ListView(
           children: [
@@ -130,16 +132,16 @@ class _MainPageState extends State<MainPage> {
 
       bottomNavigationBar: BottomNavigationBar(
         items: <BottomNavigationBarItem>[
-          BottomNavigationBarItem(
+          const BottomNavigationBarItem(
             icon: Icon(Icons.home),
             label: 'Home',
           ),
-          BottomNavigationBarItem(
+          const BottomNavigationBarItem(
             icon: Icon(Icons.quiz),
             label: 'Quiz',
           ),
           BottomNavigationBarItem(
-            icon: Icon(Icons.settings),
+            icon: const Icon(Icons.settings),
             label: AppLocalizations.of(context)!.settings,
           ),
         ],
@@ -179,16 +181,16 @@ class HomePage extends StatelessWidget {
               builder: (BuildContext context,
                   AsyncSnapshot<List<Profile>> snapshot) {
                 final data = snapshot.data; // 静的解析が効くように変数に格納
-                if (snapshot.hasError) {
-                  return const Text('Something went wrong');
+                if (snapshot.hasError ||
+                    snapshot.connectionState == ConnectionState.waiting) {
+                  return const Center(child: CircularProgressIndicator());
                 } else if (data == null || data.isEmpty) {
-                  // print(data);
+                  // profileが1つもない場合
                   return Center(
                       child:
                           Text(AppLocalizations.of(context)!.registerProfile));
                 } else {
                   // TODO: UIのoverflowに対処
-                  // TODO: createdAt/updatedAtの並び順での表示への変更を可能に
                   // dataをorder順にソートする
                   data.sort((a, b) => a.order.compareTo(b.order));
                   // ReorderableListViewで表示
@@ -216,11 +218,12 @@ class HomePage extends StatelessWidget {
                         stream: service.listenToSettings(),
                         builder: (BuildContext context,
                             AsyncSnapshot<List<Settings>> snapshot) {
-                          final data = snapshot.data; // 静的解析が効くように変数に格納
-                          if (snapshot.hasError) {
-                            return const Text('Something went wrong');
-                          } else if (data == null || data.isEmpty) {
-                            return const Text('Tap + button to register.');
+                          final settings = snapshot.data; // 静的解析が効くように変数に格納
+                          if (snapshot.hasError ||
+                              settings == null ||
+                              settings.isEmpty) {
+                            return const Center(
+                                child: CircularProgressIndicator());
                           } else {
                             return Card(
                               key: ValueKey(profile.id),
@@ -230,37 +233,15 @@ class HomePage extends StatelessWidget {
                                 subtitle: Column(
                                   crossAxisAlignment: CrossAxisAlignment.start,
                                   children: [
-                                    Text(
-                                      // profile.order.toString(), // for debug
-                                      profile.memos
-                                          .join('     '), // memosの要素を改行で結合して表示
-                                    ),
+                                    Text(profile.memos
+                                            .join('     ') // memosの要素を改行で結合して表示
+                                        ),
                                   ],
                                 ),
                                 // quizのscore表示
-                                trailing: data[0].presentQuizScore == true
-                                    ? Text(
-                                        // nullなら何も表示しない
-                                        profile.numberOfIncorrectTaps == null
-                                            ? ''
-                                            : '${profile.calculateCorrectRate()}',
-                                        // correctRateRankに従って色を変える
-                                        style: profile.correctRateRank() ==
-                                                'perfect'
-                                            ? const TextStyle(
-                                                color: Colors.green,
-                                                fontSize: 15)
-                                            : profile.correctRateRank() ==
-                                                    'good'
-                                                ? const TextStyle(
-                                                    color: Colors.orange,
-                                                    fontSize: 15)
-                                                : const TextStyle(
-                                                    color: Colors.red,
-                                                    fontSize: 15),
-                                      )
+                                trailing: settings[0].presentQuizScore == true
+                                    ? scoreIcon(context, profile)
                                     : null,
-
                                 // profile detailへ遷移
                                 onTap: () => Navigator.of(context).push(
                                   MaterialPageRoute(

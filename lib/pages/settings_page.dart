@@ -32,27 +32,39 @@ class _SettingsPageState extends State<SettingsPage> {
 
         if (snapshot.hasData) {
           return SettingsList(
+            // lightTheme:
+            //     SettingsThemeData(settingsListBackground: Colors.grey[100]),
+            // darkTheme:
+            //     SettingsThemeData(settingsListBackground: Colors.grey[800]),
             sections: [
-              // TODO: l10n
+              // TODO: l10n 本体設定
               SettingsSection(
                 title: Text(AppLocalizations.of(context)!.languageSettings),
                 tiles: <SettingsTile>[
-                  SettingsTile.navigation(
-                      leading: const Icon(Icons.language),
-                      title:
-                          Text(AppLocalizations.of(context)!.languageSettings),
-                      value:
-                          Text(_getDisplayLanguage(snapshot.data![0].language)),
-                      onPressed: (BuildContext context) {
-                        Navigator.of(context).push(
-                          MaterialPageRoute(
-                            builder: (context) => LanguageSettingsPage(
-                              service: widget.service,
-                              settings: snapshot.data![0],
-                            ),
-                          ),
-                        );
-                      }),
+                  SettingsTile(
+                    title: const Text('日本語'),
+                    trailing: isJapanese(snapshot.data![0].language) == true
+                        ? const Icon(Icons.check)
+                        : null,
+                    onPressed: (BuildContext context) {
+                      switchLocaleToJa(
+                        widget.service,
+                        snapshot.data![0],
+                      );
+                    },
+                  ),
+                  SettingsTile(
+                    title: const Text('English'),
+                    trailing: isEnglish(snapshot.data![0].language) == true
+                        ? const Icon(Icons.check)
+                        : null,
+                    onPressed: (BuildContext context) {
+                      switchLocaleToEn(
+                        widget.service,
+                        snapshot.data![0],
+                      );
+                    },
+                  ),
                 ],
               ),
               SettingsSection(
@@ -77,15 +89,12 @@ class _SettingsPageState extends State<SettingsPage> {
   }
 }
 
-String _getDisplayLanguage(String languageCode) {
-  switch (languageCode) {
-    case 'ja':
-      return '日本語';
-    case 'en':
-      return 'English';
-    default:
-      return '-';
-  }
+bool isJapanese(String languageCode) {
+  return languageCode == 'ja';
+}
+
+bool isEnglish(String languageCode) {
+  return languageCode == 'en';
 }
 
 class LanguageSettingsPage extends StatelessWidget {
@@ -101,27 +110,26 @@ class LanguageSettingsPage extends StatelessWidget {
       appBar: AppBar(
         title: const Text('Language'),
       ),
-      body: Center(
-        child: Column(
-          children: [
-            const SizedBox(height: 30),
-            ElevatedButton(
-              child: const Text('English'),
-              onPressed: () {
-                switchLocaleToEn(service, settings);
-                Navigator.pop(context);
-              },
-            ),
-            const SizedBox(height: 30),
-            ElevatedButton(
-              child: const Text('日本語'),
-              onPressed: () {
-                switchLocaleToJa(service, settings);
-                Navigator.pop(context);
-              },
-            ),
-          ],
-        ),
+      body: SettingsList(
+        sections: [
+          SettingsSection(
+            title: Text(AppLocalizations.of(context)!.generalSetttings),
+            tiles: <SettingsTile>[
+              SettingsTile(
+                title: const Text('English'),
+                onPressed: (BuildContext context) {
+                  switchLocaleToEn(service, settings);
+                },
+              ),
+              SettingsTile(
+                title: const Text('日本語'),
+                onPressed: (BuildContext context) {
+                  switchLocaleToJa(service, settings);
+                },
+              ),
+            ],
+          ),
+        ],
       ),
     );
   }
