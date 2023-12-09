@@ -53,7 +53,7 @@ class _RegisterProfilePageState extends State<RegisterProfilePage> {
                     // controller: _nameTextController,
                     decoration: InputDecoration(
                       // labelText: 'Name',
-                      hintText: AppLocalizations.of(context)!.enterTheName,
+                      hintText: AppLocalizations.of(context)!.name,
                     ),
                     onChanged: (text) {
                       // 名前が入力されるとnewProfileに反映
@@ -67,7 +67,7 @@ class _RegisterProfilePageState extends State<RegisterProfilePage> {
                     validator: (text) {
                       // 名前が入力されていない場合はエラーを返す
                       if (text == null || text.isEmpty) {
-                        return AppLocalizations.of(context)!.pleaseEnterTheName;
+                        return AppLocalizations.of(context)!.enterTheName;
                       }
                       return null;
                     },

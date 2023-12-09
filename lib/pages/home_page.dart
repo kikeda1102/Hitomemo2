@@ -107,7 +107,7 @@ class _MainPageState extends State<MainPage> {
           ),
         ],
       ),
-      // profileの一覧表示
+      // 選択されたページを表示
       body: pageWidgets.elementAt(_currentIndex),
 
       // 新規追加
@@ -131,6 +131,7 @@ class _MainPageState extends State<MainPage> {
       ),
 
       bottomNavigationBar: BottomNavigationBar(
+        // backgroundColor: Colors.grey[100],
         items: <BottomNavigationBarItem>[
           const BottomNavigationBarItem(
             icon: Icon(Icons.home),
@@ -174,7 +175,7 @@ class HomePage extends StatelessWidget {
       children: [
         Expanded(
           child: Padding(
-            padding: const EdgeInsets.all(8.0),
+            padding: const EdgeInsets.all(10.0),
             // profileの一覧をStreamとして表示
             child: StreamBuilder<List<Profile>>(
               stream: service.listenToAllProfiles(),

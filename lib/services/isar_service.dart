@@ -95,6 +95,12 @@ class IsarService {
     yield* nonNullableStream;
   }
 
+  // 1件をFutureとして取得
+  Future<Profile?> getProfile(int id) async {
+    final isar = await _isar;
+    return isar.profiles.get(id);
+  }
+
   // 全件をListとして取得
   // addボタンが押された時のorderRefresh()で使用
   Future<List<Profile>> getAllProfiles() async {
@@ -102,8 +108,7 @@ class IsarService {
     return isar.profiles.where().findAll();
   }
 
-  // 取得する件数を指定してランダムに取得
-  // Quiz用
+  // 取得する件数を指定してランダムに取得 Quiz用
   // memoを持たないprofileは除外する
   Future<List<Profile>> getProfilesRomdomly(int number) async {
     final isar = await _isar;
