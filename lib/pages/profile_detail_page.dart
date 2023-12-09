@@ -195,7 +195,7 @@ class _ProfileDetailPageState extends State<ProfileDetailPage> {
                   if (formKeyState != null && formKeyState.validate()) {
                     // DB更新
                     formKeyState.save();
-                    updateProfile(newProfile, widget.service);
+                    widget.service.putProfile(newProfile);
                     setState(() {
                       isEditing = false;
                     });
@@ -230,13 +230,6 @@ class _ProfileDetailPageState extends State<ProfileDetailPage> {
       ),
     );
   }
-}
-
-Function updateProfile(Profile profile, IsarService service) {
-  return () {
-    // DB更新
-    service.putProfile(profile);
-  };
 }
 
 // 削除確認ダイアログ

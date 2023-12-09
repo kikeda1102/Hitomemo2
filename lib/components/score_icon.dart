@@ -29,7 +29,7 @@ Widget scoreIcon(Profile profile, double radius) {
               ? 0
               : 2 * math.pi * (profile.calculateCorrectRate() ?? 0.0) / 100.0,
           radius: radius,
-          thickness: 3,
+          thickness: radius / 6,
           color: getScoreColor(profile.calculateCorrectRate() ?? 0.0),
         ),
         // 点数
@@ -41,6 +41,7 @@ Widget scoreIcon(Profile profile, double radius) {
           style: TextStyle(
             color: getScoreColor(profile.calculateCorrectRate() ?? 0.0),
             fontSize: radius / 1.4,
+            fontWeight: FontWeight.bold,
           ),
         ),
       ],
