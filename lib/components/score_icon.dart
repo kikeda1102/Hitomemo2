@@ -5,9 +5,9 @@ import 'package:hito_memo_2/models/profile.dart';
 // スコアの色を取得する関数
 Color getScoreColor(num score) {
   double doubleScore = score.toDouble();
-  if (doubleScore >= 80) {
+  if (doubleScore >= 75) {
     return const Color.fromARGB(255, 4, 205, 124); // Green
-  } else if (doubleScore >= 30) {
+  } else if (doubleScore >= 50) {
     return const Color.fromARGB(255, 255, 196, 0); // Orange
   } else {
     return const Color.fromARGB(255, 244, 54, 95); // Red

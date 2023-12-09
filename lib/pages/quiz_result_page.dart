@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:hito_memo_2/services/isar_service.dart';
 import 'package:hito_memo_2/models/quiz_result_manager.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+import 'package:hito_memo_2/components/score_icon.dart';
 
 // 結果を表示するページ
 class QuizResultPage extends StatefulWidget {
@@ -60,26 +61,8 @@ class _QuizResultPageState extends State<QuizResultPage> {
                         ],
                       ),
                       // 正答率
-                      trailing: Text(
-                        // nullなら何も表示しない
-                        widget.quizResultManager.correctProfiles[index]
-                                    .numberOfIncorrectTaps ==
-                                null
-                            ? ''
-                            : '${widget.quizResultManager.correctProfiles[index].calculateCorrectRate()}',
-                        // correctRateRankに従って色を変える
-                        style: widget.quizResultManager.correctProfiles[index]
-                                    .correctRateRank() ==
-                                'perfect'
-                            ? const TextStyle(color: Colors.green, fontSize: 20)
-                            : widget.quizResultManager.correctProfiles[index]
-                                        .correctRateRank() ==
-                                    'good'
-                                ? const TextStyle(
-                                    color: Colors.orange, fontSize: 20)
-                                : const TextStyle(
-                                    color: Colors.red, fontSize: 20),
-                      ),
+                      trailing: scoreIcon(
+                          widget.quizResultManager.correctProfiles[index], 22),
                     ),
                   );
                 },
