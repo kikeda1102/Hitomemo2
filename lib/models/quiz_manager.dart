@@ -105,8 +105,10 @@ class QuizManager {
         .where((String char) => !correctLetters.contains(char))
         .toList();
 
+    // incorrectLettersの数が3以下の場合、プリセットの文字列を追加する
     if (incorrectLetters.length <= 3) {
       // プリセットの文字列を追加
+      // TODO: l10n settingsで条件分岐
       incorrectLetters.addAll([
         'a',
         'b',
@@ -146,8 +148,12 @@ class QuizManager {
     // incorrectNamesの頭文字を取り出す
     List<String> incorrectInitials =
         incorrectNames.map((String name) => name[0]).toList();
+    // uniqueにする
+    incorrectInitials = incorrectInitials.toSet().toList();
+    // incorrectInitialsの数が3以下の場合、プリセットの文字列を追加する
     if (incorrectInitials.length <= 3) {
       // プリセットの文字列を追加
+      // TODO: l10n
       incorrectInitials.addAll([
         'A',
         'B',

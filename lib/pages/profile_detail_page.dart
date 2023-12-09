@@ -94,7 +94,7 @@ class _ProfileDetailPageState extends State<ProfileDetailPage> {
                   ),
                   // memos
                   SizedBox(
-                    height: 500,
+                    height: 300,
                     child: ListView.builder(
                       itemBuilder: (context, index) => Card(
                         key: ValueKey(index),
@@ -137,7 +137,7 @@ class _ProfileDetailPageState extends State<ProfileDetailPage> {
                     const SizedBox(height: 20),
                     // memos
                     SizedBox(
-                      height: 500,
+                      height: 200,
                       child: ReorderableListView.builder(
                         itemBuilder: (context, index) => Card(
                           key: ValueKey(index),
@@ -149,7 +149,7 @@ class _ProfileDetailPageState extends State<ProfileDetailPage> {
                                 border: const OutlineInputBorder(),
                               ),
                               onSaved: (value) {
-                                profile.memos[index] = value!;
+                                newProfile.memos[index] = value!;
                               },
                             ),
                           ),
@@ -194,7 +194,7 @@ class _ProfileDetailPageState extends State<ProfileDetailPage> {
                   FormState? formKeyState = _formKey.currentState;
                   if (formKeyState != null && formKeyState.validate()) {
                     // DB更新
-                    formKeyState.save();
+                    formKeyState.save(); // onSavedを呼び出す
                     widget.service.putProfile(newProfile);
                     setState(() {
                       isEditing = false;
