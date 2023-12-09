@@ -240,7 +240,7 @@ class HomePage extends StatelessWidget {
                                 ),
                                 // quizのscore表示
                                 trailing: settings[0].presentQuizScore == true
-                                    ? scoreIcon(context, profile)
+                                    ? scoreIcon(profile, 22)
                                     : null,
                                 // profile detailへ遷移
                                 onTap: () => Navigator.of(context).push(

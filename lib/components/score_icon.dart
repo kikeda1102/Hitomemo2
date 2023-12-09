@@ -15,7 +15,7 @@ Color getScoreColor(num score) {
 }
 
 // スコア表示アイコン
-Widget scoreIcon(BuildContext context, Profile profile) {
+Widget scoreIcon(Profile profile, double radius) {
   // スコアがnullの場合は何も表示しない
   if (profile.numberOfIncorrectTaps == null) {
     return const SizedBox.shrink();
@@ -25,9 +25,10 @@ Widget scoreIcon(BuildContext context, Profile profile) {
       children: [
         // バウムクーヘン
         BaumkuchenWidget(
-          endAngle:
-              2 * math.pi * (profile.calculateCorrectRate() ?? 0.0) / 100.0,
-          radius: 20,
+          endAngle: profile.calculateCorrectRate() == 0
+              ? 0
+              : 2 * math.pi * (profile.calculateCorrectRate() ?? 0.0) / 100.0,
+          radius: radius,
           thickness: 3,
           color: getScoreColor(profile.calculateCorrectRate() ?? 0.0),
         ),
@@ -39,7 +40,7 @@ Widget scoreIcon(BuildContext context, Profile profile) {
               : '${profile.calculateCorrectRate()}',
           style: TextStyle(
             color: getScoreColor(profile.calculateCorrectRate() ?? 0.0),
-            fontSize: 13,
+            fontSize: radius / 1.4,
           ),
         ),
       ],
