@@ -21,128 +21,116 @@ class _RegisterProfilePageState extends State<RegisterProfilePage> {
     memos: List<String>.empty(),
   );
   final _formKey = GlobalKey<FormState>(); // Validation用
-  // 名前を入力するTextField
-  // final _nameTextController = TextEditingController();
   // メモを入力するTextField
   final _memoTextController = TextEditingController();
-  // Stateの更新
-  void updateProfile() {
-    setState(() {});
-  }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-          // title: const Text('Register New Person'),
-          ),
+      appBar: AppBar(),
       body: SingleChildScrollView(
-        child: Center(
-          child: Form(
-            key: _formKey,
+        child: Form(
+          key: _formKey,
+          child: Padding(
+            padding: const EdgeInsets.all(12.0),
             child: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              mainAxisSize: MainAxisSize.min,
-              crossAxisAlignment: CrossAxisAlignment.center,
               children: [
                 const SizedBox(height: 20),
                 // 名前を入力するTextField
-                Container(
-                  padding: const EdgeInsets.only(left: 30.0, right: 30.0),
-                  child: TextFormField(
-                    // controller: _nameTextController,
-                    decoration: InputDecoration(
-                      // labelText: 'Name',
-                      hintText: AppLocalizations.of(context)!.name,
+                TextFormField(
+                  style: const TextStyle(
+                    fontWeight: FontWeight.bold, // ここで太文字に設定
+                  ),
+                  initialValue: newProfile.name,
+                  decoration: InputDecoration(
+                    labelText: AppLocalizations.of(context)!.name,
+                    border: const OutlineInputBorder(),
+                  ),
+                  validator: (value) {
+                    if (value == null || value.isEmpty) {
+                      return AppLocalizations.of(context)!.enterTheName;
+                    }
+                    return null;
+                  },
+                  onSaved: (value) {
+                    newProfile.name = value!;
+                  },
+                ),
+
+                const SizedBox(height: 20),
+                SizedBox(
+                  // デバイスの高さの半分
+                  height: MediaQuery.of(context).size.height / 2,
+                  child: ReorderableListView.builder(
+                    itemBuilder: (context, index) => Card(
+                      key: ValueKey(index),
+                      child: ListTile(
+                        leading: IconButton(
+                          icon: const Icon(Icons.delete),
+                          onPressed: () {
+                            // memosからindex番目の要素を削除
+                            newProfile.memos = newProfile.memos
+                                .where(
+                                    (memo) => memo != newProfile.memos[index])
+                                .toList();
+                            setState(() {});
+                          },
+                        ),
+                        title: TextFormField(
+                          initialValue: newProfile.memos[index],
+                          decoration: InputDecoration(
+                            labelText: AppLocalizations.of(context)!.memos,
+                            border: const OutlineInputBorder(),
+                          ),
+                          onSaved: (value) {
+                            newProfile.memos[index] = value!;
+                          },
+                        ),
+                        trailing: ReorderableDragStartListener(
+                          index: index,
+                          child: const Icon(Icons.drag_handle),
+                        ),
+                      ),
                     ),
-                    onChanged: (text) {
-                      // 名前が入力されるとnewProfileに反映
-                      newProfile.name = text;
-                      // validation
-                      FormState? formKeyState = _formKey.currentState;
-                      if (formKeyState != null) {
-                        formKeyState.validate();
+                    itemCount: newProfile.memos.length,
+                    onReorder: (oldIndex, newIndex) {
+                      // 下に移動した場合は、自分が消える分、newIndexを1減らす
+                      if (oldIndex < newIndex) {
+                        newIndex -= 1;
                       }
-                    },
-                    validator: (text) {
-                      // 名前が入力されていない場合はエラーを返す
-                      if (text == null || text.isEmpty) {
-                        return AppLocalizations.of(context)!.enterTheName;
-                      }
-                      return null;
-                    },
-                  ),
-                ),
-
-                const SizedBox(height: 20),
-
-                // memosを表示
-                Container(
-                  padding: const EdgeInsets.only(left: 30.0, right: 30.0),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(AppLocalizations.of(context)!.memos),
-                      const SizedBox(height: 10),
-
-                      // memosを表示
-                      // if (newProfile.memos.isNotEmpty)
-
-                      ...newProfile.memos
-                          .map((memo) => Chip(
-                                label: Text(
-                                  memo,
-                                  style: const TextStyle(fontSize: 16),
-                                ),
-                              ))
-                          .toList(),
-                    ],
-                  ),
-                ),
-
-                const SizedBox(height: 20),
-
-                // memosを作成
-                // TODO: UI修正
-                Container(
-                  padding: const EdgeInsets.only(left: 30, right: 30),
-                  // memoを入力するTextField
-                  child: TextFormField(
-                    onFieldSubmitted: (text) {
-                      // Enterされたとき、memosに新しくmemoを追加
-                      newProfile.memos = [...newProfile.memos, text];
-                      // textを空にする
-                      _memoTextController.clear();
+                      // oldIndex番目の要素を削除し、その要素をitemに格納
+                      final item = newProfile.memos[oldIndex];
+                      // newProfile.memosからoldIndex番目の要素を削除
+                      newProfile.memos = newProfile.memos
+                          .where((memo) => memo != newProfile.memos[oldIndex])
+                          .toList();
+                      // newIndex番目にitemを挿入
+                      newProfile.memos.insert(newIndex, item);
                       setState(() {});
                     },
-                    // initialValue: '',
-                    controller: _memoTextController,
-                    // maxLines: 10,
-                    decoration: const InputDecoration(
-                      // labelText: 'Memo',
-                      border: OutlineInputBorder(),
-                    ),
                   ),
                 ),
-
-                const SizedBox(height: 20),
-
-                // 登録ボタン
-                ElevatedButton(
-                  child: Text(AppLocalizations.of(context)!.register),
-                  onPressed: () {
-                    // validation
-                    FormState? formKeyState = _formKey.currentState;
-                    if (formKeyState != null && formKeyState.validate()) {
-                      // DBへの登録
-                      widget.service.putProfile(newProfile);
-                      Navigator.pop(context);
-                    }
-                    // for debug
-                    if (formKeyState == null) {
-                      // print('formKey.currentState is null');
-                    }
-                  },
+                Card(
+                  child: ListTile(
+                    trailing: IconButton(
+                      icon: const Icon(Icons.add),
+                      onPressed: () {
+                        registerMemo(_memoTextController.text);
+                        setState(() {});
+                      },
+                    ),
+                    title: TextFormField(
+                      decoration: InputDecoration(
+                        labelText: AppLocalizations.of(context)!.addMemo,
+                        border: const OutlineInputBorder(),
+                      ),
+                      onFieldSubmitted: (text) {
+                        registerMemo(text);
+                        setState(() {});
+                      },
+                      controller: _memoTextController,
+                    ),
+                  ),
                 ),
 
                 const SizedBox(height: 20),
@@ -151,6 +139,31 @@ class _RegisterProfilePageState extends State<RegisterProfilePage> {
           ),
         ),
       ),
+      bottomNavigationBar: BottomAppBar(
+        child: ElevatedButton(
+          onPressed: () {
+            // DB更新処理
+            // validation
+            FormState? formKeyState = _formKey.currentState;
+            if (formKeyState != null && formKeyState.validate()) {
+              // DB更新
+              formKeyState.save(); // onSavedを呼び出す
+              widget.service.putProfile(newProfile);
+              Navigator.pop(context);
+            }
+          },
+          child: Text(AppLocalizations.of(context)!.register),
+        ),
+      ),
     );
+  }
+
+  // メモを追加するメソッド
+  Function() registerMemo(String text) {
+    // Enterされたとき、newProfile.memosに新しくmemoを追加
+    newProfile.memos = [...newProfile.memos, text];
+    // textを空にする
+    _memoTextController.clear();
+    return () {};
   }
 }

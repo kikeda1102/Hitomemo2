@@ -191,7 +191,6 @@ class HomePage extends StatelessWidget {
                       child:
                           Text(AppLocalizations.of(context)!.registerProfile));
                 } else {
-                  // TODO: UIのoverflowに対処
                   // dataをorder順にソートする
                   data.sort((a, b) => a.order.compareTo(b.order));
                   // ReorderableListViewで表示

@@ -192,7 +192,6 @@ class _ProfileDetailPageState extends State<ProfileDetailPage> {
                         },
                       ),
                     ),
-                    // TODO: memoを追加
                     Card(
                       child: ListTile(
                         title: TextFormField(
@@ -236,14 +235,13 @@ class _ProfileDetailPageState extends State<ProfileDetailPage> {
                     // DB更新
                     formKeyState.save(); // onSavedを呼び出す
                     widget.service.putProfile(newProfile);
-                    setState(() {
-                      isEditing = false;
-                    });
+                    isEditing = false;
+                    setState(() {});
                   }
                 } else {
-                  setState(() {
-                    isEditing = true;
-                  });
+                  // 編集中でない場合
+                  isEditing = true;
+                  setState(() {});
                 }
               },
               child: isEditing == false
