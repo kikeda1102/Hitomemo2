@@ -19,8 +19,8 @@ class ProfileDetailPage extends StatefulWidget {
 class _ProfileDetailPageState extends State<ProfileDetailPage> {
   final _formKey = GlobalKey<FormState>();
   bool isEditing = false; // 編集中かどうかを判定する変数
-
-  late Profile newProfile; // newProfileをメンバ変数として宣言
+  final _memoTextController = TextEditingController();
+  late Profile newProfile; // newProfileをstate変数として宣言
 
   @override
   void initState() {
@@ -49,7 +49,7 @@ class _ProfileDetailPageState extends State<ProfileDetailPage> {
                 imageBytes: null,
                 memos: List<String>.empty(),
               );
-          var memos = profile.memos;
+          // var memos = profile.memos;
 
           if (snapshot.connectionState == ConnectionState.waiting) {
             return const Center(child: CircularProgressIndicator());
@@ -62,13 +62,13 @@ class _ProfileDetailPageState extends State<ProfileDetailPage> {
             return Padding(
               padding: const EdgeInsets.all(12.0),
               child: Column(
-                mainAxisAlignment: MainAxisAlignment.start,
                 children: [
                   // 名前
                   Center(
                     child: Text(
                       profile.name,
-                      style: const TextStyle(fontSize: 30),
+                      style: const TextStyle(
+                          fontSize: 30, fontWeight: FontWeight.bold),
                     ),
                   ),
                   // scoreIcon
@@ -94,15 +94,15 @@ class _ProfileDetailPageState extends State<ProfileDetailPage> {
                   ),
                   // memos
                   SizedBox(
-                    height: 300,
+                    height: MediaQuery.of(context).size.height / 2,
                     child: ListView.builder(
                       itemBuilder: (context, index) => Card(
                         key: ValueKey(index),
                         child: ListTile(
-                          title: Text(memos[index]),
+                          title: Text(profile.memos[index]),
                         ),
                       ),
-                      itemCount: memos.length,
+                      itemCount: profile.memos.length,
                     ),
                   ),
                 ],
@@ -115,11 +115,14 @@ class _ProfileDetailPageState extends State<ProfileDetailPage> {
               child: Padding(
                 padding: const EdgeInsets.all(12.0),
                 child: Column(
-                  mainAxisAlignment: MainAxisAlignment.start,
+                  // mainAxisAlignment: MainAxisAlignment.start,
                   children: [
                     // 名前
                     TextFormField(
-                      initialValue: profile.name,
+                      style: const TextStyle(
+                        fontWeight: FontWeight.bold, // ここで太文字に設定
+                      ),
+                      initialValue: newProfile.name,
                       decoration: InputDecoration(
                         labelText: AppLocalizations.of(context)!.name,
                         border: const OutlineInputBorder(),
@@ -137,13 +140,25 @@ class _ProfileDetailPageState extends State<ProfileDetailPage> {
                     const SizedBox(height: 20),
                     // memos
                     SizedBox(
-                      height: 200,
+                      // デバイスの高さの半分
+                      height: MediaQuery.of(context).size.height / 2,
                       child: ReorderableListView.builder(
                         itemBuilder: (context, index) => Card(
                           key: ValueKey(index),
                           child: ListTile(
+                            leading: IconButton(
+                              icon: const Icon(Icons.delete),
+                              onPressed: () {
+                                // memosからindex番目の要素を削除
+                                newProfile.memos = newProfile.memos
+                                    .where((memo) =>
+                                        memo != newProfile.memos[index])
+                                    .toList();
+                                setState(() {});
+                              },
+                            ),
                             title: TextFormField(
-                              initialValue: profile.memos[index],
+                              initialValue: newProfile.memos[index],
                               decoration: InputDecoration(
                                 labelText: AppLocalizations.of(context)!.memos,
                                 border: const OutlineInputBorder(),
@@ -152,24 +167,49 @@ class _ProfileDetailPageState extends State<ProfileDetailPage> {
                                 newProfile.memos[index] = value!;
                               },
                             ),
+                            trailing: ReorderableDragStartListener(
+                              index: index,
+                              child: const Icon(Icons.drag_handle),
+                            ),
                           ),
                         ),
-                        itemCount: profile.memos.length,
+                        itemCount: newProfile.memos.length,
                         onReorder: (oldIndex, newIndex) {
                           // 下に移動した場合は、自分が消える分、newIndexを1減らす
                           if (oldIndex < newIndex) {
                             newIndex -= 1;
                           }
                           // oldIndex番目の要素を削除し、その要素をitemに格納
-                          final item = memos[oldIndex];
-                          // memosからoldIndex番目の要素を削除
-                          // TODO: copyWithで置き換える
-                          memos = memos
-                              .where((memo) => memo != memos[oldIndex])
+                          final item = newProfile.memos[oldIndex];
+                          // newProfile.memosからoldIndex番目の要素を削除
+                          newProfile.memos = newProfile.memos
+                              .where(
+                                  (memo) => memo != newProfile.memos[oldIndex])
                               .toList();
                           // newIndex番目にitemを挿入
-                          memos.insert(newIndex, item);
+                          newProfile.memos.insert(newIndex, item);
+                          setState(() {});
                         },
+                      ),
+                    ),
+                    // TODO: memoを追加
+                    Card(
+                      child: ListTile(
+                        title: TextFormField(
+                          decoration: InputDecoration(
+                            icon: const Icon(Icons.add),
+                            labelText: AppLocalizations.of(context)!.addMemo,
+                            border: const OutlineInputBorder(),
+                          ),
+                          onFieldSubmitted: (text) {
+                            // Enterされたとき、newProfile.memosに新しくmemoを追加
+                            newProfile.memos = [...newProfile.memos, text];
+                            // textを空にする
+                            _memoTextController.clear();
+                            setState(() {});
+                          },
+                          controller: _memoTextController,
+                        ),
                       ),
                     ),
                   ],

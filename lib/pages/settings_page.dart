@@ -37,7 +37,7 @@ class _SettingsPageState extends State<SettingsPage> {
             // darkTheme:
             //     SettingsThemeData(settingsListBackground: Colors.grey[800]),
             sections: [
-              // TODO: l10n 本体設定
+              // l10n todo: 本体設定
               SettingsSection(
                 title: Text(AppLocalizations.of(context)!.languageSettings),
                 tiles: <SettingsTile>[

@@ -108,7 +108,6 @@ class QuizManager {
     // incorrectLettersの数が3以下の場合、プリセットの文字列を追加する
     if (incorrectLetters.length <= 3) {
       // プリセットの文字列を追加
-      // TODO: l10n settingsで条件分岐
       incorrectLetters.addAll([
         'a',
         'b',
@@ -153,7 +152,6 @@ class QuizManager {
     // incorrectInitialsの数が3以下の場合、プリセットの文字列を追加する
     if (incorrectInitials.length <= 3) {
       // プリセットの文字列を追加
-      // TODO: l10n
       incorrectInitials.addAll([
         'A',
         'B',

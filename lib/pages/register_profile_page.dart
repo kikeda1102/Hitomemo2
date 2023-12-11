@@ -103,6 +103,7 @@ class _RegisterProfilePageState extends State<RegisterProfilePage> {
                 const SizedBox(height: 20),
 
                 // memosを作成
+                // TODO: UI修正
                 Container(
                   padding: const EdgeInsets.only(left: 30, right: 30),
                   // memoを入力するTextField
