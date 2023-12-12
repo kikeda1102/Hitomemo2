@@ -6,7 +6,7 @@
   "registerProfile":"+ボタンを押して新規プロフィールを登録",
   "registerProfileWithMemos":"クイズを始めるには、メモ付きのプロフィールを1件以上登録してください。",
   "name":"名前",
-  "memos":"メモ",
+  "memo":"メモ",
   "register":"登録",
   "enterTheName":"名前を入力してください。",
   "edit":"編集",

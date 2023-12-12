@@ -6,7 +6,7 @@
   "registerProfile":"Tap + button to register a new profile.",
   "registerProfileWithMemos":"To start quiz, register profiles with memos.",
   "name":"Name",
-  "memos":"Memos",
+  "memo":"Memo",
   "register":"Register",
   "enterTheName":"Please enter the name.",
   "edit":"Edit",
