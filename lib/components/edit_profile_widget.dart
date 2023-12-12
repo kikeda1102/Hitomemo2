@@ -92,6 +92,7 @@ class EditProfileWidget extends StatelessWidget {
                   ),
                 ),
                 itemCount: newProfile.memos.length,
+                // TODO: register_profile_pageのonReorderが効かない
                 onReorder: (oldIndex, newIndex) {
                   // 下に移動した場合は、自分が消える分、newIndexを1減らす
                   if (oldIndex < newIndex) {
