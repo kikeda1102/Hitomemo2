@@ -144,7 +144,7 @@ class _QuizPageState extends State<QuizPage> {
                 ],
               ),
 
-              const SizedBox(height: 40),
+              const SizedBox(height: 20),
 
               // 正解/不正解を表示
               AnimatedOpacity(

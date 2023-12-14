@@ -50,7 +50,6 @@ class _ProfileDetailPageState extends State<ProfileDetailPage> {
                 imageBytes: null,
                 memos: List<String>.empty(),
               );
-          // var memos = profile.memos;
 
           if (snapshot.connectionState == ConnectionState.waiting) {
             return const Center(child: CircularProgressIndicator());
@@ -98,7 +97,7 @@ class _ProfileDetailPageState extends State<ProfileDetailPage> {
                     height: MediaQuery.of(context).size.height / 2,
                     child: ListView.builder(
                       itemBuilder: (context, index) => Card(
-                        key: ValueKey(index),
+                        key: ValueKey(index.toString() + profile.memos[index]),
                         child: ListTile(
                           title: Text(profile.memos[index]),
                         ),

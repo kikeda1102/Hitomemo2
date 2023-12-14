@@ -20,13 +20,16 @@ class _QuizResultPageState extends State<QuizResultPage> {
   void initState() {
     super.initState();
     // 結果をDBに保存
+    // TODO: range errorが出る場合あり デバッグ必要
+    // TODO: クイズの文字化け 絵文字が問題？
     for (int i = 0; i < widget.quizResultManager.correctProfiles.length; i++) {
       widget.quizResultManager.correctProfiles[i] =
           widget.quizResultManager.correctProfiles[i].copyWith(
         newNumberOfIncorrectTaps:
             widget.quizResultManager.numbersOfIncorrectTaps[i],
       );
-      widget.service.putProfile(widget.quizResultManager.correctProfiles[i]);
+      widget.service.putProfile(
+          widget.quizResultManager.correctProfiles[i]); // ここでrangeError
     }
   }
 
