@@ -9,6 +9,7 @@
   "memo":"Memo",
   "register":"Register",
   "enterTheName":"Please enter the name.",
+  "enterTheMemo":"Please enter the memo.",
   "edit":"Edit",
   "complete":"Complete",
   "delete":"Delete",

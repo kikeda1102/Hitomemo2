@@ -93,8 +93,7 @@ class _ProfileDetailPageState extends State<ProfileDetailPage> {
                         }),
                   ),
                   // memos
-                  SizedBox(
-                    height: MediaQuery.of(context).size.height / 2,
+                  Expanded(
                     child: ListView.builder(
                       itemBuilder: (context, index) => Card(
                         key: ValueKey(index.toString() + profile.memos[index]),

@@ -67,7 +67,7 @@ class EditProfileWidget extends StatelessWidget {
                       ),
                       validator: (value) {
                         if (value == null || value.isEmpty) {
-                          return AppLocalizations.of(context)!.enterTheName;
+                          return AppLocalizations.of(context)!.enterTheMemo;
                         }
                         return null;
                       },
