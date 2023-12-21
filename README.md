@@ -2,6 +2,30 @@
 
 初対面の人や友達など、周りの人のプロフィールを記録しておくアプリ
 
+## 問題点
+
+memos の onReorder をしたとき rangeError が出る
+
+### 考えられる原因 ← ほんとにこれ原因？？
+
+edit_profile_widget において、
+newProfile は final の外部引数として受け取っているのに、
+newProfile.memos = ...
+と更新してしまっている
+
+## 解決策
+
+現状 newProfile は profile_detail_page で 更新可能な late として定義し,それを stateless である edit_profile_widget に渡している。
+そこで、
+
+- Profile クラスのメンバ変数を全て immutable にする
+- newProfile の変更をするメソッド copyWith() を用意し、それを引き渡す。
+
+### 修正
+
+上記原因が本当に今の問題の原因かは不明だが、現状がよくない実装なのは確かなので、
+上記解決策に従って修正する
+
 ## メモ
 
 onReorder で register の時だけ再描画されない問題

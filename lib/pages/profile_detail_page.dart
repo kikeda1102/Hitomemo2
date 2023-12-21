@@ -37,6 +37,13 @@ class _ProfileDetailPageState extends State<ProfileDetailPage> {
     });
   }
 
+  void updateNewProfile(newMemos) {
+    newProfile = newProfile.copyWith(
+      newMemos: newProfile.memos,
+    );
+    return;
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -110,9 +117,9 @@ class _ProfileDetailPageState extends State<ProfileDetailPage> {
           } else {
             // 編集中の場合
             return EditProfileWidget(
+                newProfile: newProfile,
                 formKey: _formKey,
                 memoTextController: _memoTextController,
-                newProfile: newProfile,
                 setState: setState);
           }
         },

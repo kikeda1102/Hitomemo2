@@ -1,7 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:hito_memo_2/models/profile.dart';
-// import 'package:hito_memo_2/services/isar_service.dart';
-// import 'package:hito_memo_2/models/settings.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 class EditProfileWidget extends StatelessWidget {
@@ -12,6 +10,7 @@ class EditProfileWidget extends StatelessWidget {
   const EditProfileWidget(
       {super.key,
       required this.newProfile,
+      // required Function updateNewProfile,
       required GlobalKey<FormState> formKey,
       required TextEditingController memoTextController,
       required this.setState})
@@ -52,8 +51,7 @@ class EditProfileWidget extends StatelessWidget {
             Expanded(
               child: ReorderableListView.builder(
                 itemBuilder: (context, index) => Card(
-                  key: ValueKey(index.toString()+newProfile.memos[index]),
-                  // key: UniqueKey(),
+                  key: ValueKey(index.toString() + newProfile.memos[index]),
                   child: ListTile(
                     leading: ReorderableDragStartListener(
                       index: index,
@@ -82,9 +80,8 @@ class EditProfileWidget extends StatelessWidget {
                       ),
                       onPressed: () {
                         // memosからindex番目の要素を削除
-                        newProfile.memos = newProfile.memos
-                            .where((memo) => memo != newProfile.memos[index])
-                            .toList();
+                        newProfile.memos = List.from(newProfile.memos)
+                          ..removeAt(index);
                         setState(() {});
                       },
                     ),
@@ -118,7 +115,12 @@ class EditProfileWidget extends StatelessWidget {
                     ),
                     onFieldSubmitted: (text) {
                       // Enterされたとき、newProfile.memosに新しくmemoを追加
-                      newProfile.memos = [...newProfile.memos, text];
+                      // updateNewProfile(
+                      //   newProfile: newProfile,
+                      //   newMemos: [...newProfile.memos, text],
+                      // );
+                      setState(() {});
+
                       // textを空にする
                       _memoTextController.clear();
                       setState(() {});
