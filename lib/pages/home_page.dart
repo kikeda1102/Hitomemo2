@@ -31,7 +31,7 @@ class _MainPageState extends State<MainPage> {
   // profilesのorderを現状順に更新する関数
   void refreshOrder(List<Profile> profiles, IsarService service) {
     for (int i = 0; i < profiles.length; i++) {
-      profiles[i] = profiles[i].copyWith(newOrder: i);
+      profiles[i] = profiles[i].copyWith(order: i);
       // 更新をDBに保存
       service.putProfile(profiles[i]);
     }
@@ -161,7 +161,7 @@ class HomePage extends StatelessWidget {
   // profilesのorderを現状順に更新する関数
   void refreshOrder(List<Profile> profiles, IsarService service) {
     for (int i = 0; i < profiles.length; i++) {
-      profiles[i] = profiles[i].copyWith(newOrder: i);
+      profiles[i] = profiles[i].copyWith(order: i);
       // 更新をDBに保存
       service.putProfile(profiles[i]);
     }

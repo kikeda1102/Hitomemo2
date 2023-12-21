@@ -6,13 +6,13 @@ part 'profile.g.dart';
 @Collection()
 class Profile {
   Id id; // Isarのid
-  int order; // ReorderableListViewで並び順を管理するための変数
-  DateTime created;
-  DateTime? updated;
-  String name;
-  List<byte>? imageBytes; // 画像
-  List<String> memos; //箇条書きのメモ
-  int? numberOfIncorrectTaps; // quizで誤タップされた回数
+  final int order; // ReorderableListViewで並び順を管理するための変数
+  final DateTime created;
+  final DateTime? updated;
+  final String name;
+  final List<byte>? imageBytes; // 画像
+  final List<String> memos; //箇条書きのメモ
+  final int? numberOfIncorrectTaps; // quizで誤タップされた回数
 
   // コンストラクタ
   Profile({
@@ -27,24 +27,25 @@ class Profile {
 
   // copyWithメソッドを定義
   Profile copyWith({
-    int? newId,
-    int? newOrder,
+    int? id,
+    int? order,
     // DateTime? created,
-    DateTime? newUpdated,
-    String? newName,
-    List<int>? newImageBytes,
-    List<String>? newMemos,
-    int? newNumberOfIncorrectTaps,
+    DateTime? updated,
+    String? name,
+    List<int>? imageBytes,
+    List<String>? memos,
+    int? numberOfIncorrectTaps,
   }) {
     return Profile(
-      id: newId ?? id,
-      order: newOrder ?? order,
+      id: id ?? this.id,
+      order: order ?? this.order,
       // created: created ?? this.created,
-      updated: newUpdated ?? updated,
-      name: newName ?? name,
-      imageBytes: newImageBytes ?? imageBytes,
-      memos: newMemos ?? memos,
-      numberOfIncorrectTaps: newNumberOfIncorrectTaps ?? numberOfIncorrectTaps,
+      updated: updated ?? this.updated,
+      name: name ?? this.name,
+      imageBytes: imageBytes ?? this.imageBytes,
+      memos: memos ?? this.memos,
+      numberOfIncorrectTaps:
+          numberOfIncorrectTaps ?? this.numberOfIncorrectTaps,
     );
   }
 

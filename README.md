@@ -80,6 +80,14 @@ memos も与える事で解決
 
   - 来週までに、クイズのメソッドの実装をしてくる
 
+- 2023/12/21
+
+### EditProfileWidget の設計について
+
+- 一時編集中の変数( = EditProfileWidget が保持する状態)と、
+  Profile_detail_page で stream として監視する、 DB の Profile 変数を区別した設計にすべき
+- 前者: editingProfile, 後者: profile とする
+
 - 2023/10/12:
 
   - details の memos を reorderable にした

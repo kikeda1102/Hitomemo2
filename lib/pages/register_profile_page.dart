@@ -30,10 +30,10 @@ class _RegisterProfilePageState extends State<RegisterProfilePage> {
     return Scaffold(
       appBar: AppBar(),
       body: EditProfileWidget(
-          formKey: _formKey,
-          memoTextController: _memoTextController,
-          newProfile: newProfile,
-          setState: setState),
+        profile: newProfile,
+        formKey: _formKey,
+        memoTextController: _memoTextController,
+      ),
       bottomNavigationBar: BottomAppBar(
         child: ElevatedButton(
           onPressed: () {

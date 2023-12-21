@@ -120,7 +120,6 @@ Profile _profileDeserialize(
     order: reader.readLongOrNull(offsets[5]) ?? -1,
     updated: reader.readDateTimeOrNull(offsets[6]),
   );
-  object.created = reader.readDateTime(offsets[0]);
   return object;
 }
 

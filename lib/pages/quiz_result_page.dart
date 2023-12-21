@@ -25,7 +25,7 @@ class _QuizResultPageState extends State<QuizResultPage> {
     for (int i = 0; i < widget.quizResultManager.correctProfiles.length; i++) {
       widget.quizResultManager.correctProfiles[i] =
           widget.quizResultManager.correctProfiles[i].copyWith(
-        newNumberOfIncorrectTaps:
+        numberOfIncorrectTaps:
             widget.quizResultManager.numbersOfIncorrectTaps[i],
       );
       widget.service.putProfile(

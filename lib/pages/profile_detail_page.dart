@@ -21,28 +21,6 @@ class _ProfileDetailPageState extends State<ProfileDetailPage> {
   final _formKey = GlobalKey<FormState>();
   bool isEditing = false; // 編集中かどうかを判定する変数
   final _memoTextController = TextEditingController();
-  late Profile newProfile; // newProfileをstate変数として宣言
-
-  @override
-  void initState() {
-    super.initState();
-    // profileを取得 更新用
-    Future(() async {
-      newProfile = await widget.service.getProfile(widget.id) ??
-          Profile(
-            name: '',
-            imageBytes: null,
-            memos: List<String>.empty(),
-          );
-    });
-  }
-
-  void updateNewProfile(newMemos) {
-    newProfile = newProfile.copyWith(
-      newMemos: newProfile.memos,
-    );
-    return;
-  }
 
   @override
   Widget build(BuildContext context) {
@@ -117,10 +95,10 @@ class _ProfileDetailPageState extends State<ProfileDetailPage> {
           } else {
             // 編集中の場合
             return EditProfileWidget(
-                newProfile: newProfile,
-                formKey: _formKey,
-                memoTextController: _memoTextController,
-                setState: setState);
+              profile: profile,
+              formKey: _formKey,
+              memoTextController: _memoTextController,
+            );
           }
         },
       ),
@@ -140,7 +118,7 @@ class _ProfileDetailPageState extends State<ProfileDetailPage> {
                   if (formKeyState != null && formKeyState.validate()) {
                     // DB更新
                     formKeyState.save(); // onSavedを呼び出す
-                    widget.service.putProfile(newProfile);
+                    // widget.service.putProfile(profile);
                     isEditing = false;
                     setState(() {});
                   }

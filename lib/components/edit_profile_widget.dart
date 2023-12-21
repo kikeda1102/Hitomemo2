@@ -1,26 +1,36 @@
 import 'package:flutter/material.dart';
 import 'package:hito_memo_2/models/profile.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+// import 'package:hito_memo_2/services/isar_service.dart';
 
-class EditProfileWidget extends StatelessWidget {
-  final Profile newProfile;
+class EditProfileWidget extends StatefulWidget {
+  final Profile profile;
   final GlobalKey<FormState> _formKey;
   final TextEditingController _memoTextController;
-  final StateSetter setState;
-  const EditProfileWidget(
-      {super.key,
-      required this.newProfile,
-      // required Function updateNewProfile,
-      required GlobalKey<FormState> formKey,
-      required TextEditingController memoTextController,
-      required this.setState})
-      : _formKey = formKey,
+  const EditProfileWidget({
+    required this.profile,
+    super.key,
+    required GlobalKey<FormState> formKey,
+    required TextEditingController memoTextController,
+  })  : _formKey = formKey,
         _memoTextController = memoTextController;
+
+  @override
+  State<EditProfileWidget> createState() => _EditProfileWidgetState();
+}
+
+class _EditProfileWidgetState extends State<EditProfileWidget> {
+  late Profile editingProfile;
+  @override
+  void initState() {
+    super.initState();
+    editingProfile = widget.profile;
+  }
 
   @override
   Widget build(BuildContext context) {
     return Form(
-      key: _formKey,
+      key: widget._formKey,
       child: Padding(
         padding: const EdgeInsets.all(12.0),
         child: Column(
@@ -31,7 +41,7 @@ class EditProfileWidget extends StatelessWidget {
               style: const TextStyle(
                 fontWeight: FontWeight.bold, // ここで太文字に設定
               ),
-              initialValue: newProfile.name,
+              initialValue: editingProfile.name,
               decoration: InputDecoration(
                 labelText: AppLocalizations.of(context)!.name,
                 border: const OutlineInputBorder(),
@@ -43,7 +53,8 @@ class EditProfileWidget extends StatelessWidget {
                 return null;
               },
               onSaved: (value) {
-                newProfile.name = value!;
+                editingProfile = editingProfile.copyWith(name: value!);
+                setState(() {});
               },
             ),
             const SizedBox(height: 20),
@@ -51,14 +62,14 @@ class EditProfileWidget extends StatelessWidget {
             Expanded(
               child: ReorderableListView.builder(
                 itemBuilder: (context, index) => Card(
-                  key: ValueKey(index.toString() + newProfile.memos[index]),
+                  key: ValueKey(index.toString() + editingProfile.memos[index]),
                   child: ListTile(
                     leading: ReorderableDragStartListener(
                       index: index,
                       child: const Icon(Icons.drag_handle),
                     ),
                     title: TextFormField(
-                      initialValue: newProfile.memos[index],
+                      initialValue: editingProfile.memos[index],
                       decoration: InputDecoration(
                         labelText: AppLocalizations.of(context)!.memo,
                         border: const OutlineInputBorder(),
@@ -70,7 +81,7 @@ class EditProfileWidget extends StatelessWidget {
                         return null;
                       },
                       onSaved: (value) {
-                        newProfile.memos[index] = value!;
+                        editingProfile.memos[index] = value!;
                       },
                     ),
                     trailing: IconButton(
@@ -80,27 +91,30 @@ class EditProfileWidget extends StatelessWidget {
                       ),
                       onPressed: () {
                         // memosからindex番目の要素を削除
-                        newProfile.memos = List.from(newProfile.memos)
-                          ..removeAt(index);
+                        editingProfile = editingProfile.copyWith(
+                            memos: List.from(editingProfile.memos)
+                              ..removeAt(index));
                         setState(() {});
                       },
                     ),
                   ),
                 ),
-                itemCount: newProfile.memos.length,
+                itemCount: editingProfile.memos.length,
                 onReorder: (oldIndex, newIndex) {
                   // 下に移動した場合は、自分が消える分、newIndexを1減らす
                   if (oldIndex < newIndex) {
                     newIndex -= 1;
                   }
                   // oldIndex番目の要素を削除し、その要素をitemに格納
-                  final item = newProfile.memos[oldIndex];
+                  final item = editingProfile.memos[oldIndex];
                   // newProfile.memosからoldIndex番目の要素を削除
-                  newProfile.memos = newProfile.memos
-                      .where((memo) => memo != newProfile.memos[oldIndex])
-                      .toList();
+                  editingProfile = editingProfile.copyWith(
+                      memos: editingProfile.memos
+                          .where(
+                              (memo) => memo != editingProfile.memos[oldIndex])
+                          .toList());
                   // newIndex番目にitemを挿入
-                  newProfile.memos.insert(newIndex, item);
+                  editingProfile.memos.insert(newIndex, item);
                   setState(() {});
                   // print(newProfile.memos);
                 },
@@ -122,21 +136,21 @@ class EditProfileWidget extends StatelessWidget {
                       setState(() {});
 
                       // textを空にする
-                      _memoTextController.clear();
+                      widget._memoTextController.clear();
                       setState(() {});
                     },
-                    controller: _memoTextController,
+                    controller: widget._memoTextController,
                   ),
                   trailing: IconButton(
                     icon: const Icon(Icons.add),
                     onPressed: () {
                       // newProfile.memosに新しくmemoを追加
-                      newProfile.memos = [
-                        ...newProfile.memos,
-                        _memoTextController.text
-                      ];
+                      editingProfile = editingProfile.copyWith(memos: [
+                        ...editingProfile.memos,
+                        widget._memoTextController.text
+                      ]);
                       // textを空にする
-                      _memoTextController.clear();
+                      widget._memoTextController.clear();
                       setState(() {});
                     },
                   )),
