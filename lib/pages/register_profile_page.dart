@@ -139,16 +139,6 @@ class _RegisterProfilePageState extends State<RegisterProfilePage> {
                         _memoTextController.clear();
                         setState(() {});
                       },
-                      onSaved: (text) {
-                        // editingProfile.memosに新しくmemoを追加
-                        editingProfile = editingProfile.copyWith(memos: [
-                          ...editingProfile.memos,
-                          _memoTextController.text
-                        ]);
-                        // textを空にする
-                        _memoTextController.clear();
-                        setState(() {});
-                      },
                       controller: _memoTextController,
                     ),
                     trailing: IconButton(
@@ -162,6 +152,7 @@ class _RegisterProfilePageState extends State<RegisterProfilePage> {
                         // textを空にする
                         _memoTextController.clear();
                         setState(() {});
+                        FocusScope.of(context).unfocus(); // キーボードを閉じる
                       },
                     )),
               ),
