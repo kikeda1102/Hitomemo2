@@ -24,95 +24,133 @@ class _ProfileDetailPageState extends State<ProfileDetailPage> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(),
-      body: StreamBuilder<Profile>(
-        stream: widget.service.listenToProfile(widget.id),
-        builder: (BuildContext context, AsyncSnapshot<Profile> snapshot) {
-          Profile profile = snapshot.data ??
-              Profile(
-                name: '',
-                imageBytes: null,
-                memos: List<String>.empty(),
-              );
+    if (isEditing == false) {
+      // 編集中でない場合
+      return Scaffold(
+        appBar: AppBar(),
+        body: StreamBuilder<Profile>(
+          stream: widget.service.listenToProfile(widget.id),
+          builder: (BuildContext context, AsyncSnapshot<Profile> snapshot) {
+            Profile profile = snapshot.data ??
+                Profile(
+                  name: '',
+                  imageBytes: null,
+                  memos: List<String>.empty(),
+                );
 
-          if (snapshot.connectionState == ConnectionState.waiting) {
-            return const Center(child: CircularProgressIndicator());
-          } else if (snapshot.hasError) {
-            return Text('Error: ${snapshot.error}');
-          } else if (!snapshot.hasData) {
-            return const Center(child: Text('No data'));
-          } else if (!isEditing) {
-            // 編集中でない場合
-            return Padding(
-              padding: const EdgeInsets.all(12.0),
-              child: Column(
-                children: [
-                  // 名前
-                  Center(
-                    child: Text(
-                      profile.name,
-                      style: const TextStyle(
-                          fontSize: 30, fontWeight: FontWeight.bold),
-                    ),
-                  ),
-                  // scoreIcon
-                  Padding(
-                    padding: const EdgeInsets.all(25.0),
-                    child: StreamBuilder(
-                        stream: widget.service.listenToSettings(),
-                        builder:
-                            (context, AsyncSnapshot<List<Settings>> snapshot) {
-                          List<Settings> settings = snapshot.data ??
-                              List<Settings>.empty(growable: true);
-                          if (snapshot.hasData) {
-                            if (settings[0].presentQuizScore) {
-                              return scoreIcon(profile, 35);
-                            } else {
-                              return const SizedBox(height: 0);
-                            }
-                          } else {
-                            return const Center(
-                                child: CircularProgressIndicator());
-                          }
-                        }),
-                  ),
-                  // memos
-                  Expanded(
-                    child: ListView.builder(
-                      itemBuilder: (context, index) => Card(
-                        key: ValueKey(index.toString() + profile.memos[index]),
-                        child: ListTile(
-                          title: Text(profile.memos[index]),
-                        ),
+            if (snapshot.connectionState == ConnectionState.waiting) {
+              return const Center(child: CircularProgressIndicator());
+            } else if (snapshot.hasError) {
+              return Text('Error: ${snapshot.error}');
+            } else if (!snapshot.hasData) {
+              return const Center(child: Text('No data'));
+            } else {
+              return Padding(
+                padding: const EdgeInsets.all(12.0),
+                child: Column(
+                  children: [
+                    // 名前
+                    Center(
+                      child: Text(
+                        profile.name,
+                        style: const TextStyle(
+                            fontSize: 30, fontWeight: FontWeight.bold),
                       ),
-                      itemCount: profile.memos.length,
                     ),
-                  ),
-                ],
+                    // scoreIcon
+                    Padding(
+                      padding: const EdgeInsets.all(25.0),
+                      child: StreamBuilder(
+                          stream: widget.service.listenToSettings(),
+                          builder: (context,
+                              AsyncSnapshot<List<Settings>> snapshot) {
+                            List<Settings> settings = snapshot.data ??
+                                List<Settings>.empty(growable: true);
+                            if (snapshot.hasData) {
+                              if (settings[0].presentQuizScore) {
+                                return scoreIcon(profile, 35);
+                              } else {
+                                return const SizedBox(height: 0);
+                              }
+                            } else {
+                              return const Center(
+                                  child: CircularProgressIndicator());
+                            }
+                          }),
+                    ),
+                    // memos
+                    Expanded(
+                      child: ListView.builder(
+                        itemBuilder: (context, index) => Card(
+                          key:
+                              ValueKey(index.toString() + profile.memos[index]),
+                          child: ListTile(
+                            title: Text(profile.memos[index]),
+                          ),
+                        ),
+                        itemCount: profile.memos.length,
+                      ),
+                    ),
+                  ],
+                ),
+              );
+            }
+          },
+        ),
+        bottomNavigationBar: BottomAppBar(
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+            children: [
+              // 更新ボタン
+              ElevatedButton(
+                onPressed: () {
+                  isEditing = true;
+                  setState(() {});
+                },
+                child: Text(AppLocalizations.of(context)!.edit),
               ),
-            );
-          } else {
-            // 編集中の場合
-            return EditProfileWidget(
-              profile: profile,
-              formKey: _formKey,
-              memoTextController: _memoTextController,
-            );
-          }
-        },
-      ),
-      bottomNavigationBar: BottomAppBar(
-        // color: Colors.grey[100],
-        // surfaceTintColor: Colors.grey,
-        child: Row(
-          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-          children: [
-            // 更新ボタン
-            ElevatedButton(
-              onPressed: () {
-                // DB更新処理
-                if (isEditing == true) {
+            ],
+          ),
+        ),
+      );
+    } else {
+      // 編集中の場合
+      return Scaffold(
+        appBar: AppBar(),
+        body: StreamBuilder<Profile>(
+          stream: widget.service.listenToProfile(widget.id),
+          builder: (BuildContext context, AsyncSnapshot<Profile> snapshot) {
+            Profile profile = snapshot.data ??
+                Profile(
+                  name: '',
+                  imageBytes: null,
+                  memos: List<String>.empty(),
+                );
+
+            if (snapshot.connectionState == ConnectionState.waiting) {
+              return const Center(child: CircularProgressIndicator());
+            } else if (snapshot.hasError) {
+              return Text('Error: ${snapshot.error}');
+            } else if (!snapshot.hasData) {
+              return const Center(child: Text('No data'));
+            } else {
+              // 編集中の場合
+              return EditProfileWidget(
+                profile: profile,
+                formKey: _formKey,
+                memoTextController: _memoTextController,
+              );
+            }
+          },
+        ),
+        bottomNavigationBar: BottomAppBar(
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+            children: [
+              // 更新完了ボタン
+              ElevatedButton(
+                onPressed: () {
+                  // DB更新処理
                   // validation
                   FormState? formKeyState = _formKey.currentState;
                   if (formKeyState != null && formKeyState.validate()) {
@@ -122,35 +160,29 @@ class _ProfileDetailPageState extends State<ProfileDetailPage> {
                     isEditing = false;
                     setState(() {});
                   }
-                } else {
-                  // 編集中でない場合
-                  isEditing = true;
-                  setState(() {});
-                }
-              },
-              child: isEditing == false
-                  ? Text(AppLocalizations.of(context)!.edit)
-                  : Text(AppLocalizations.of(context)!.complete),
-            ),
+                },
+                child: Text(AppLocalizations.of(context)!.complete),
+              ),
 
-            // 削除ボタン
-            ElevatedButton(
-              onPressed: () {
-                showDialog(
-                  context: context,
-                  builder: (_) => _deleteDialog(
-                    context,
-                    id: widget.id,
-                    service: widget.service,
-                  ),
-                );
-              },
-              child: Text(AppLocalizations.of(context)!.delete),
-            ),
-          ],
+              // 削除ボタン
+              ElevatedButton(
+                onPressed: () {
+                  showDialog(
+                    context: context,
+                    builder: (_) => _deleteDialog(
+                      context,
+                      id: widget.id,
+                      service: widget.service,
+                    ),
+                  );
+                },
+                child: Text(AppLocalizations.of(context)!.delete),
+              ),
+            ],
+          ),
         ),
-      ),
-    );
+      );
+    }
   }
 }
 
