@@ -48,7 +48,9 @@ class _MyAppState extends State<MyApp> {
     return StreamBuilder(
       stream: widget.service.listenToSettings(),
       builder: (context, AsyncSnapshot<List<Settings>> snapshot) {
-        if (snapshot.hasData && snapshot.data != null) {
+        if (snapshot.hasData &&
+            snapshot.data != null &&
+            snapshot.data!.isNotEmpty) {
           settings = snapshot.data![0];
           return MaterialApp(
             debugShowCheckedModeBanner: false, // デバッグバナーを非表示
