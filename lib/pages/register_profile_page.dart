@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:hito_memo_2/services/isar_service.dart';
 import 'package:hito_memo_2/models/profile.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
-import 'package:hito_memo_2/components/edit_profile_widget.dart';
+// import 'package:hito_memo_2/components/edit_profile_widget.dart';
 
 // プロフィール新規追加画面
 

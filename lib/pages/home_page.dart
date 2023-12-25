@@ -10,6 +10,7 @@ import 'package:hito_memo_2/services/isar_service.dart';
 import 'package:hito_memo_2/pages/settings_page.dart';
 import 'package:hito_memo_2/pages/quiz_gate_page.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+import 'package:hito_memo_2/pages/icon_picture_page.dart';
 
 // メイン画面
 class MainPage extends StatefulWidget {
@@ -89,6 +90,16 @@ class _MainPageState extends State<MainPage> {
                   label: Text(AppLocalizations.of(context)!.privacyPolicy),
                 );
               },
+            ),
+            const SizedBox(height: 20),
+            // IconPicturePageへ遷移
+            ListTile(
+              leading: const Icon(Icons.image),
+              onTap: () => Navigator.of(context).push(
+                MaterialPageRoute(
+                  builder: (context) => const IconPicturePage(),
+                ),
+              ),
             ),
           ],
         ),

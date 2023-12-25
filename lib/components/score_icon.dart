@@ -37,10 +37,12 @@ Widget scoreIcon(Profile profile, double radius) {
           // nullなら何も表示しない
           profile.numberOfIncorrectTaps == null
               ? ''
-              : '${profile.calculateCorrectRate()}',
+              // : '${profile.calculateCorrectRate()}',
+              // : 'Hito \n Memo',
+              : '人',
           style: TextStyle(
             color: getScoreColor(profile.calculateCorrectRate() ?? 0.0),
-            fontSize: radius / 1.4,
+            fontSize: radius / 0.51,
             fontWeight: FontWeight.bold,
           ),
         ),
